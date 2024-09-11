@@ -9,6 +9,7 @@ npm i react-helmet-async
 npm i axios
 npm i slick-carousel react-slick
 npm i antd
+npm i styled-components
 ```
 
 ## Cài Đặt node_modules
