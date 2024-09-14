@@ -10,6 +10,7 @@ npm i axios
 npm i slick-carousel react-slick
 npm i antd
 npm i styled-components
+npm install tailwindcss postcss autoprefixer
 ```
 
 ## Cài Đặt node_modules
