@@ -1,8 +1,12 @@
 import React from 'react'
-import { Button } from 'antd'
+import SlidebarComponent from '../../components/SlidebarComponent/SlidebarComponent'
+import {WrapperContainer} from './style'
+
 const HomePage = () => {
   return (
-    <Button type="primary">Primary Button</Button>
+    <WrapperContainer>
+      <SlidebarComponent curentpage={"1"}/>
+    </WrapperContainer>
   )
 }
 
