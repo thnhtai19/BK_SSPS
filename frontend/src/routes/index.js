@@ -9,6 +9,7 @@ export const routes = [
     },{
         path: '/home',
         page: HomePage,
+        isShowDashboard: true,
     },
     {
         path: '*',
