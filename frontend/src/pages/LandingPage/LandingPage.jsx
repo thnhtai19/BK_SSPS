@@ -1,8 +1,11 @@
 import React from 'react'
+import ApexChart from '../../components/ApexChart/ApexChart'
 
 const LandingPage = () => {
   return (
-    <div>LandingPage</div>
+    <div>
+      <ApexChart />
+    </div>
   )
 }
 

@@ -11,6 +11,7 @@ npm i slick-carousel react-slick
 npm i antd
 npm i styled-components
 npm install tailwindcss postcss autoprefixer
+npm i react-apexcharts
 ```
 
 ## Cài Đặt node_modules
