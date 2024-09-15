@@ -13,6 +13,7 @@ export const routes = [
     },{
         path: '/buy',
         page: BuyPage,
+        isShowDashboard: true,
     },
     {
         path: '*',
