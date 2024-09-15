@@ -7,19 +7,25 @@ function App() {
   return (
     <Router>
       <Routes>
+        {routes
+          .filter(route => !route.isShowDashboard)
+          .map(route => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={<route.page />}
+            />
+          ))}
         <Route path="/" element={<DashboardComponent />}>
-          {routes.map(route => {
-            if (route.isShowDashboard) {
-              return (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={<route.page />}
-                />
-              );
-            }
-            return null;
-          })}
+          {routes
+            .filter(route => route.isShowDashboard)
+            .map(route => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<route.page />}
+              />
+            ))}
         </Route>
       </Routes>
     </Router>
