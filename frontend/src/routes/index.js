@@ -1,6 +1,7 @@
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage"
 import LandingPage from "../pages/LandingPage/LandingPage"
 import HomePage from "../pages/HomePage/HomePage"
+import BuyPage from "../pages/BuyPage/BuyPage"
 
 export const routes = [
     {
@@ -9,6 +10,9 @@ export const routes = [
     },{
         path: '/home',
         page: HomePage,
+    },{
+        path: '/buy',
+        page: BuyPage,
     },
     {
         path: '*',
