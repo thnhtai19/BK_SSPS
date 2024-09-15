@@ -32,7 +32,7 @@ const SlidebarComponent = ({ curentpage }) => {
                         {(!isCollapsed || isHovered)  && <div className='brand-name'>BK SSPS</div>}
                         {(!isCollapsed || isHovered)  && (
                             <div className="icon-wrapper" onClick={toggleSidebar}>
-                                <ArrowLeftOutlined className="icon" />
+                                <ArrowLeftOutlined className={`icon ${isCollapsed ? 'rotated' : ''}`} />
                             </div>
                         )}
                     </div>
@@ -69,8 +69,8 @@ const SlidebarComponent = ({ curentpage }) => {
                     <img src={user} alt='user' width="40px" />
                     {(!isCollapsed || isHovered)  && (
                         <div className='wrap-name'>
-                            <div className='text-2xl font-bold'>Trần Thành Tài</div>
-                            <div className='text-sm'>tai.tranthanh@hcmut.edu.vn</div>
+                            <div className='text-base font-bold'>Trần Thành Tài</div>
+                            <div style={{fontSize: '11px'}}>tai.tranthanh@hcmut.edu.vn</div>
                         </div>
                     )}
                 </div>

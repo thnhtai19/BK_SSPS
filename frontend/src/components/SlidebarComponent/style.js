@@ -7,10 +7,6 @@ export const WrapperContainer = styled.div`
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    position: fixed;
-    z-index: 10;
-    top: 0;
-    left: 0;
     transition: width 0.3s;
 
     .wrap-logo {
@@ -33,7 +29,6 @@ export const WrapperContainer = styled.div`
         color: #0688B4;
         font-size: 25px;
         font-weight: bold;
-
         white-space: nowrap; 
         overflow: hidden;
         text-overflow: ellipsis;
@@ -44,6 +39,9 @@ export const WrapperContainer = styled.div`
         flex-direction: column;
         justify-content: center;
         gap: 5px;
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .wrap-item-container {
@@ -89,6 +87,7 @@ export const WrapperContainer = styled.div`
 
     .wrap-user {
         height: 80px;
+        width: 100%;
         justify-content: center;
         padding: 0 20px;
     }
@@ -113,14 +112,9 @@ export const WrapperContainer = styled.div`
         padding: 10px;
         transition: background-color 0.3s ease;
     }
-
-    .icon-wrapper:active {
+    
+    .icon-wrapper:hover {
         background-color: #ddd;
-    }
-
-    .icon-wrapper:active {
-        transform: rotate(180deg);
-        transition: transform 0.3s ease;
     }
 
     .icon {
@@ -128,6 +122,17 @@ export const WrapperContainer = styled.div`
         font-weight: bold;
         font-size: 20px;
         margin: 0;
+        transition: transform 0.3s ease;
     }
 
-`;
+    .icon.rotated {
+        transform: rotate(180deg);
+    }
+
+    @media(max-width: 1200px){
+        .icon-wrapper{
+            display: none;
+        }
+    }
+
+`
