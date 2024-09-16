@@ -6,11 +6,9 @@ module.exports = {
   ],
   theme: {
     extend: {
-      height: {
-        '400': '400px',
-      },
       width: {
-        '600': '600px',
+        '540': '540px',
+        '400': '400px',
       }
     },
   },
