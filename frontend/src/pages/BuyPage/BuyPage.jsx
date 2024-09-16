@@ -54,9 +54,9 @@ const BuyPage = () =>{
     <>
       <p className="px-5">bkssps.vn <RightOutlined /> Mua thêm trang</p>
         {isSuccess === null && (
-          <div className="flex justify-evenly	">
+          <div className="flex flex-wrap justify-evenly	">
             {/* Thông tin thanh toán cho việc mua thêm trang */}
-              <section className="flex-none h-auto w-540 mt-12 mx-5 p-8 border border-solid rounded-2xl bg-white shadow-lg shadow-[#e4d8d8]">
+              <section className="flex-none h-auto w-540 my-12 mx-5 p-8 border border-solid rounded-2xl bg-white shadow-lg shadow-[#e4d8d8]">
                   <form onSubmit={handleSubmit}>
                     <fieldset className="space-y-6"> {/* Khoảng cách giữa các label */}
                       <legend className="font-bold text-xl mb-2">Mua thêm trang</legend>
@@ -99,7 +99,7 @@ const BuyPage = () =>{
               </section>
 
               {/* Lịch sử giao dịch */}
-              <section className="flex-none h-auto w-540 mt-12 mx-5 p-8 border border-solid rounded-2xl bg-white shadow-lg shadow-[#e4d8d8]">
+              <section className="flex-none h-auto w-540 my-12 mx-5 p-8 border border-solid rounded-2xl bg-white shadow-lg shadow-[#e4d8d8]">
                 <p className="font-bold text-xl mb-2">Lịch sử mua trang</p>
                 <Table 
                   dataSource={dataSource} 
