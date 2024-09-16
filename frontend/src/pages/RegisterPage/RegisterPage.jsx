@@ -5,6 +5,7 @@ import { useRef, useState, useEffect } from "react";
 import { CloseOutlined } from "@ant-design/icons";
 
 import imgLogin from "../../assets/image.png";
+import Logocnpm from "../../assets/logocnpm.png";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,9 +28,14 @@ function Register() {
   }
 
   return (
-    <div className="flex sm:p-11 p-4 justify-center bg-[#D2ECF4] sm:bg-transparent ms:items-center h-dvh ">
+    <div className="flex sm:p-11 p-4 justify-center  sm:bg-transparent ms:items-center h-dvh ">
       {/* column left */}
-      <div className="sm:flex-1 sm:p-10 p-5 h-fit text-[#6F6F6F] bg-white rounded-xl sm:rounded-none ">
+      <div className="sm:flex-1 sm:p-10 p-5 my-auto h-fit text-[#6F6F6F] bg-white rounded-xl sm:rounded-none ">
+        {/* logo in mobile */}
+        <div className="sm:hidden mb-6 flex items-center gap-3 justify-center">
+          <img src={Logocnpm} alt="" className="w-10" />
+          <span className="text-[#0688B4] font-bold text-3xl  ">BK SSPS</span>
+        </div>
         <h1 className="sm:text-3xl text-lg text-black font-bold text-center">
           DỊCH VỤ XÁC THỰC HCMUT_SSO
         </h1>

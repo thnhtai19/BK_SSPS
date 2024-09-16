@@ -4,7 +4,8 @@ import { EyeInvisibleOutlined } from "@ant-design/icons";
 import { EyeOutlined } from "@ant-design/icons";
 import { CloseOutlined } from "@ant-design/icons";
 
-import imgLogin from "../../assets/image.png";
+import ImgLogin from "../../assets/image.png";
+import Logocnpm from "../../assets/logocnpm.png";
 
 function ForgetPasword({ setShowForgetPassword }) {
   const modelRef = useRef(null);
@@ -73,9 +74,14 @@ function Login() {
   }
 
   return (
-    <div className="flex sm:p-11 p-4 justify-center bg-[#D2ECF4] sm:bg-transparent ms:items-center h-dvh ">
+    <div className="flex sm:p-11 p-4 justify-center   sm:bg-transparent sm:items-center h-dvh ">
       {/* column left */}
-      <div className="sm:flex-1 sm:p-10 p-5 h-fit text-[#6F6F6F] bg-white rounded-xl sm:rounded-none ">
+      <div className="sm:flex-1 sm:p-10 p-5 h-fit my-auto text-[#6F6F6F]  bg-white rounded-xl sm:rounded-none ">
+        {/* logo in mobile */}
+        <div className="sm:hidden mb-6 flex items-center gap-3 justify-center">
+          <img src={Logocnpm} alt="" className="w-10" />
+          <span className="text-[#0688B4] font-bold text-3xl  ">BK SSPS</span>
+        </div>
         <h1 className="sm:text-3xl text-lg text-black font-bold text-center">
           DỊCH VỤ XÁC THỰC HCMUT_SSO
         </h1>
@@ -134,7 +140,7 @@ function Login() {
       </div>
       {/* column right */}
       <div className="hidden sm:flex flex-1 bg-[#D2ECF4] rounded-xl h-[90vh] items-center justify-center ">
-        <img src={imgLogin} alt="login" className="object-cover " />
+        <img src={ImgLogin} alt="login" className="object-cover " />
       </div>
       {/* pop up forget pasword */}
       {showForgetPassword && (
