@@ -12,17 +12,7 @@ export const routes = [
     },{
         path: '/home',
         page: HomePage,
-    },{
-        path: '/login',
-        page: LoginPage,
-    },{
-        path: '/register',
-        page: RegisterPage,
-    },{
-        path: '/myAccount',
-        page: MyAccountPage,
-        isShowHeader: true,
-        isShowFooter: true
+        isShowDashboard: true,
     },
     {
         path: '*',
