@@ -1,17 +1,17 @@
-import check from '../../assets/check.png';
+import mark from '../../assets/mark.png';
 import { useNavigate } from 'react-router-dom';
 
-const BuySuccessPage = () => {
+const BuyErrorPage = () => {
   const navigate = useNavigate();
 
 	return(
 		<>
       <div className="mt-16 text-center">
         <div>
-          <img className="h-16 w-16 mx-auto mb-4" src={check} alt="success"/>
-          <h2 className="text-2xl font-bold text-[#006688]">Thanh toán thành công!</h2>
+          <img className="h-16 w-16 mx-auto mb-4" src={mark} alt="Error"/>
+          <h2 className="text-2xl font-bold text-[#006688]">Thanh toán thất bại!</h2>
           <p className="mt-6 mb-12 h-8 w-400 mx-auto">
-            Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi, bạn đã được cộng số trang in vào trong tài khoản!
+            Đơn hàng của bạn đã thanh toán thất bại. Vui lòng kiểm tra kỹ các thông tin hoặc liên hệ chúng tôi nếu đây là lỗi.
           </p>
         </div>
 
@@ -20,12 +20,13 @@ const BuySuccessPage = () => {
             Mua thêm trang
           </button>
           <button className="px-4 py-2 bg-[#0688B4] text-white font-semibold rounded-md hover:bg-[#0b6986]">
-            In tài liệu
+            Liên hệ hỗ trợ
           </button>
         </div>
       </div>
+
 		</>
 	)
 }
 
-export default BuySuccessPage
+export default BuyErrorPage
