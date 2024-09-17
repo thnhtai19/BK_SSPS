@@ -35,7 +35,6 @@ export const WrapperContainer = styled.div`
   .wrap-page {
     padding-top: 80px;
     background-color: #F7F9FB;
-    height: 100vh;
   }
 
   @media (max-width: 1200px) {
