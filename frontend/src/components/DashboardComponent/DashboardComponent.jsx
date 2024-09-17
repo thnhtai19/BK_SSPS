@@ -4,7 +4,7 @@ import SlidebarComponent from '../../components/SlidebarComponent/SlidebarCompon
 import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
 import { WrapperContainer, Overlay } from './style';
 
-const DashboardComponent = () => {
+const DashboardComponent = ({pageIndex}) => {
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef(null);
 
@@ -23,7 +23,7 @@ const DashboardComponent = () => {
   return (
     <WrapperContainer isOpen={isOpen}>
       <div className='wrap-sidebar' ref={sidebarRef}>
-        <SlidebarComponent curentpage={"1"} />
+        <SlidebarComponent curentpage={pageIndex} />
       </div>
       <div className='wrap-main'>
         <div className='wrap-header'>
