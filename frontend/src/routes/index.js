@@ -13,6 +13,16 @@ export const routes = [
         path: '/home',
         page: HomePage,
         isShowDashboard: true,
+    },{
+        path: '/login',
+        page: LoginPage,
+    },{
+        path: '/register',
+        page: RegisterPage,
+    },{
+        path: '/myaccount',
+        page: MyAccountPage,
+        isShowDashboard: true,
     },
     {
         path: '*',
