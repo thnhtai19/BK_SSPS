@@ -2,40 +2,38 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import SlidebarComponent from '../../components/SlidebarComponent/SlidebarComponent';
 import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
-import { WrapperContainer, WrapperSlidebar, ContentContainer, Overlay } from './style';
+import { WrapperContainer, Overlay } from './style';
 
 const DashboardComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef(null);
 
-  const handleClickOutside = (event) => {
-    if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-      setIsOpen(false);
-    }
-  };
-
   useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-
+    const handleClickOutside = (event) => {
+      if (isOpen && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
 
   return (
-    <WrapperContainer>
-      <Overlay isOpen={isOpen} onClick={() => setIsOpen(false)} />
-      <WrapperSlidebar isOpen={isOpen} ref={sidebarRef}>
+    <WrapperContainer isOpen={isOpen}>
+      <div className='wrap-sidebar' ref={sidebarRef}>
         <SlidebarComponent curentpage={"1"} />
-      </WrapperSlidebar>
-      <ContentContainer isOpen={isOpen}>
-        <HeaderComponent isOpen={isOpen} setIsOpen={setIsOpen} />
-        <Outlet />
-      </ContentContainer>
+      </div>
+      <div className='wrap-main'>
+        <div className='wrap-header'>
+          <HeaderComponent isOpen={isOpen} setIsOpen={setIsOpen}/>
+        </div>
+        <div className='wrap-page'>
+          <Outlet />
+        </div>
+      </div>
+      {isOpen && <Overlay onClick={() => setIsOpen(false)} />}
     </WrapperContainer>
   );
 };
