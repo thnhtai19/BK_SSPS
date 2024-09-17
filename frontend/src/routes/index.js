@@ -13,6 +13,7 @@ export const routes = [
         path: '/home',
         page: HomePage,
         isShowDashboard: true,
+        pageIndex: 1,
     },{
         path: '/buy',
         page: BuyPage,

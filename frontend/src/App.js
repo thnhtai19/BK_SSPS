@@ -16,17 +16,18 @@ function App() {
               element={<route.page />}
             />
           ))}
-        <Route path="/" element={<DashboardComponent />}>
-          {routes
-            .filter(route => route.isShowDashboard)
-            .map(route => (
+
+        {routes
+          .filter(route => route.isShowDashboard)
+          .map(route => (
+            <Route path="/" element={<DashboardComponent pageIndex={route.pageIndex} />}>
               <Route
                 key={route.path}
                 path={route.path}
                 element={<route.page />}
               />
-            ))}
-        </Route>
+            </Route>
+          ))}
       </Routes>
     </Router>
   );
