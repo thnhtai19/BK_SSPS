@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import BuySuccessPage from '../BuySuccessPage/BuySuccessPage';
+import BuyFailPage from '../BuyFailPage/BuyFailPage';
 import { Table } from "antd";
 import { RightOutlined } from '@ant-design/icons';
-import check from '../../assets/check.png';
-import mark from '../../assets/mark.png';
 
 const dataSource = [
   
@@ -56,7 +56,7 @@ const BuyPage = () =>{
         {isSuccess === null && (
           <div className="flex flex-wrap justify-evenly	">
             {/* Thông tin thanh toán cho việc mua thêm trang */}
-              <section className="flex-none h-auto w-540 my-12 mx-5 p-8 border border-solid rounded-2xl bg-white shadow-lg shadow-[#e4d8d8]">
+              <section className="flex-none h-auto w-480 my-12 mx-5 p-8 border border-solid rounded-2xl bg-white shadow-lg shadow-[#e4d8d8]">
                   <form onSubmit={handleSubmit}>
                     <fieldset className="space-y-6"> {/* Khoảng cách giữa các label */}
                       <legend className="font-bold text-xl mb-2">Mua thêm trang</legend>
@@ -99,7 +99,7 @@ const BuyPage = () =>{
               </section>
 
               {/* Lịch sử giao dịch */}
-              <section className="flex-none h-auto w-540 my-12 mx-5 p-8 border border-solid rounded-2xl bg-white shadow-lg shadow-[#e4d8d8]">
+              <section className="flex-none h-auto w-480 my-12 mx-5 p-8 border border-solid rounded-2xl bg-white shadow-lg shadow-[#e4d8d8]">
                 <p className="font-bold text-xl mb-2">Lịch sử mua trang</p>
                 <Table 
                   dataSource={dataSource} 
@@ -134,32 +134,10 @@ const BuyPage = () =>{
         {isSuccess !== null && (
           <div className="mt-16 text-center">
             {isSuccess ? (
-              <div>
-                <img className="h-16 w-16 mx-auto mb-4" src={check} alt="success"/>
-                <h2 className="text-2xl font-bold text-[#006688]">Thanh toán thành công!</h2>
-                <p className="mt-6 mb-12 h-8 w-400 mx-auto">
-                  Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi, bạn đã được cộng số trang in vào trong tài khoản!
-                </p>
-              </div>
+              <BuySuccessPage isSuccess={isSuccess} onRetry={handleRetry} />
             ) : (
-              <div>
-                <img className="h-16 w-16 mx-auto mb-4" src={mark} alt="fail"/>
-                <h2 className="text-2xl font-bold text-[#006688]">Thanh toán thất bại!</h2>
-                <p className="mt-6 mb-12 h-8 w-400 mx-auto">
-                  Đơn hàng của bạn đã thanh toán thất bại. Vui lòng kiểm tra kỹ các thông tin hoặc liên hệ chúng tôi nếu đây là lỗi.
-                </p>
-              </div>
+              <BuyFailPage isSuccess={isSuccess} onRetry={handleRetry} />
             )}
-
-            <div className="mt-6 space-x-4">
-              <button onClick={handleRetry} className="px-4 py-2 bg-white text-[#444444] font-semibold rounded-md hover:bg-[#cac9c9]">
-                Mua thêm trang
-              </button>
-              <button className="px-4 py-2 bg-[#0688B4] text-white font-semibold rounded-md hover:bg-[#0b6986]">
-                In tài liệu
-              </button>
-            </div>
-
           </div>
         )}        
     </>
