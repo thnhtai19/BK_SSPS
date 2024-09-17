@@ -1,13 +1,13 @@
 import styled from "styled-components";
 
 export const WrapperContainer = styled.div`
-    width: ${({ isCollapsed, isHovered }) => (isCollapsed && !isHovered ? '80px' : '250px')};
-    height: 100%;
+    width: 250px;
     background-color: #fff;
     display: flex;
     justify-content: space-between;
     flex-direction: column;
     transition: width 0.3s;
+    height: 100vh;
 
     .wrap-logo {
         height: 80px;
@@ -65,8 +65,8 @@ export const WrapperContainer = styled.div`
         height: 50px;
         border-radius: 15px;
         background-color: #FFFFF;
-        justify-content: ${({ isCollapsed, isHovered }) => (isCollapsed && !isHovered ? 'center' : 'left')};
-        padding-left: ${({ isCollapsed, isHovered }) => (isCollapsed && !isHovered ? '0px' : '20px')};
+        justify-content: left;
+        padding-left: 20px;
         transition: padding-left 0.3s;
 
         img {
@@ -74,7 +74,7 @@ export const WrapperContainer = styled.div`
         }
 
         div {
-            display: ${({ isCollapsed, isHovered }) => (isCollapsed && !isHovered ? 'none' : 'block')};
+            display: block;
             white-space: nowrap; 
             overflow: hidden;
             text-overflow: ellipsis;
