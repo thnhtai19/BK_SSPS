@@ -16,13 +16,15 @@ import {
     WrapperMain3,
     WrapperButtonText
 } from './style';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logocnpm.png';
 import printer from '../../assets/printer.png';
 import work from '../../assets/work.png'
 import upload from '../../assets/upload.png'
 import edit from '../../assets/pen.png'
 import verified from '../../assets/verified.png'
 import bg01 from '../../assets/01.png'
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { Link } from "react-router-dom";
 
 const LandingPage = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -32,28 +34,41 @@ const LandingPage = () => {
   };
 
   return (
-    <div>
+    <HelmetProvider>
+        <Helmet>
+                <title>Dịch vụ in ấn thông minh - BK SSPS</title>
+        </Helmet>
         <WrapperHeader>
           <div className='container'>
-            <WrapperLogo>
-              <img src={logo} alt='logo' width="45px" />
-              <div style={{fontSize: '23px', fontWeight: 'bold', color: '#fff' }}>
-                BKSSPS.VN
-              </div>
-            </WrapperLogo>
+            <Link to={'/home'} style={{ textDecoration: "none" }}>
+              <WrapperLogo>
+                <img src={logo} alt='logo' width="45px" />
+                <div style={{fontSize: '23px', fontWeight: 'bold', color: '#0688B4' }}>
+                  BK SSPS
+                </div>
+              </WrapperLogo>
+            </Link>
             <WrapperMainHeader className={isMenuOpen ? 'open' : ''}>
-              <WrapperButtonText>Trang Chủ</WrapperButtonText>
-              <WrapperButtonText>Giới Thiệu</WrapperButtonText>
+              <Link to={'/home'}>
+                <WrapperButtonText>Trang Chủ</WrapperButtonText>
+              </Link>
+              <Link to={'/#'}>
+                <WrapperButtonText>Giới Thiệu</WrapperButtonText>
+              </Link>
               <WrapperButtonText>Dịch Vụ</WrapperButtonText>
               <WrapperButtonText>Liên Hệ</WrapperButtonText>
             </WrapperMainHeader>
             <WrapperRightHeader>
-              <WrapperButtonText>
-                Đăng Nhập
-              </WrapperButtonText>
-              <WrapperButton>
-                Đăng Ký
-              </WrapperButton>
+              <Link to={'/auth/login'} style={{ textDecoration: "none" }}>
+                <WrapperButtonText>
+                  Đăng Nhập
+                </WrapperButtonText>
+              </Link>
+              <Link to={'/auth/register'} style={{ textDecoration: "none" }}>
+                <WrapperButton>
+                  Đăng Ký
+                </WrapperButton>
+              </Link>
             </WrapperRightHeader>
             <HamburgerIcon onClick={toggleMenu}>
               <div></div>
@@ -62,11 +77,14 @@ const LandingPage = () => {
             </HamburgerIcon>
             {isMenuOpen && (
               <MobileMenu>
-                <WrapperButtonText>Trang Chủ</WrapperButtonText>
+                <Link to={'/home'}>
+                  <WrapperButtonText>Trang Chủ</WrapperButtonText>
+                </Link>
                 <WrapperButtonText>Giới Thiệu</WrapperButtonText>
                 <WrapperButtonText>Dịch Vụ</WrapperButtonText>
                 <WrapperButtonText>Liên Hệ</WrapperButtonText>
-                <WrapperButtonText>Đăng Nhập/Đăng ký</WrapperButtonText>
+                <WrapperButtonText>Đăng Ký</WrapperButtonText>
+                <WrapperButtonText>Đăng Nhập</WrapperButtonText>
               </MobileMenu>
             )}
           </div>
@@ -85,9 +103,11 @@ const LandingPage = () => {
                 Hệ thống được phát triển dựa trên nhu cầu sử dụng của sinh viên toàn trường. Chúng tôi luôn mang lại trải nghiệm tốt nhất cho sinh viên. 
               </div>
               <div className='button-text'>
-                <WrapperButton style={{fontSize: '15px', padding: '15px 25px'}}>
-                  Bắt Đầu Ngay
-                </WrapperButton>
+                <Link to={'/home'} style={{ textDecoration: "none" }}>
+                  <WrapperButton style={{fontSize: '15px', padding: '15px 25px'}}>
+                    Bắt Đầu Ngay
+                  </WrapperButton>
+                  </Link>
               </div>
             </WrapperMainLeft>
             <WrapperMainRight>
@@ -152,12 +172,16 @@ const LandingPage = () => {
               <div className='title'>Bạn còn chờ đợi gì nữa?</div>
               <div className='small-text'>Hãy sử dụng thử dịch vụ của chúng tôi nhé.</div>
               <div className='button-area'>
+              <Link to={'/auth/login'} style={{ textDecoration: "none" }}>
               <WrapperButton style={{padding: '15px 25px'}}>
                   Đăng Nhập
               </WrapperButton>
+              </Link>
+              <Link to={'/auth/register'} style={{ textDecoration: "none" }}>
               <WrapperButton style={{padding: '15px 25px'}}>
                   Đăng Ký 
               </WrapperButton>
+              </Link>
               </div>
             </div>
             <div className='right'>
@@ -171,7 +195,7 @@ const LandingPage = () => {
             © 2024 bkssps.vn - All Rights Reserved.
             </div>
         </WrapperFooter>
-    </div>
+    </HelmetProvider>
   )
 }
 
