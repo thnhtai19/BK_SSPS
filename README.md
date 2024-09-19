@@ -14,6 +14,8 @@ npm i mysql2
 npm i cookie-parser
 npm i bcryptjs
 npm i express-session
+npm install tailwindcss postcss autoprefixer
+npm i react-apexcharts
 ```
 
 ## Cài Đặt node_modules

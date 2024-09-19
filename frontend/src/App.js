@@ -1,31 +1,35 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import {routes} from './routes'
-import HeaderComponent from "./components/HeaderComponent/HeaderComponent";
-import FooterComponent from "./components/FooterComponent/FooterComponent";
+import DashboardComponent from './components/DashboardComponent/DashboardComponent';
+import { routes } from './routes';
 
 function App() {
   return (
-    <div>
-      <Router>
-        <Routes>
-        {routes.map(route =>{
-          const Page = route.page
-          const Header = route.isShowHeader ? HeaderComponent : Fragment
-          const Footer = route.isShowFooter ? FooterComponent : Fragment
-          return (
-            <Route key={route.path} path={route.path} element={
-              <>
-                <Header />
-                <Page />
-                <Footer />
-              </>
-            } />
-          )
-        })}
-        </Routes>
-      </Router>
-    </div>
+    <Router>
+      <Routes>
+        {routes
+          .filter(route => !route.isShowDashboard)
+          .map(route => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={<route.page />}
+            />
+          ))}
+
+        {routes
+          .filter(route => route.isShowDashboard)
+          .map(route => (
+            <Route path="/" element={<DashboardComponent pageIndex={route.pageIndex} />}>
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<route.page />}
+              />
+            </Route>
+          ))}
+      </Routes>
+    </Router>
   );
 }
 

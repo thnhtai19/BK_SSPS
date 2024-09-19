@@ -1,14 +1,14 @@
 import styled from "styled-components";
-import bg1 from '../../assets/bg1.png'
 
 export const WrapperHeader = styled.div`
-    height: 70px;
-    background: linear-gradient(45deg, #a2c2e3, #ffffff);
+    height: 80px;
+    background: #FFF;
     align-items: center;
     justify-content: center;
     display: flex;
     padding: 0 120px;
     position: relative;
+    border-bottom: 1px solid #F3F3FF;
 
     .container{
         align-items: center;    
@@ -35,14 +35,14 @@ export const WrapperButton = styled.div`
     font-size: 14px;
     font-weight: 600;
     color: #fff;
-    background-color: #007bff; 
+    background-color: #0688B4; 
     border: none;
     border-radius: 15px;
     text-align: center;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s;
     &:hover {
-        background-color: #0056b3;
+        background-color: #01759b;
     }
 
     &:focus {
@@ -52,6 +52,11 @@ export const WrapperButton = styled.div`
 
 export const WrapperButtonText = styled.div`
     cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+
+    &:hover {
+        color: #0688B4;
+    }
 `
 
 export const WrapperMainHeader = styled.div`
@@ -83,10 +88,7 @@ export const WrapperRightHeader = styled.div`
 `;
 
 export const WrapperMain = styled.div`
-    background-image: url(${bg1});
-    background-size: cover; 
-    background-position:
-    background-repeat: no-repeat;
+    background-color: #FFF;
     padding: 0 120px;
     justify-content: center;
     display: flex;
@@ -95,6 +97,7 @@ export const WrapperMain = styled.div`
     .container{
         max-width: 1200px;
         justify-content: space-between;
+        align-items: center;
         display: flex;
         width: 100%;
     }
@@ -102,10 +105,15 @@ export const WrapperMain = styled.div`
     @media (max-width: 950px) {
         padding: 0px 20px 100px 20px;
     }
+
+    @media (max-width: 1500px) {
+        height: 100vh;
+    }
 `;
 
 export const WrapperMainIntro = styled.div`
     display: flex;
+    align-items: center;
 
     @media (max-width: 720px) {
         display: block;
@@ -119,7 +127,6 @@ export const WrapperMainLeft = styled.div`
         font-size: 28px;
         font-weight: bold;
         color: #111;
-        padding-top: 110px;
     }
 
     .title-text{
@@ -142,16 +149,11 @@ export const WrapperMainLeft = styled.div`
         padding-top: 30px;
     }
 
-     @media (max-width: 950px) {
-         .main-text{
-            padding-top: 80px;
-        }
-    }
-
     @media (max-width: 720px) {
          width: 100%;
 
          .main-text{
+            font-size: 22px;
             padding-top: 40px;
         }
     }
@@ -159,7 +161,6 @@ export const WrapperMainLeft = styled.div`
 `;
 export const WrapperMainRight = styled.div`
     flex: 1;
-    padding-top: 60px;
 
     .img-print {
         width: 100%;
@@ -244,7 +245,7 @@ export const MobileMenu = styled.div`
 
 export const WrapperMain2 = styled.div`
     padding: 50px 120px 80px 120px;
-    background-color: #fff;
+    background-color: #d4f0f9;
     justify-content: center;
     display: flex;
 
