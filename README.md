@@ -12,7 +12,8 @@ npm i antd
 npm i styled-components
 npm i mysql2
 npm i cookie-parser
-
+npm i bcryptjs
+npm i express-session
 ```
 
 ## Cài Đặt node_modules
