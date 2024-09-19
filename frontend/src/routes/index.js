@@ -14,10 +14,10 @@ export const routes = [
         page: HomePage,
         isShowDashboard: true,
     },{
-        path: '/login',
+        path: '/auth/login',
         page: LoginPage,
     },{
-        path: '/register',
+        path: '/auth/register',
         page: RegisterPage,
     },{
         path: '/myaccount',

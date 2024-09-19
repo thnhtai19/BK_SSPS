@@ -28,7 +28,7 @@ function Register() {
   }
 
   return (
-    <div className="flex sm:p-11 p-4 justify-center  sm:bg-transparent ms:items-center h-dvh ">
+    <div className="flex sm:p-10 p-4 justify-center  sm:bg-transparent ms:items-center h-dvh ">
       {/* column left */}
       <div className="sm:flex-1 sm:p-10 p-5 my-auto h-fit text-[#6F6F6F] bg-white rounded-xl sm:rounded-none ">
         {/* logo in mobile */}
@@ -43,7 +43,7 @@ function Register() {
           Xin mời bạn nhập đầy đủ thông tin đăng ký. Sau đó bạn sẽ có quyền truy
           cập và sử dụng các dịch vụ của chúng tôi.
         </p>
-        <form className="flex flex-col sm:w-[450px] m-auto  mt-8">
+        <form className="flex flex-col sm:w-[450px] m-auto  mt-8 ">
           <label>Họ và tên</label>
           <input
             type="text"
@@ -89,14 +89,21 @@ function Register() {
           </button>
         </form>
         <div className="text-center mt-6">
-          Bạn chưa có tài khoản?{" "}
-          <Link to="/register" className="text-[#0688B4] ml-2 hover:underline">
-            Đăng ký ngay
+          Bạn đã có tài khoản?{" "}
+          <Link
+            to="/auth/login"
+            className="text-[#0688B4] ml-2 hover:underline"
+          >
+            Đăng nhập ngay
           </Link>
         </div>
       </div>
       {/* column right */}
-      <div className="hidden flex-1 bg-[#D2ECF4] rounded-xl h-[90vh] items-center justify-center sm:flex">
+      <div className="hidden sm:flex flex-col flex-1 bg-[#D2ECF4] rounded-xl h-[90vh] items-center justify-center gap-6 pt-4 ">
+        <div className="flex items-center justify-center gap-3 ">
+          <img src={Logocnpm} alt="" className="w-14" />
+          <h2 className="text-[#0688B4] font-bold text-3xl">BK SSPS</h2>
+        </div>
         <img src={imgLogin} alt="login" className="object-cover " />
       </div>
     </div>

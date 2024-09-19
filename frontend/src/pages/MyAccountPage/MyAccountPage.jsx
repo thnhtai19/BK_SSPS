@@ -6,35 +6,25 @@ import { Table } from "antd";
 function MyAccount() {
   const columns = [
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "ID",
+      dataIndex: "id",
     },
     {
-      title: "Age",
-      dataIndex: "age",
+      title: "Time",
+      dataIndex: "time",
     },
     {
-      title: "Sex",
-      dataIndex: "sex",
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
+      title: "Content",
+      dataIndex: "content",
     },
   ];
   const dataSource = Array.from({
     length: 17,
   }).map((_, i) => ({
     key: i,
-    name: `Edward King ${i}`,
-    age: 32,
-    sex: `Male ${i}`,
-    address: `London, Park Lane no. ${i}`,
-    address: `London, Park Lane no. ${i}`,
+    id: `2124848`,
+    time: `12-09-2024 00:00:00`,
+    content: `Đã đăng nhập tài khoản IP: 115.79.219.34`,
   }));
 
   return (
@@ -105,11 +95,9 @@ function MyAccount() {
         </div>
       </div>
       {/* row bottom */}
-      <div className="flex-1 flex flex-col mt-6  bg-white border-[2px] border-[#EFF1F3] p-6  rounded-xl">
+      <div className="flex-1 flex flex-col mt-6 w- bg-white border-[2px] border-[#EFF1F3] p-6  rounded-xl">
         <h3 className="text-lg font-medium mb-4">Nhật ký hoạt động</h3>
-        <div className="overflow-hidden  ">
-          <Table columns={columns} dataSource={dataSource} />
-        </div>
+        <Table columns={columns} dataSource={dataSource} />
       </div>
     </div>
   );
