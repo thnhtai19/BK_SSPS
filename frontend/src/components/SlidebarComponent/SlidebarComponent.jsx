@@ -20,27 +20,27 @@ const SlidebarComponent = ({ curentpage }) => {
                     </div>
                 </div>
                 <div className='wrap-item-container'>
-                    <div className={`wrap-item ${curentpage === '1' ? 'select-item' : ''}`}>
+                    <div className={`wrap-item ${curentpage === 1 ? 'select-item' : ''}`}>
                         <img src={home} alt='home' width="20px" />
                         <div>Trang chủ</div>
                     </div>
-                    <div className={`wrap-item ${curentpage === '2' ? 'select-item' : ''}`}>
+                    <div className={`wrap-item ${curentpage === 2 ? 'select-item' : ''}`}>
                         <img src={myacc} alt='my-account' width="20px" />
                         <div>Tài khoản của tôi</div>
                     </div>
-                    <div className={`wrap-item ${curentpage === '3' ? 'select-item' : ''}`}>
+                    <div className={`wrap-item ${curentpage === 3 ? 'select-item' : ''}`}>
                         <img src={print} alt='print' width="20px" />
                         <div>In tài liệu</div>
                     </div>
-                    <div className={`wrap-item ${curentpage === '4' ? 'select-item' : ''}`}>
+                    <div className={`wrap-item ${curentpage === 4 ? 'select-item' : ''}`}>
                         <img src={history} alt='history' width="20px" />
                         <div>Lịch sử in</div>
                     </div>
-                    <div className={`wrap-item ${curentpage === '5' ? 'select-item' : ''}`}>
+                    <div className={`wrap-item ${curentpage === 5 ? 'select-item' : ''}`}>
                         <img src={buymore} alt='buy-more' width="20px" />
-                        <div>Mua thêm giấy</div>
+                        <div>Mua thêm trang</div>
                     </div>
-                    <div className={`wrap-item ${curentpage === '6' ? 'select-item' : ''}`}>
+                    <div className={`wrap-item ${curentpage === 6 ? 'select-item' : ''}`}>
                         <img src={contact} alt='contact' width="20px" />
                         <div>Hỗ trợ</div>
                     </div>

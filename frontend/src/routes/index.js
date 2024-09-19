@@ -5,6 +5,11 @@ import LoginPage from "../pages/LoginPage/LoginPage"
 import RegisterPage from "../pages/RegisterPage/RegisterPage"
 import MyAccountPage from "../pages/MyAccountPage/MyAccountPage"
 
+import BuyPage from "../pages/BuyPage/BuyPage"
+import BuySuccessPage from "../pages/BuySuccessPage/BuySuccessPage"
+import BuyErrorPage from "../pages/BuyErrorPage/BuyErrorPage"
+
+
 export const routes = [
     {
         path: '/',
@@ -13,6 +18,7 @@ export const routes = [
         path: '/home',
         page: HomePage,
         isShowDashboard: true,
+        pageIndex: 1,
     },{
         path: '/auth/login',
         page: LoginPage,
@@ -21,7 +27,19 @@ export const routes = [
         page: RegisterPage,
     },{
         path: '/myaccount',
-        page: MyAccountPage,
+        page: MyAccountPage, 
+        isShowDashboard: true,
+    },{
+        path: '/buy',
+        page: BuyPage,
+        isShowDashboard: true,
+    },{
+        path: '/buy/success',
+        page: BuySuccessPage,
+        isShowDashboard: true,
+    },{
+        path: '/buy/error',
+        page: BuyErrorPage,
         isShowDashboard: true,
     },
     {
