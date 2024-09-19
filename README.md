@@ -10,6 +10,8 @@ npm i axios
 npm i slick-carousel react-slick
 npm i antd
 npm i styled-components
+npm i mysql2
+npm i cookie-parser
 npm install tailwindcss postcss autoprefixer
 npm i react-apexcharts
 ```
