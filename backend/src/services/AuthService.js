@@ -5,10 +5,11 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const { error } = require('console');
 const axios = require('axios');
+const supportFunction = require('./support');
 
 class AuthService {
     createUser = async (data) => {
-        const { email, password, name, role } = data;
+        const { email, password, name, role, MSSV } = data;
         return new Promise(async (resolve, reject) => {
             try {
                 const [existingUsers] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
@@ -22,13 +23,11 @@ class AuthService {
                     return;
                 }
                 const hashedPassword = await bcrypt.hash(password, 10);
-                var phonenum = "";
-                var address = "";
-                var sex = "";
-                var date_of_birth = "";
+                var page = "";
+                const start = supportFunction.startTime();
                 const [result] = await db.query(
-                    'INSERT INTO users (email, password, name, phonenum, address, sex, date_of_birth, role, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-                    [email, hashedPassword, name, phonenum, address, sex, date_of_birth, role, true]
+                    'INSERT INTO users (email, password, name, MSSV, page, start, role, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+                    [email, hashedPassword, name, MSSV, page, start, role, true]
                 );
                 if (result.affectedRows === 1) {
                     resolve({
@@ -40,8 +39,8 @@ class AuthService {
                     });
                 } 
                 else resolve({ status: false, message: "Failed to create user" });
-                resolve({status: true})
-            } 
+                resolve({status: true, start: start});
+            }
             catch (error) {
                 reject(error);
             }
