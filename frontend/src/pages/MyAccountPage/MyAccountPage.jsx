@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import { UnlockOutlined } from "@ant-design/icons";
 import { Table } from "antd";
-import style from "../MyAccountPage/style.css";
 
 function MyAccount() {
   const columns = [
