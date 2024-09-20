@@ -4,7 +4,8 @@ import HomePage from "../pages/HomePage/HomePage"
 import LoginPage from "../pages/LoginPage/LoginPage"
 import RegisterPage from "../pages/RegisterPage/RegisterPage"
 import MyAccountPage from "../pages/MyAccountPage/MyAccountPage"
-
+import HistoryPage from "../pages/HistoryPage/HistoryPage"
+import ServicePage from "../pages/ServicePage/ServicePage"
 import BuyPage from "../pages/BuyPage/BuyPage"
 import BuySuccessPage from "../pages/BuySuccessPage/BuySuccessPage"
 import BuyErrorPage from "../pages/BuyErrorPage/BuyErrorPage"
@@ -28,6 +29,14 @@ export const routes = [
     },{
         path: '/myaccount',
         page: MyAccountPage, 
+        isShowDashboard: true,
+    },{
+        path: '/service',
+        page: ServicePage, 
+        isShowDashboard: true,
+    },{
+        path: '/history',
+        page: HistoryPage, 
         isShowDashboard: true,
     },{
         path: '/buy',
