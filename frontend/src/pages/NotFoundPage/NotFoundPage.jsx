@@ -11,7 +11,7 @@ const NotFoundPage = () => {
       <div className="not-found-container">
         <h1 className="not-found-title">404</h1>
         <p className="not-found-message">Xin lỗi! Trang mà bạn đang tìm không tồn tại.</p>
-        <a href="/" className="not-found-link">Trở về trang chủ</a>
+        <a href="/home" className="not-found-link">Trở về trang chủ</a>
       </div>
     </HelmetProvider>
   );

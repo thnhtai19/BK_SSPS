@@ -5,7 +5,12 @@ module.exports = {
     "./node_modules/daisyui/dist/**/*.js",
   ],
   theme: {
-    extend: {},
+    extend: {
+      width: {
+        '480': '480px',
+        '400': '400px',
+      }
+    },
   },
   plugins: [],
 }
