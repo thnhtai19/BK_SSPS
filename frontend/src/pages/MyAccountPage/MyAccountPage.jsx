@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { UnlockOutlined } from "@ant-design/icons";
 import { Table } from "antd";
+import style from "../MyAccountPage/style.css";
 
 function MyAccount() {
   const columns = [
@@ -97,7 +98,9 @@ function MyAccount() {
       {/* row bottom */}
       <div className="flex-1 flex flex-col mt-6 w- bg-white border-[2px] border-[#EFF1F3] p-6  rounded-xl">
         <h3 className="text-lg font-medium mb-4">Nhật ký hoạt động</h3>
-        <Table columns={columns} dataSource={dataSource} />
+        <div className="w-full overflow-x-scroll">
+          <Table columns={columns} dataSource={dataSource}  />
+        </div>
       </div>
     </div>
   );

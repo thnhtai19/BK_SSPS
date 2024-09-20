@@ -9,9 +9,7 @@ module.exports = {
       width: {
         '480': '480px',
         '400': '400px',
-      },
-    
-    
+      },    
       animation: {
         zoomIn: "zoomIn 0.5s ease forwards",
         zoomOut: "zoomOut 0.5s ease forwards",
