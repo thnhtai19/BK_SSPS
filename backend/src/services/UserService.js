@@ -1,21 +1,13 @@
 const db = require('../config/db');
 
-async function getStudentById(Id) {
+
+async function getUserById(Id) {
     try{
-        const [result, ] = await db.execute('SELECT * FROM Student WHERE StudentId = ?', [Id]);
+        const [result, ] = await db.execute('SELECT * FROM Users WHERE id = ?', [Id]);
         return result[0];
     }
     catch(err){
         throw err;
     }
 }
-async function getAdminById(Id) {
-    try{
-        const [result, ] = await db.execute('SELECT * FROM Admin WHERE AdminID = ?', [Id]);
-        return result[0];
-    }
-    catch(err){
-        throw err;
-    }
-}
-module.exports = {getStudentById, getAdminById};
+module.exports = {getUserById};
