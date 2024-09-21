@@ -1,17 +1,43 @@
-const {createPurchaseOrder, addStudentPages, updateBalance} = require('../services/PurchaseOrderService');
-async function BuyPages(req, res, next) {
-    try{
+const {createPurchaseOrder, updateStudentPages} = require('../services/PurchaseOrderService');
+
+async function createNewPurchaseOrder(req, res) {
+    try {
+        if(!req.session.user) {
+            return res.status(401).json({message: 'Unauthorized'});
+        }
+        if(req.session.user.role !== 'student') {
+            return res.status(403).json({message: 'Forbidden! You are not a student'});
+        }
+        const pagesNumber = req.body.pagesNumber;
         const id = req.session.user.id;
-        const {price, pagecount} = req.body;
-        if(!id || !price || !pagecount) {
+        if(!pagesNumber || !id) {
             return res.status(400).json({message: 'Invalid request'});
         }
-        await createPurchaseOrder(id, price, pagecount);
-        await updateBalance(pagecount, id);
-        await addStudentPages(id);
+        let result = await createPurchaseOrder(pagesNumber, id);
+        res.json({message: 'Buy success!'});
     }
     catch(err){
-        next(err);
+        res.status(500).json({message: 'Internal Server Error'});
     }
 }
-module.exports = {BuyPages};
+async function updatePages(req, res){
+    try{
+        if(!req.session.user) {
+            return res.status(401).json({message: 'Unauthorized'});
+        }
+        if(req.session.user.role !== 'student') {
+            return res.status(403).json({message: 'Forbidden! You are not a student'});
+        }
+        const pagesNumber = req.body.pagesNumber;
+        const id = req.session.user.id;
+        if(!pagesNumber || !id) {
+            return res.status(400).json({message: 'Invalid request'});
+        }
+        let result = await updateStudentPages(pagesNumber, id);
+        res.json({message: 'Update success!'});
+    }
+    catch(err){
+        res.status(500).json({message: 'Internal Server Error'});
+    }
+}
+module.exports = {createNewPurchaseOrder, updatePages};
