@@ -9,7 +9,7 @@ const supportFunction = require('./support');
 
 class AuthService {
     createUser = async (data) => {
-        const { email, password, name, role, MSSV } = data;
+        const { email, password, name, role, uid } = data;
         return new Promise(async (resolve, reject) => {
             try {
                 const [existingUsers] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
@@ -26,8 +26,8 @@ class AuthService {
                 var page = "";
                 const start = supportFunction.startTime();
                 const [result] = await db.query(
-                    'INSERT INTO users (email, password, name, MSSV, page, start, role, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
-                    [email, hashedPassword, name, MSSV, page, start, role, true]
+                    'INSERT INTO users (email, password, name, uid, page, start, role, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+                    [email, hashedPassword, name, uid, page, start, role, true]
                 );
                 if (result.affectedRows === 1) {
                     resolve({
@@ -39,7 +39,6 @@ class AuthService {
                     });
                 } 
                 else resolve({ status: false, message: "Không thể tạo tài khoản" });
-                resolve({status: true, start: start});
             }
             catch (error) {
                 reject(error);
@@ -76,11 +75,12 @@ class AuthService {
                 }
                 if (user.status == 1) {
                     req.session.user = {
-                        id: user.id,
+                        id: user.uid,
                         name: user.name,
                         email: user.email,
                         role: user.role
                     };
+                    console.log(req.session.user.id);
                     resolve({
                         status: true,
                         name: user.name,
