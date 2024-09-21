@@ -1,24 +1,19 @@
-const {getStudentById, getAdminById} = require('../services/UserService');
+const {getUserById} = require('../services/UserService');
 
-async function getUserInforById(req, res, next) {
-    try{
+async function getUserInforById(req, res) {
+    try {
+        if (!req.session.user) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
         const id = req.session.user.id;
-        const role = req.session.user.role;
-        if(!id || !role) {
-            return res.status(400).json({message: 'Invalid request'});
+        if (!id) {
+            return res.status(400).json({ message: 'Invalid request' });
         }
-        let result;
-        if(role === 'admin'){
-            result = await getAdminById(id);
-        }
-        else {
-            result = await getStudentById(id);
-        }
+        let result = await getUserById(id);
+        delete result.password;
         res.json(result);
-    }
-    catch(err){
-        next(err);
+    } catch (err) {
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 }
-
 module.exports = {getUserInforById};
