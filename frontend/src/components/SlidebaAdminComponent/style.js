@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const WrapperContainer = styled.div`
     width: 250px;
-    background-color: #fff;
+    background-color: #1D2333;
     display: flex;
     justify-content: space-between;
     flex-direction: column;
@@ -22,13 +22,13 @@ export const WrapperContainer = styled.div`
         justify-content: center;
         align-items: center;
         gap: 5px;
-        border-bottom: 1px solid #EFF1F3;
+        border-bottom: 1px solid #fff;
         cursor: pointer;
     }
 
     .brand-name {
-        color: #0688B4;
-        font-size: 25px;
+        color: #fff;
+        font-size: 21px;
         font-weight: bold;
         white-space: nowrap; 
         overflow: hidden;
@@ -43,6 +43,7 @@ export const WrapperContainer = styled.div`
         white-space: nowrap; 
         overflow: hidden;
         text-overflow: ellipsis;
+        color: #fff;
     }
 
     .wrap-item-container {
@@ -54,7 +55,7 @@ export const WrapperContainer = styled.div`
         cursor: pointer;
 
         :hover {
-            background-color: #F1F3F5;
+            background-color: #343B48;
         }
     }
 
@@ -79,11 +80,12 @@ export const WrapperContainer = styled.div`
             white-space: nowrap; 
             overflow: hidden;
             text-overflow: ellipsis;
+            color: #FFFF;
         }
     }
 
     .select-item {
-        background-color: #F1F3F5;
+        background-color: #343B48;
     }
 
     .wrap-user {

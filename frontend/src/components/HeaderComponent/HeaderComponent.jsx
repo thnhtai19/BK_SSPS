@@ -32,7 +32,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
   };
 
   const notice = (
-    <Menu style={{ width: '300px', maxHeight: '300px', overflow: 'auto', position: 'relative', padding: 0, margin: 0 }}>
+    <Menu style={{ width: '350px', maxHeight: '300px', overflow: 'auto', position: 'relative', padding: 0, margin: 0 }}>
       <div style={{
         position: 'sticky',
         top: 0,
@@ -85,7 +85,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
       </div>
 
       <Menu.Item key="0">
-        <Link to="/user" style={{ color: '#444' }} >
+        <Link to="/myaccount" style={{ color: '#444' }} >
           <div style={{ display: 'flex', gap: '10px' }}>
             <UserOutlined />
             <div style={{ fontSize: '14px' }}>Trang cá nhân</div>
@@ -93,7 +93,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
         </Link>
       </Menu.Item>
       <Menu.Item key="1">
-        <Link to="/user/order" style={{ color: '#444' }} >
+        <Link to="/history" style={{ color: '#444' }} >
           <div style={{ display: 'flex', gap: '10px' }}>
             <ShopOutlined />
             <div style={{ fontSize: '14px' }}>Lịch sử in tài liệu</div>
@@ -101,7 +101,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
         </Link>
       </Menu.Item>
       <Menu.Item key="2">
-        <Link to="/admin" style={{ color: '#444' }} >
+        <Link to="/admin/home" style={{ color: '#444' }} >
           <div style={{ display: 'flex', gap: '10px' }}>
             <SafetyCertificateOutlined />
             <div style={{ fontSize: '14px' }}>Quản trị hệ thống</div>
@@ -133,13 +133,13 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
             99 credits
           </div>
         </div>
-        <Dropdown overlay={notice} trigger={['click']} overlayStyle={{ paddingTop: '20px' }}>
+        <Dropdown overlay={notice} trigger={['click']} overlayStyle={{ paddingTop: '10px'}} >
         <Badge count={1}> 
-          <BellOutlined style={{ fontSize: '25px', color: '#444' }} />
+          <BellOutlined style={{ fontSize: '25px', color: '#444', cursor: 'pointer' }} />
         </Badge>
         </Dropdown>
         <Dropdown overlay={menu} trigger={['click']} overlayStyle={{ paddingTop: '10px' }} >
-          <img src={user} alt='user' width="40px" />
+          <img src={user} alt='user' width="40px" style={{ cursor: 'pointer' }} />
         </Dropdown>
       </div>
     </WrapperContainer>
