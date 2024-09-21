@@ -1,31 +1,23 @@
 const db = require('../config/db');
-async function createPurchaseOrder(StudentID, TotalPrice, PageCount){
+async function createPurchaseOrder(pages, id){
     try{
         const day = new Date();
         const CurrentTime = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate() + ' ' + day.getHours() + ':' + day.getMinutes() + ':' + day.getSeconds();
-        const [result, ] = await db.execute('INSERT INTO purchase_order (StudentID, price, time, pages) VALUES (?, ?, ?, ?)', [StudentID, TotalPrice, CurrentTime, PageCount]);
+        const [result, ] = await db.execute('INSERT INTO purchase_order (purchaseTime, Page, StudentId) VALUES (?, ?, ?)', [CurrentTime, pages, id]);
         return result;
     }
     catch(err){
         throw err;
     }
 }
-async function addStudentPages(Id){
+async function updateStudentPages(pagesNumber, id){
     try{
-        const [result, ] = await db.execute('UPDATE Student SET pages = pages + 1 WHERE StudentID = ?', [Id]);
+        const [result, ] = await db.execute('UPDATE users SET Page = Page + ? WHERE id = ?', [pagesNumber, id]);
         return result;
     }
     catch(err){
         throw err;
     }
 }
-async function updateBalance(balance, id){
-    try{
-        const [result, ] = await db.execute('UPDATE Student SET balance = ? WHERE StudentID = ?', [balance, id]);
-        return result;
-    }
-    catch(err){
-        throw err;
-    }
-}
-module.exports = {createPurchaseOrder, addStudentPages, updateBalance};
+
+module.exports = {createPurchaseOrder, updateStudentPages};
