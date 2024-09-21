@@ -1,4 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/BuyController');
-router.put('/', controller.BuyPages);
+router.post('/', controller.createNewPurchaseOrder)
+router.post('/', controller.updatePages)
+module.exports = router;
