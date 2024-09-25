@@ -5,6 +5,7 @@ const routes = require('./routes');
 const cookieParser = require('cookie-parser');
 const app = express();
 const port = 3001;
+const session = require('express-session');
 
 app.use(cors({
   origin: "http://localhost:3000",
@@ -15,6 +16,12 @@ app.use(cors({
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(cookieParser());
+app.use(session({
+  secret: 'abcxyz',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } 
+}));
 
 routes(app);
 
