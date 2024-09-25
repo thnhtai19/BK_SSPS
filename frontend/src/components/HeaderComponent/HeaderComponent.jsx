@@ -26,9 +26,11 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
   const [notifications, setNotifications] = useState([]);
   const [notificationStatus, setNotificationStatus] = useState(false);
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const handleLogout = async () => {
     try {
-        await axios.post('http://localhost:3001/auth/log_out');
+        await axios.post(apiUrl + 'auth/log_out');
         localStorage.clear();
         window.location.href = '/';
     } catch (error) {
