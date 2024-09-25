@@ -9,7 +9,8 @@ import ServicePage from "../pages/ServicePage/ServicePage"
 import BuyPage from "../pages/BuyPage/BuyPage"
 import BuySuccessPage from "../pages/BuySuccessPage/BuySuccessPage"
 import BuyErrorPage from "../pages/BuyErrorPage/BuyErrorPage"
-
+import SupportPage from "../pages/SupportPage/SupportPage"
+import AdminHistoryPage from "../pages/AdminHistoryPage/AdminHistoryPage"
 
 export const routes = [
     {
@@ -67,16 +68,10 @@ export const routes = [
         pageIndex: 5,
     },
     {
-        path: '/bkpay',
-        page: NotFoundPage,
+        path: '/support',
+        page: SupportPage,
         isShowDashboard: true,
         pageIndex: 6,
-    },
-    {
-        path: '/support',
-        page: NotFoundPage,
-        isShowDashboard: true,
-        pageIndex: 7,
     },
     {
         path: '/admin/home',
@@ -98,7 +93,7 @@ export const routes = [
     },
     {
         path: '/admin/print-history',
-        page: HomePage,
+        page: AdminHistoryPage,
         isShowDashboardAdmin: true,
         pageIndex: 4,
     },

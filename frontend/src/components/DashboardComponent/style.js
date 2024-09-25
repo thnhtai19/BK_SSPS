@@ -2,7 +2,8 @@ import styled from "styled-components";
 
 export const WrapperContainer = styled.div`
   display: flex;
-
+  overflow-x: hidden;
+  
   .wrap-sidebar {
     width: 250px;
     position: fixed;
@@ -50,6 +51,12 @@ export const WrapperContainer = styled.div`
     min-height: 100vh;
   }
 
+   @media (min-width: 1200px) {
+    .wrap-main {
+      overflow-x: auto;
+    }
+  }
+
   @media (max-width: 1200px) {
     .wrap-sidebar {
       transform: ${({ isOpen }) => (isOpen ? 'translateX(0)' : 'translateX(-100%)')};
@@ -60,6 +67,7 @@ export const WrapperContainer = styled.div`
 
     .wrap-main {
       margin-left: 0;
+      overflow-x: hidden;
     }
 
     .wrap-header {

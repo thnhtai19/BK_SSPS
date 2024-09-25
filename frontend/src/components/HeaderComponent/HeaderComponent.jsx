@@ -17,12 +17,24 @@ import {
 import { Input, Dropdown, Menu, Badge } from 'antd';
 import user from '../../assets/user.png';
 import { Link } from "react-router-dom";
+import axios from "axios";
+
 
 const { Search } = Input;
 
 const HeaderComponent = ({ isOpen, setIsOpen }) => {
   const [notifications, setNotifications] = useState([]);
   const [notificationStatus, setNotificationStatus] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+        await axios.post('http://localhost:3001/auth/log_out');
+        localStorage.clear();
+        window.location.href = '/';
+    } catch (error) {
+        console.error('Logout failed:', error);
+    }
+  };
 
   const truncateText = (text, maxLength) => {
       if (text.length > maxLength) {
@@ -110,9 +122,9 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
       </Menu.Item>
       <div style={{ width: '250px', borderBottom: '1.5px solid #F5F5F5', margin: '5px 0' }} />
       <Menu.Item key="3">
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '10px' }} onClick={handleLogout}>
           <LogoutOutlined />
-          <Link to="/user" style={{ color: '#444' }}>Đăng xuất</Link>
+          <div style={{ color: '#444' }}>Đăng xuất</div>
         </div>
       </Menu.Item>
     </Menu>
