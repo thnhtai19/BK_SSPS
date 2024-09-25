@@ -9,25 +9,26 @@ const supportFunction = require('./support');
 
 class AuthService {
     createUser = async (data) => {
-        const { email, password, name, role, uid } = data;
+        const { email, password, name, role, Uid } = data;
         return new Promise(async (resolve, reject) => {
             try {
                 const [existingUsers] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
                 if (existingUsers.length > 0) { 
-                    resolve({ status: false, message: "Email đã được dùng" });
+                    resolve({ status: false, message: "Email already in use" });
                     return;
                 }
                 if (typeof email === 'object' && email !== null) email = String(email.address);
                 if (typeof email !== 'string' || !email.endsWith('@hcmut.edu.vn')) {
-                    resolve({ status: false, message: "Email không đúng định dạng" });
+                    resolve({ status: false, message: "Incorrect format email" });
                     return;
                 }
                 const hashedPassword = await bcrypt.hash(password, 10);
-                var page = "";
+                //var page = "";
+                let page = 0;
                 const start = supportFunction.startTime();
                 const [result] = await db.query(
-                    'INSERT INTO users (email, password, name, uid, page, start, role, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
-                    [email, hashedPassword, name, uid, page, start, role, true]
+                    'INSERT INTO users (email, password, name, Uid, page, start, role, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+                    [email, hashedPassword, name, Uid, page, start, role, true]
                 );
                 if (result.affectedRows === 1) {
                     resolve({
@@ -38,7 +39,8 @@ class AuthService {
                         user_status: true
                     });
                 } 
-                else resolve({ status: false, message: "Không thể tạo tài khoản" });
+                else resolve({ status: false, message: "Failed to create user" });
+                resolve({status: true, start: start});
             }
             catch (error) {
                 reject(error);
@@ -48,13 +50,13 @@ class AuthService {
 
     logout = (req) => {
         return new Promise((resolve, reject) => {
-            if (req.session.user) {
+            if (req.session) {
                 req.session.destroy((err) => {
-                    if (err) reject({ status: false, message: 'Đăng xuất thất bại' });
-                    else resolve({ status: true, message: 'Đăng xuất thành công' });
+                    if (err) reject({ status: false, message: 'Error logging out' });
+                    else resolve({ status: true });
                 });
             } 
-            else resolve({ status: false, message: 'Chưa đăng nhập' });
+            else resolve({ status: false, message: 'No active session' });
         });
     }    
 
@@ -64,23 +66,22 @@ class AuthService {
             try {
                 const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
                 if (rows.length === 0) {
-                    resolve({ status: false, message: "Tài khoản không tồn tại" });
+                    resolve({ status: false, message: "Invalid account" });
                     return;
                 }
                 const user = rows[0];
                 const isMatch = await bcrypt.compare(password, user.password);
                 if (!isMatch) {
-                    resolve({ status: false, message: "Mật khẩu sai" });
+                    resolve({ status: false, message: "Wrong password" });
                     return;
                 }
                 if (user.status == 1) {
                     req.session.user = {
-                        id: user.uid,
+                        id: user.id,
                         name: user.name,
                         email: user.email,
                         role: user.role
                     };
-                    console.log(req.session.user.id);
                     resolve({
                         status: true,
                         name: user.name,
@@ -89,7 +90,7 @@ class AuthService {
                         user_status: user.status
                     });
                 } 
-                else resolve({ status: false, message: "Tài khoản đã bị ban" });
+                else resolve({ status: false, message: "User has been banned" });
             } 
             catch (error) {
                 reject(error);
@@ -102,7 +103,7 @@ class AuthService {
         return new Promise (async (resolve, reject) => {
             try {
                 const [existingUsers] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
-                if (existingUsers.length === 0) resolve({ status: false, message: "Tài khoản không tồn tại" });
+                if (existingUsers.length === 0) resolve({ status: false, message: "Invalid account" });
                 const newPassword = Math.random().toString(36).slice(-8);
                 const hashedPassword = await bcrypt.hash(newPassword, 10);
                 const updatePasswordQuery = `UPDATE users SET password = ? WHERE email = ?`;
@@ -121,14 +122,14 @@ class AuthService {
                             });
                         } 
                         else {
-                            reject({ status: false, message: "Lỗi khi gửi mail" });
+                            reject({ status: false, message: "Send mail error" });
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
                     });
                 }
-                else resolve({ status: false, message: "Cập nhật mật khẩu thất bại" });
+                else resolve({ status: false, message: "Password update failed" });
             } 
             catch (error) {
                 reject(error);
@@ -142,13 +143,13 @@ class AuthService {
             try {
                 const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
                 if (rows.length === 0) {
-                    resolve({ status: false, message: "Tài khoản không tồn tại" });
+                    resolve({ status: false, message: "Invalid account" });
                     return;
                 }
                 const user = rows[0];
                 const isMatch = await bcrypt.compare(currentPassword, user.password);
                 if (!isMatch) {
-                    resolve({ status: false, message: "Mật khẩu sai" });
+                    resolve({ status: false, message: "Wrong password" });
                     return;
                 }
                 const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -159,7 +160,7 @@ class AuthService {
                         email: email,
                         password: newPassword
                     });
-                } else resolve({ status: false, message: "Cập nhật mật khẩu thất bại" });
+                } else resolve({ status: false, message: "Password update failed" });
             }
             catch (error) {
                 reject(error);
