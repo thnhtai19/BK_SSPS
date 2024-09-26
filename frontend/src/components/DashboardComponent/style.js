@@ -31,6 +31,18 @@ export const WrapperContainer = styled.div`
     background-color: #F7F9FB;
     transition: left 0.3s ease-in-out;
   }
+  
+  .wrap-header-admin {
+    position: fixed;
+    top: 0;
+    left: 250px;
+    right: 0;
+    height: 80px;
+    z-index: 1000;
+    background-color: #fff;
+    transition: left 0.3s ease-in-out;
+    border-bottom: 1px solid #EFF1F3;
+  }
 
   .wrap-page {
     padding-top: 80px;
@@ -51,6 +63,10 @@ export const WrapperContainer = styled.div`
     }
 
     .wrap-header {
+      left: 0;
+    }
+
+    .wrap-header-admin {
       left: 0;
     }
   }

@@ -106,7 +106,7 @@ export const WrapperMain = styled.div`
         padding: 0px 20px 100px 20px;
     }
 
-    @media (max-width: 1500px) {
+    @media (max-width: 1550px) {
         height: 100vh;
     }
 `;
