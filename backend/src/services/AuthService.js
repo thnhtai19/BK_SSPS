@@ -1,18 +1,16 @@
 const { message } = require('antd');
 const bcrypt = require('bcryptjs');
 const db = require('../config/db');
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
 const { error } = require('console');
 const axios = require('axios');
 const supportFunction = require('./support');
 
 class AuthService {
     createUser = async (data) => {
-        const { email, password, name, role, uid } = data;
+        const { email, password, name, uid } = data;
         return new Promise(async (resolve, reject) => {
             try {
-                const [existingUsers] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+                const [existingUsers] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
                 if (existingUsers.length > 0) { 
                     resolve({ status: false, message: "Email đã được dùng" });
                     return;
@@ -23,20 +21,25 @@ class AuthService {
                     return;
                 }
                 const hashedPassword = await bcrypt.hash(password, 10);
-                var page = "";
                 const start = supportFunction.startTime();
                 const [result] = await db.query(
-                    'INSERT INTO users (email, password, name, uid, page, start, role, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
-                    [email, hashedPassword, name, uid, page, start, role, true]
+                    'INSERT INTO user (email, password, ten, id, ngay_dk, role) VALUES (?, ?, ?, ?, ?, ?)', 
+                    [email, hashedPassword, name, uid, start, 'student']
                 );
                 if (result.affectedRows === 1) {
-                    resolve({
-                        status: true,
-                        name: name,
-                        email: email,
-                        role: role,
-                        user_status: true
-                    });
+                    const [sinh_vien] = await db.query(
+                        'INSERT INTO sinh_vien (id, trang_thai, so_giay_con) VALUES (?, ?, ?)', 
+                        [uid, '1', 0]
+                    );
+                    if (sinh_vien.affectedRows === 1) {
+                        resolve({
+                            status: true,
+                            name: name,
+                            email: email,
+                            role: 'student',
+                        });
+                    }
+                    else resolve({ status: false, message: "Không thể tạo sinh viên" });
                 } 
                 else resolve({ status: false, message: "Không thể tạo tài khoản" });
             }
@@ -62,7 +65,7 @@ class AuthService {
         const { email, password } = data;
         return new Promise(async (resolve, reject) => {
             try {
-                const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+                const [rows] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
                 if (rows.length === 0) {
                     resolve({ status: false, message: "Tài khoản không tồn tại" });
                     return;
@@ -73,23 +76,34 @@ class AuthService {
                     resolve({ status: false, message: "Mật khẩu sai" });
                     return;
                 }
-                if (user.status == 1) {
-                    req.session.user = {
-                        id: user.uid,
-                        name: user.name,
-                        email: user.email,
-                        role: user.role
-                    };
-                    console.log(req.session.user.id);
-                    resolve({
-                        status: true,
-                        name: user.name,
-                        email: user.email,
-                        role: user.role,
-                        user_status: user.status
-                    });
-                } 
-                else resolve({ status: false, message: "Tài khoản đã bị ban" });
+                fetch("https://api.ipify.org?format=json")
+                .then(response => response.json())
+                .then(async data => {
+                    const IP = data.ip;
+                    const [sinh_vien] = await db.query('SELECT * FROM sinh_vien WHERE id = ?', [user.id]);
+                    const SV = sinh_vien[0];
+                    if (SV.trang_thai == 1) {
+                        req.session.user = {
+                            id: user.id,
+                            name: user.ten,
+                            email: user.email,
+                        };
+                        const thoi_gian = supportFunction.startTime();
+                        const [result] = await db.query(
+                            'INSERT INTO nhat_ky (MSSV, IP, thoi_gian) VALUES (?, ?, ?)', 
+                            [user.id, IP, thoi_gian]
+                        );
+                        if (result.affectedRows === 1) {
+                            resolve({
+                                status: true,
+                                name: user.name,
+                                email: user.email,
+                            });
+                        } 
+                        else resolve({ status: false, message: "Không thể lưu IP" });
+                    } 
+                    else resolve({ status: false, message: "Tài khoản đã bị ban" });
+                });
             } 
             catch (error) {
                 reject(error);
@@ -101,11 +115,11 @@ class AuthService {
         const { email } = body
         return new Promise (async (resolve, reject) => {
             try {
-                const [existingUsers] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+                const [existingUsers] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
                 if (existingUsers.length === 0) resolve({ status: false, message: "Tài khoản không tồn tại" });
                 const newPassword = Math.random().toString(36).slice(-8);
                 const hashedPassword = await bcrypt.hash(newPassword, 10);
-                const updatePasswordQuery = `UPDATE users SET password = ? WHERE email = ?`;
+                const updatePasswordQuery = `UPDATE user SET password = ? WHERE email = ?`;
                 const [result] = await db.query(updatePasswordQuery, [hashedPassword, email]);
                 if (result.affectedRows === 1) {
                     const data = {
@@ -140,7 +154,7 @@ class AuthService {
         const { currentPassword, newPassword, email } = data;
         return new Promise(async (resolve, reject) => {
             try {
-                const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+                const [rows] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
                 if (rows.length === 0) {
                     resolve({ status: false, message: "Tài khoản không tồn tại" });
                     return;
@@ -152,7 +166,7 @@ class AuthService {
                     return;
                 }
                 const hashedPassword = await bcrypt.hash(newPassword, 10);
-                const updatePasswordQuery = `UPDATE users SET password = ? WHERE email = ?`;
+                const updatePasswordQuery = `UPDATE user SET password = ? WHERE email = ?`;
                 const [result] = await db.query(updatePasswordQuery, [hashedPassword, email]);
                 if (result.affectedRows === 1) {
                     resolve({
