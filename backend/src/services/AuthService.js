@@ -24,7 +24,7 @@ class AuthService {
                 const start = supportFunction.startTime();
                 const [result] = await db.query(
                     'INSERT INTO user (email, password, ten, id, ngay_dk, role) VALUES (?, ?, ?, ?, ?, ?)', 
-                    [email, hashedPassword, name, uid, start, 'student']
+                    [email, hashedPassword, name, uid, start, 'SV']
                 );
                 if (result.affectedRows === 1) {
                     const [sinh_vien] = await db.query(
@@ -36,7 +36,7 @@ class AuthService {
                             status: true,
                             name: name,
                             email: email,
-                            role: 'student',
+                            role: 'SV',
                         });
                     }
                     else resolve({ status: false, message: "Không thể tạo sinh viên" });
@@ -90,8 +90,8 @@ class AuthService {
                         };
                         const thoi_gian = supportFunction.startTime();
                         const [result] = await db.query(
-                            'INSERT INTO nhat_ky (MSSV, IP, thoi_gian) VALUES (?, ?, ?)', 
-                            [user.id, IP, thoi_gian]
+                            'INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)', 
+                            [user.id, `Đã đăng nhập tài khoản IP: ${IP}`, thoi_gian]
                         );
                         if (result.affectedRows === 1) {
                             resolve({

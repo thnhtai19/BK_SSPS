@@ -5,11 +5,20 @@ use hcmut_ssps;
 create table user (
 	id 			varchar(50) not null,
     ten 		varchar(50) not null,
-    ngay_dk 	date not null,
+    ngay_dk 	varchar(50) not null,
     email 		varchar(50) not null,
-    password 	varchar(50) not null,
+    password 	varchar(128) not null,
     role		varchar(50) not null default 'SV',
     primary 	key (id)
+);
+
+create table nhat_ky (
+	id			int not null auto_increment,
+	uid			varchar(50) not null,
+    thoi_gian	varchar(50) not null,
+    noi_dung	varchar(255) not null,
+    primary key(id),
+    foreign key(uid) references user(id)
 );
 
 create table sspo (
