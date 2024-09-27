@@ -50,8 +50,8 @@ const ChangePassword = () => {
 	  };
 	return (
 		<>
-          <h3 className="text-lg font-medium mb-4">Đổi mật khẩu</h3>
-		  <form onSubmit={handleSubmit} className="hidden sm:flex  flex-1 flex-col  bg-white border-[2px] border-[#EFF1F3] p-6 rounded-xl">
+      <h3 className="text-lg font-medium mb-4">Đổi mật khẩu</h3>
+		  <form onSubmit={handleSubmit} className="hidden sm:flex  flex-1 flex-col  bg-white">
 			<label>Mật khẩu cũ</label>
 			<input
 				type="text"
