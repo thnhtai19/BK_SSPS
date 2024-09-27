@@ -11,6 +11,10 @@ import BuySuccessPage from "../pages/BuySuccessPage/BuySuccessPage"
 import BuyErrorPage from "../pages/BuyErrorPage/BuyErrorPage"
 import SupportPage from "../pages/SupportPage/SupportPage"
 import AdminHistoryPage from "../pages/AdminHistoryPage/AdminHistoryPage"
+import AdminSystemSettingPage from "../pages/AdminSystemSettingPage/AdminSystemSettingPage"
+import AdminHome from "../pages/AdminHome/AdminHome"
+import ManageUserPage from "../pages/ManageUserPage/ManageUserPage"
+import ManagePrinterPage from "../pages/ManagePrinterPage/ManagePrinterPage"
 
 export const routes = [
     {
@@ -75,19 +79,19 @@ export const routes = [
     },
     {
         path: '/admin/home',
-        page: HomePage,
+        page: AdminHome,
         isShowDashboardAdmin: true,
         pageIndex: 1,
     },
     {
         path: '/admin/user-management',
-        page: HomePage,
+        page: ManageUserPage,
         isShowDashboardAdmin: true,
         pageIndex: 2,
     },
     {
         path: '/admin/printer-management',
-        page: HomePage,
+        page: ManagePrinterPage,
         isShowDashboardAdmin: true,
         pageIndex: 3,
     },
@@ -105,7 +109,7 @@ export const routes = [
     },
     {
         path: '/admin/system-settings',
-        page: HomePage,
+        page: AdminSystemSettingPage,
         isShowDashboardAdmin: true,
         pageIndex: 6,
     },

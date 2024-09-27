@@ -1,7 +1,7 @@
-import { useState } from "react";
+//import { useState } from "react";
 
-import { UnlockOutlined } from "@ant-design/icons";
 import { Table } from "antd";
+import ChangePassword from "../../components/ChangePassword/ChangePassword";
 
 function MyAccount() {
   const columns = [
@@ -69,29 +69,7 @@ function MyAccount() {
         </div>
         {/* change password */}
         <div className="hidden sm:flex  flex-1 flex-col  bg-white border-[2px] border-[#EFF1F3] p-6 rounded-xl">
-          <h3 className="text-lg font-medium mb-4">Đổi mật khẩu</h3>
-          <label>Mật khẩu cũ</label>
-          <input
-            type="text"
-            placeholder="Nhập mật khẩu cũ"
-            className="mt-2 mb-4 border-[2px] border-[#EFF1F3] py-1 px-4 rounded-xl"
-          />
-          <label>Mật khẩu mới</label>
-          <input
-            type="password"
-            placeholder="Nhập mật khẩu mới"
-            className="mt-2 mb-4 border-[2px] border-[#EFF1F3] py-1 px-4 rounded-xl"
-          />
-          <label>Xác nhận mật khẩu mới</label>
-          <input
-            type="password"
-            placeholder="Nhập lại mật khẩu mới"
-            className="mt-2 mb-4 border-[2px] border-[#EFF1F3] py-1 px-4 rounded-xl"
-          />
-          <button className="bg-[#0688B4] hover:shadow  hover:shadow-[#0688B4] rounded-xl text-white font-bold mt-3 py-2">
-            <UnlockOutlined className="text-xl mr-2" />
-            Thay đổi mật khẩu
-          </button>
+          <ChangePassword/>
         </div>
       </div>
       {/* row bottom */}
