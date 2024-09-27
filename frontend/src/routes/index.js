@@ -9,7 +9,7 @@ import ServicePage from "../pages/ServicePage/ServicePage"
 import BuyPage from "../pages/BuyPage/BuyPage"
 import BuySuccessPage from "../pages/BuySuccessPage/BuySuccessPage"
 import BuyErrorPage from "../pages/BuyErrorPage/BuyErrorPage"
-
+import AdminSystemSettingPage from "../pages/AdminSystemSettingPage/AdminSystemSettingPage"
 
 export const routes = [
     {
@@ -110,7 +110,7 @@ export const routes = [
     },
     {
         path: '/admin/system-settings',
-        page: HomePage,
+        page: AdminSystemSettingPage,
         isShowDashboardAdmin: true,
         pageIndex: 6,
     },

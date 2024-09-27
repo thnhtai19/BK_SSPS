@@ -60,7 +60,7 @@ const BuyPage = () =>{
                     <legend className="font-bold text-xl mb-2">Mua thêm trang</legend>
                     
                     <label className="block">
-                      <span className="block text-md font-medium text-gray-700 mb-2">Mã số sinh viên</span>
+                      <span className="block text-sm font-medium text-gray-700 mb-2">Mã số sinh viên</span>
                       <input
                         type="text"
                         placeholder="Nhập MSSV"
