@@ -16,15 +16,12 @@ const HomePage = () => {
 	return (
 		<div className='p-4 min-h-screen'>
 			<div className='text-sm mb-5'>
-
-				<Breadcrumb separator=">">
-    				<Breadcrumb.Item>
+				<Breadcrumb separator='>'>
+					<Breadcrumb.Item>
 						<Link to='/'>bkssps.vn</Link>
 					</Breadcrumb.Item>
-    				<Breadcrumb.Item>
-						Trang chủ
-					</Breadcrumb.Item>
-  				</Breadcrumb>
+					<Breadcrumb.Item>Trang chủ</Breadcrumb.Item>
+				</Breadcrumb>
 			</div>
 
 			<div className='flex flex-wrap justify-between gap-8 mb-10'>

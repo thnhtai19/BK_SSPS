@@ -12,30 +12,36 @@ const ServicePage = () => {
 	const [customPages, setCustomPages] = useState('');
 	const [isCustomDisabled, setIsCustomDisabled] = useState(true);
 	const [isDragging, setIsDragging] = useState(false);
-	
+
 	const handleDragOver = (event) => {
 		event.preventDefault();
 		setIsDragging(true);
-	}
+	};
 
 	const handleDragLeave = (event) => {
 		event.preventDefault();
 		setIsDragging(false);
-	}
+	};
 
 	const handleDrop = (event) => {
 		event.preventDefault();
 		setIsDragging(false);
 
-		if (event.dataTransfer.files && event.dataTransfer.files[0]){
+		if (event.dataTransfer.files && event.dataTransfer.files[0]) {
 			const droppedFile = event.dataTransfer.files[0];
-			if (['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(droppedFile.type)) {
+			if (
+				[
+					'application/pdf',
+					'application/msword',
+					'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+				].includes(droppedFile.type)
+			) {
 				setFile(droppedFile);
 			} else {
 				alert('Chỉ chấp nhận file .pdf, .doc, .docx');
 			}
 		}
-	}
+	};
 
 	const handleFileUpload = (event) => {
 		if (event.target.files && event.target.files[0]) {
@@ -69,18 +75,16 @@ const ServicePage = () => {
 
 	return (
 		<div className='p-4 min-h-screen'>
-			<Breadcrumb separator=">">
-    			<Breadcrumb.Item>
+			<Breadcrumb separator='>'>
+				<Breadcrumb.Item>
 					<Link to='/'>bkssps.vn</Link>
 				</Breadcrumb.Item>
-    			<Breadcrumb.Item>
-					In tài liệu
-				</Breadcrumb.Item>
-  			</Breadcrumb>
+				<Breadcrumb.Item>In tài liệu</Breadcrumb.Item>
+			</Breadcrumb>
 
 			<div className='bg-white p-6 rounded-lg shadow-md mb-10 mt-5'>
 				<h3 className='text-lg font-bold mb-4 text-gray-900'>Tải tài liệu lên</h3>
-				<div 
+				<div
 					className={`border-dashed border-2 p-6 text-center ${isDragging ? 'border-blue-500' : 'border-gray-300'}`}
 					onDragOver={handleDragOver}
 					onDragLeave={handleDragLeave}
@@ -184,10 +188,12 @@ const ServicePage = () => {
 					</button>
 
 					<button
-  						className={`px-4 py-2 rounded transition duration-300 ${!printer ? 'bg-gray-200 cursor-not-allowed text-gray-700' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-  						onClick={handlePrint}
-  						disabled={!printer} 
-					>	
+						className={`px-4 py-2 rounded transition duration-300 ${
+							!printer ? 'bg-gray-200 cursor-not-allowed text-gray-700' : 'bg-blue-500 text-white hover:bg-blue-600'
+						}`}
+						onClick={handlePrint}
+						disabled={!printer}
+					>
 						Bắt đầu in
 					</button>
 				</div>

@@ -26,68 +26,59 @@ const HistoryPage = () => {
 
 	const columns = [
 		{
-		  title: 'ID',
-		  dataIndex: 'id',
+			title: 'ID',
+			dataIndex: 'id',
 		},
 		{
-		  title: 'ID máy in',
-		  dataIndex: 'printerId',
+			title: 'ID máy in',
+			dataIndex: 'printerId',
 		},
 		{
-		  title: 'Tài liệu',
-		  dataIndex: 'document',
+			title: 'Tài liệu',
+			dataIndex: 'document',
 		},
 		{
-		  title: 'Thời gian bắt đầu',
-		  dataIndex: 'startTime',
+			title: 'Thời gian bắt đầu',
+			dataIndex: 'startTime',
 		},
 		{
-		  title: 'Thời gian kết thúc',
-		  dataIndex: 'endTime',
-		  render: (endTime, record) => {
-			if (record.status === 'Đang chờ in') {
-			  return '---'; 
-			}
-			return endTime;
-		  },
+			title: 'Thời gian kết thúc',
+			dataIndex: 'endTime',
+			render: (endTime, record) => {
+				if (record.status === 'Đang chờ in') {
+					return '---';
+				}
+				return endTime;
+			},
 		},
 		{
-		  title: 'Kích thước',
-		  dataIndex: 'size',
+			title: 'Kích thước',
+			dataIndex: 'size',
 		},
 		{
-		  title: 'Số trang',
-		  dataIndex: 'pages',
+			title: 'Số trang',
+			dataIndex: 'pages',
 		},
 		{
-		  title: 'Trạng thái',
-		  dataIndex: 'status',
-		  render: (status) => (
-			<button
-			  style={{
-				backgroundColor:
-				  status === 'Hoàn tất'
-					? '#bfffd8'
-					: status === 'Đang chờ in'
-					? '#f7f9fb'
-					: '#ffd4d4',
-				color: status === 'Hoàn tất' ? '#00750c' : status === 'Đang chờ in' ? '#444444' : '#c40000', // Màu chữ đỏ đậm cho "Đã hủy"
-				borderRadius: '5px',
-				padding: '5px 10px',
-				border: 'none',
-			  }}
-			>
-			  {status === 'Hoàn tất'
-				? 'Hoàn tất in'
-				: status === 'Đang chờ in'
-				? 'Đang chờ in'
-				: 'Đã hủy'} 
-			</button>
-		  ),
+			title: 'Trạng thái',
+			dataIndex: 'status',
+			render: (status) => (
+				<button
+					style={{
+						backgroundColor: status === 'Hoàn tất' ? '#bfffd8' : status === 'Đang chờ in' ? '#f7f9fb' : '#ffd4d4',
+						color: status === 'Hoàn tất' ? '#00750c' : status === 'Đang chờ in' ? '#444444' : '#c40000', // Màu chữ đỏ đậm cho "Đã hủy"
+						borderRadius: '5px',
+						padding: '5px 10px',
+						border: 'none',
+					}}
+				>
+					{status === 'Hoàn tất' ? 'Hoàn tất in' : status === 'Đang chờ in' ? 'Đang chờ in' : 'Đã hủy'}
+				</button>
+			),
 		},
-	  ];
-	  
-	  const data = Array.from({ length: 10 }).map((_, i) => ({
+	];
+
+	const data = Array.from({ length: 10 }).map((_, i) => ({
 		key: i,
 		id: `212484${i}`,
 		printerId: `908${i}`,
@@ -96,15 +87,8 @@ const HistoryPage = () => {
 		endTime: `1${i}-09-2024 09:${i + 1}:42`,
 		size: i % 2 === 0 ? 'A4' : 'A3',
 		pages: i * 5 + 10,
-		status:
-		  i % 3 === 0
-			? 'Hoàn tất'
-			: i % 3 === 1
-			? 'Đang chờ in'
-			: 'Đã hủy', 
-	  }));
-	  
-	  
+		status: i % 3 === 0 ? 'Hoàn tất' : i % 3 === 1 ? 'Đang chờ in' : 'Đã hủy',
+	}));
 
 	const chartData = [
 		{ date: '10-07-2024', A3: 180, A4: 100 },
@@ -129,7 +113,7 @@ const HistoryPage = () => {
 			const startTimestamp = new Date(startDate).getTime();
 			const endOfDay = new Date(endDate).setHours(23, 59, 59, 999);
 			const endTimestamp = new Date(endOfDay).getTime();
-	
+
 			const filteredData = chartData.filter((entry) => {
 				const entryTimestamp = new Date(entry.date.split('-').reverse().join('-')).getTime();
 				return entryTimestamp >= startTimestamp && entryTimestamp <= endTimestamp;
@@ -139,43 +123,36 @@ const HistoryPage = () => {
 			setFilteredChartData(chartData);
 		}
 	}, [startDate, endDate]);
-	
-	
 
 	const handleSearch = (value) => {
 		setSearchValue(value);
 	};
 
-	const filteredData = data.filter(item =>
-		item.document.toLowerCase().includes(searchValue.toLowerCase())
-	);
+	const filteredData = data.filter((item) => item.document.toLowerCase().includes(searchValue.toLowerCase()));
 
 	return (
 		<div className='p-2 min-h-screen ml-2'>
-			<Breadcrumb separator=">">
+			<Breadcrumb separator='>'>
 				<Breadcrumb.Item>
 					<Link to='/'>bkssps.vn</Link>
 				</Breadcrumb.Item>
-				<Breadcrumb.Item>
-					Lịch sử in
-				</Breadcrumb.Item>
+				<Breadcrumb.Item>Lịch sử in</Breadcrumb.Item>
 			</Breadcrumb>
 
-			<div className="p-[20px]">
-				<Row gutter={16} align="middle">
+			<div className='p-[20px]'>
+				<Row gutter={16} align='middle'>
 					<Col>
-						<span className="flex items-center">
+						<span className='flex items-center'>
 							<FilterOutlined style={{ marginRight: 8 }} />
 							Lọc từ ngày:
 						</span>
 					</Col>
 					<Col>
-						<DatePicker placeholder="Từ ngày" onChange={(date) => handleDateChange(date, 0)} />
+						<DatePicker placeholder='Từ ngày' onChange={(date) => handleDateChange(date, 0)} />
 					</Col>
 					<Col>
-						<DatePicker placeholder="Đến ngày" onChange={(date) => handleDateChange(date, 1)} />
+						<DatePicker placeholder='Đến ngày' onChange={(date) => handleDateChange(date, 1)} />
 					</Col>
-					
 				</Row>
 			</div>
 
@@ -209,17 +186,12 @@ const HistoryPage = () => {
 			<div className='flex items-center justify-center mt-7'>
 				<div className='flex flex-col bg-white p-6 rounded-lg shadow-lg w-[95%] md:w-[95%]'>
 					<h3 className='text-xl font-semibold text-gray-800 mb-6 border-b pb-2'>Nhật ký hoạt động</h3>
-						<Search
-							placeholder="Tìm kiếm tài liệu"
-							onSearch={handleSearch}
-							style={{ width: 200, marginLeft: 16, marginBottom: 16}}
-						/>
-					<Table
-						columns={columns}
-						dataSource={filteredData}
-						pagination={paginationOptions}
-						bordered
+					<Search
+						placeholder='Tìm kiếm tài liệu'
+						onSearch={handleSearch}
+						style={{ width: 200, marginLeft: 16, marginBottom: 16 }}
 					/>
+					<Table columns={columns} dataSource={filteredData} pagination={paginationOptions} bordered />
 				</div>
 			</div>
 		</div>
