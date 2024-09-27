@@ -1,10 +1,10 @@
 import { RightOutlined } from '@ant-design/icons';
 import { Select } from "antd";
 import React from "react";
-import { Button } from "antd";
+import { Button, ConfigProvider } from "antd";
 
+const { Option } = Select;
 const AdminSystemSettingPage = () => {
-	const { Option } = Select;
 
 	const handleChange = (value) => {
 		console.log(`Selected: ${value}`);
@@ -12,6 +12,7 @@ const AdminSystemSettingPage = () => {
 
 	return (
 		<>
+		
 		<p className="px-5">bkssps.vn <RightOutlined /> Admin <RightOutlined /> Cấu hình hệ thống</p>
     <div className="w-11/12 h-auto mx-auto mt-12 py-3 px-5 border border-solid rounded-2xl bg-white">
       <form className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-6">
@@ -57,20 +58,28 @@ const AdminSystemSettingPage = () => {
           </div>
           
 					<div className="flex flex-col">
-            <label htmlFor="referrer" className="text-gray-700 mb-1 font-medium">Bảo trì hệ thống</label>
-            <Select
-							id = "referrer"
-							defaultValue=""
-							style={{ backgroundColor: "#EFF1F3" }}
-							onChange={handleChange}
-							placeholder="(chọn trạng thái)"
-							dropdownStyle={{ maxHeight: 200, overflow: 'auto' }}
+            <label htmlFor="referrer" className="text-gray-700 mb-1 font-medium">Bảo trì hệ thống</label>		
+						<ConfigProvider 
+							theme={{
+								token: {
+									colorBgContainer: '#f3f4f6',
+									colorText: '#444444',
+								},
+							}}
+						>
+							<Select
+								id="referrer"
+								defaultValue=""
+								onChange={handleChange}
+								placeholder="(chọn trạng thái)"
+								dropdownStyle={{ maxHeight: 200, overflow: 'auto' }}
+								className="w-full h-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
 							>
-							<Option value="">(chọn trạng thái)</Option>
-							<Option value="1">Đang tắt</Option>
-							<Option value="2">Đang bật</Option>
-						</Select>
-						
+								<Option value="">(chọn trạng thái)</Option>
+								<Option value="1">Đang tắt</Option>
+								<Option value="2">Đang bật</Option>
+							</Select>
+						</ConfigProvider>
           </div>
         </fieldset>
 
