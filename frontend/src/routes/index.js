@@ -9,6 +9,7 @@ import ServicePage from "../pages/ServicePage/ServicePage"
 import BuyPage from "../pages/BuyPage/BuyPage"
 import BuySuccessPage from "../pages/BuySuccessPage/BuySuccessPage"
 import BuyErrorPage from "../pages/BuyErrorPage/BuyErrorPage"
+import ReportPage from "../pages/ReportPage/ReportPage"
 import SupportPage from "../pages/SupportPage/SupportPage"
 import AdminHistoryPage from "../pages/AdminHistoryPage/AdminHistoryPage"
 import AdminSystemSettingPage from "../pages/AdminSystemSettingPage/AdminSystemSettingPage"
@@ -103,7 +104,7 @@ export const routes = [
     },
     {
         path: '/admin/usage-reports',
-        page: HomePage,
+        page: ReportPage,
         isShowDashboardAdmin: true,
         pageIndex: 5,
     },
