@@ -1,17 +1,46 @@
 import React, { useState } from 'react';
+import { Breadcrumb } from 'antd';
+import { Link } from 'react-router-dom';
 
 const ServicePage = () => {
 	const [file, setFile] = useState(null);
 	const [printer, setPrinter] = useState('');
-	const [size, setSize] = useState('');
-	const [faces, setFaces] = useState('');
-	const [copies, setCopies] = useState('');
+	const [size, setSize] = useState('A4');
+	const [faces, setFaces] = useState('2 mặt');
+	const [copies, setCopies] = useState('1');
 	const [pageSelection, setPageSelection] = useState('Tất cả');
 	const [customPages, setCustomPages] = useState('');
 	const [isCustomDisabled, setIsCustomDisabled] = useState(true);
+	const [isDragging, setIsDragging] = useState(false);
+	
+	const handleDragOver = (event) => {
+		event.preventDefault();
+		setIsDragging(true);
+	}
+
+	const handleDragLeave = (event) => {
+		event.preventDefault();
+		setIsDragging(false);
+	}
+
+	const handleDrop = (event) => {
+		event.preventDefault();
+		setIsDragging(false);
+
+		if (event.dataTransfer.files && event.dataTransfer.files[0]){
+			const droppedFile = event.dataTransfer.files[0];
+			if (['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(droppedFile.type)) {
+				setFile(droppedFile);
+			} else {
+				alert('Chỉ chấp nhận file .pdf, .doc, .docx');
+			}
+		}
+	}
 
 	const handleFileUpload = (event) => {
-		setFile(event.target.files[0]);
+		if (event.target.files && event.target.files[0]) {
+			setFile(event.target.files[0]);
+		}
 	};
 
 	const handlePageSelectionChange = (event) => {
@@ -21,11 +50,10 @@ const ServicePage = () => {
 	};
 
 	const handleReset = () => {
-		setFile(null);
 		setPrinter('');
 		setSize('');
-		setFaces('');
-		setCopies('');
+		setFaces('2 mặt');
+		setCopies('1');
 		setPageSelection('Tất cả');
 		setCustomPages('');
 		setIsCustomDisabled(true);
@@ -40,21 +68,24 @@ const ServicePage = () => {
 	};
 
 	return (
-		<div className='p-4 bg-gray-100 min-h-screen'>
-			<div className='text-sm mb-5'>
-				<a href='/' className='text-black no-underline transition-colors duration-300 hover:text-gray-500'>
-					bkssps.vn
-				</a>{' '}
-				&gt;
-				<a href='/service' className='text-black no-underline transition-colors duration-300 hover:text-gray-500'>
-					{' '}
+		<div className='p-4 min-h-screen'>
+			<Breadcrumb separator=">">
+    			<Breadcrumb.Item>
+					<Link to='/'>bkssps.vn</Link>
+				</Breadcrumb.Item>
+    			<Breadcrumb.Item>
 					In tài liệu
-				</a>
-			</div>
+				</Breadcrumb.Item>
+  			</Breadcrumb>
 
-			<div className='bg-white p-6 rounded-lg shadow-md mb-10'>
+			<div className='bg-white p-6 rounded-lg shadow-md mb-10 mt-5'>
 				<h3 className='text-lg font-bold mb-4 text-gray-900'>Tải tài liệu lên</h3>
-				<div className='border-dashed border-2 border-gray-300 p-6 text-center'>
+				<div 
+					className={`border-dashed border-2 p-6 text-center ${isDragging ? 'border-blue-500' : 'border-gray-300'}`}
+					onDragOver={handleDragOver}
+					onDragLeave={handleDragLeave}
+					onDrop={handleDrop}
+				>
 					<input type='file' accept='.doc,.docx,.pdf' onChange={handleFileUpload} className='hidden' id='file-upload' />
 					<label htmlFor='file-upload' className='cursor-pointer text-blue-500 hover:underline'>
 						<img src={require('../../assets/upload.png')} alt='Upload' className='mx-auto w-12 h-12 mb-4' />
@@ -88,7 +119,6 @@ const ServicePage = () => {
 							onChange={(e) => setSize(e.target.value)}
 							className='block w-full p-2 border border-gray-300 rounded'
 						>
-							<option value=''>Chọn kích thước</option>
 							<option value='A4'>A4</option>
 							<option value='A3'>A3</option>
 						</select>
@@ -101,7 +131,6 @@ const ServicePage = () => {
 							onChange={(e) => setFaces(e.target.value)}
 							className='block w-full p-2 border border-gray-300 rounded'
 						>
-							<option value=''>Chọn số mặt mỗi tờ</option>
 							<option value='1 mặt'>1 mặt</option>
 							<option value='2 mặt'>2 mặt</option>
 						</select>
@@ -114,6 +143,7 @@ const ServicePage = () => {
 							value={copies}
 							onChange={(e) => setCopies(e.target.value)}
 							placeholder='Nhập số bản sao'
+							min={1}
 							className='block w-full p-2 border border-gray-300 rounded'
 						/>
 					</div>
@@ -154,9 +184,10 @@ const ServicePage = () => {
 					</button>
 
 					<button
-						className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300'
-						onClick={handlePrint}
-					>
+  						className={`px-4 py-2 rounded transition duration-300 ${!printer ? 'bg-gray-200 cursor-not-allowed text-gray-700' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+  						onClick={handlePrint}
+  						disabled={!printer} 
+					>	
 						Bắt đầu in
 					</button>
 				</div>

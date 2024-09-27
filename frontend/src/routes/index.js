@@ -9,6 +9,7 @@ import ServicePage from "../pages/ServicePage/ServicePage"
 import BuyPage from "../pages/BuyPage/BuyPage"
 import BuySuccessPage from "../pages/BuySuccessPage/BuySuccessPage"
 import BuyErrorPage from "../pages/BuyErrorPage/BuyErrorPage"
+import UsageReports from "../pages/UsageReports/UsageReports"
 
 
 export const routes = [
@@ -104,7 +105,7 @@ export const routes = [
     },
     {
         path: '/admin/usage-reports',
-        page: HomePage,
+        page: UsageReports,
         isShowDashboardAdmin: true,
         pageIndex: 5,
     },
