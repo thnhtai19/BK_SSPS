@@ -8,7 +8,6 @@ import print from '../../assets/proxy.svg';
 import history from '../../assets/history-book.svg';
 import buymore from '../../assets/store.png';
 import contact from '../../assets/chat.png';
-import wallet from '../../assets/wallet.svg'
 import { useNavigate } from 'react-router-dom';
 
 const SlidebarComponent = ({ curentpage }) => {
@@ -48,11 +47,7 @@ const SlidebarComponent = ({ curentpage }) => {
                         <img src={buymore} alt='buy-more' width="20px" />
                         <div>Mua thêm trang</div>
                     </div>
-                    <div className={`wrap-item ${curentpage === 6 ? 'select-item' : ''}`} onClick={() => handleRedirect("bkpay")}>
-                        <img src={wallet} alt='buy-more' width="20px" />
-                        <div>Thanh toán BKPay</div>
-                    </div>
-                    <div className={`wrap-item ${curentpage === 7 ? 'select-item' : ''}`} onClick={() => handleRedirect("support")}>
+                    <div className={`wrap-item ${curentpage === 6 ? 'select-item' : ''}`} onClick={() => handleRedirect("support")}>
                         <img src={contact} alt='contact' width="20px" />
                         <div>Hỗ trợ</div>
                     </div>
