@@ -1,23 +1,28 @@
 const db = require('../config/db');
-async function createPurchaseOrder(pages, id){
-    try{
-        const day = new Date();
-        const CurrentTime = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate() + ' ' + day.getHours() + ':' + day.getMinutes() + ':' + day.getSeconds();
-        const [result, ] = await db.execute('INSERT INTO purchase_order (purchaseTime, Page, StudentId) VALUES (?, ?, ?)', [CurrentTime, pages, id]);
-        return result;
+const support = require('../services/support');
+const { v4: uuidv4 } = require('uuid');
+class PurchaseService {
+    createPurchaseOrder = async (pages, id) => {
+        try {
+            const day = new Date();
+            const CurrentTime = support.startTime();
+            const formattedDate = day.toISOString().split('T')[0];
+            const ma_don_mua = uuidv4();
+            await db.execute('INSERT INTO don_mua (ma_don_mua, thoi_gian, so_trang, id) VALUES (?, ?, ?, ?)', [ma_don_mua, formattedDate, pages, id]);
+            await db.execute('INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)', [id, `Đã tạo đơn mua giấy`, CurrentTime]);
+        } catch (err) {
+            throw err;
+        }
     }
-    catch(err){
-        throw err;
-    }
-}
-async function updateStudentPages(pagesNumber, id){
-    try{
-        const [result, ] = await db.execute('UPDATE users SET Page = Page + ? WHERE id = ?', [pagesNumber, id]);
-        return result;
-    }
-    catch(err){
-        throw err;
+
+    updateStudentPages = async (pagesNumber, id) => {
+        try {
+            const [result] = await db.execute('UPDATE sinh_vien SET so_giay_con = so_giay_con + ? WHERE id = ?', [pagesNumber, id]);
+            return result;
+        } catch (err) {
+            throw err;
+        }
     }
 }
 
-module.exports = {createPurchaseOrder, updateStudentPages};
+module.exports = new PurchaseService;

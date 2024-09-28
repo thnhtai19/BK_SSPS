@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const routes = require('./routes');
 const cookieParser = require('cookie-parser');
+const { v4: uuidv4 } = require('uuid');
 const app = express();
 const port = 3001;
 const session = require('express-session');
@@ -20,7 +21,10 @@ app.use(session({
   secret: 'abcxyz',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } 
+  cookie: { 
+    secure: false, 
+    maxAge: 30 * 24 * 60 * 60 * 1000
+  } 
 }));
 
 routes(app);

@@ -5,7 +5,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "mydatabase",
-    database: "test"
+    database: "hcmut_ssps"
 }).promise();
 
 connection.connect((err) => {
