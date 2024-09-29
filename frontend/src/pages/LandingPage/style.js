@@ -42,7 +42,7 @@ export const WrapperButton = styled.div`
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s;
     &:hover {
-        background-color: #0056b3;
+        background-color: #01759b;
     }
 
     &:focus {
@@ -52,6 +52,11 @@ export const WrapperButton = styled.div`
 
 export const WrapperButtonText = styled.div`
     cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+
+    &:hover {
+        color: #0688B4;
+    }
 `
 
 export const WrapperMainHeader = styled.div`
@@ -101,7 +106,7 @@ export const WrapperMain = styled.div`
         padding: 0px 20px 100px 20px;
     }
 
-    @media (max-width: 1500px) {
+    @media (max-width: 1550px) {
         height: 100vh;
     }
 `;

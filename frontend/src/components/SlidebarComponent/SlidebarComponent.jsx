@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { WrapperContainer } from './style';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import logocnpm from '../../assets/logocnpm.png';
 import user from '../../assets/user.png';
 import home from '../../assets/dashboard.svg';
@@ -9,70 +8,58 @@ import print from '../../assets/proxy.svg';
 import history from '../../assets/history-book.svg';
 import buymore from '../../assets/store.png';
 import contact from '../../assets/chat.png';
+import { useNavigate } from 'react-router-dom';
 
 const SlidebarComponent = ({ curentpage }) => {
-    const [isCollapsed, setIsCollapsed] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
+    const navigate = useNavigate();
 
-    const toggleSidebar = () => {
-        setIsCollapsed(!isCollapsed);
-    };
+    const handleRedirect = (path) => {
+        navigate(path);
+    }
 
     return (
-        <WrapperContainer
-            isCollapsed={isCollapsed}
-            isHovered={isHovered}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-        >
+        <WrapperContainer>
             <div>
                 <div className='wrap-logo'>
-                    <div className='wrap-logo-container'>
+                    <div className='wrap-logo-container' onClick={() => handleRedirect("home")}>
                         <img src={logocnpm} alt='logo' width="40px" />
-                        {(!isCollapsed || isHovered)  && <div className='brand-name'>BK SSPS</div>}
-                        {(!isCollapsed || isHovered)  && (
-                            <div className="icon-wrapper" onClick={toggleSidebar}>
-                                <ArrowLeftOutlined className={`icon ${isCollapsed ? 'rotated' : ''}`} />
-                            </div>
-                        )}
+                        <div className='brand-name'>BK SSPS</div>
                     </div>
                 </div>
                 <div className='wrap-item-container'>
-                    <div className={`wrap-item ${curentpage === '1' ? 'select-item' : ''}`}>
+                    <div className={`wrap-item ${curentpage === 1 ? 'select-item' : ''}`} onClick={() => handleRedirect("home")}>
                         <img src={home} alt='home' width="20px" />
-                        {(!isCollapsed || isHovered)  && <div>Trang chủ</div>}
+                        <div>Trang chủ</div>
                     </div>
-                    <div className={`wrap-item ${curentpage === '2' ? 'select-item' : ''}`}>
+                    <div className={`wrap-item ${curentpage === 2 ? 'select-item' : ''}`} onClick={() => handleRedirect("myaccount")}>
                         <img src={myacc} alt='my-account' width="20px" />
-                        {(!isCollapsed || isHovered)  && <div>Tài khoản của tôi</div>}
+                        <div>Tài khoản của tôi</div>
                     </div>
-                    <div className={`wrap-item ${curentpage === '3' ? 'select-item' : ''}`}>
+                    <div className={`wrap-item ${curentpage === 3 ? 'select-item' : ''}`} onClick={() => handleRedirect("service")}>
                         <img src={print} alt='print' width="20px" />
-                        {(!isCollapsed || isHovered)  && <div>In tài liệu</div>}
+                        <div>In tài liệu</div>
                     </div>
-                    <div className={`wrap-item ${curentpage === '4' ? 'select-item' : ''}`}>
+                    <div className={`wrap-item ${curentpage === 4 ? 'select-item' : ''}`} onClick={() => handleRedirect("history")}>
                         <img src={history} alt='history' width="20px" />
-                        {(!isCollapsed || isHovered)  && <div>Lịch sử in</div>}
+                        <div>Lịch sử in</div>
                     </div>
-                    <div className={`wrap-item ${curentpage === '5' ? 'select-item' : ''}`}>
+                    <div className={`wrap-item ${curentpage === 5 ? 'select-item' : ''}`} onClick={() => handleRedirect("buy")}>
                         <img src={buymore} alt='buy-more' width="20px" />
-                        {(!isCollapsed || isHovered)  && <div>Mua thêm giấy</div>}
+                        <div>Mua thêm trang</div>
                     </div>
-                    <div className={`wrap-item ${curentpage === '6' ? 'select-item' : ''}`}>
+                    <div className={`wrap-item ${curentpage === 6 ? 'select-item' : ''}`} onClick={() => handleRedirect("support")}>
                         <img src={contact} alt='contact' width="20px" />
-                        {(!isCollapsed || isHovered)  && <div>Hỗ trợ</div>}
+                        <div>Hỗ trợ</div>
                     </div>
                 </div>
             </div>
             <div className='wrap-user'>
                 <div className='wrap-user-container'>
                     <img src={user} alt='user' width="40px" />
-                    {(!isCollapsed || isHovered)  && (
-                        <div className='wrap-name'>
-                            <div className='text-base font-bold'>Trần Thành Tài</div>
-                            <div style={{fontSize: '11px'}}>tai.tranthanh@hcmut.edu.vn</div>
-                        </div>
-                    )}
+                    <div className='wrap-name'>
+                        <div className='text-base font-bold'>Trần Thành Tài</div>
+                        <div style={{ fontSize: '11px' }}>tai.tranthanh@hcmut.edu.vn</div>
+                    </div>
                 </div>
             </div>
         </WrapperContainer>

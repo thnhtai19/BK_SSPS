@@ -35,7 +35,7 @@ create table sinh_vien (
 );
 
 create table don_mua (
-	ma_don_mua 	varchar(255) not null,
+	  ma_don_mua 	varchar(255) not null,
     so_trang 	int not null,
     thoi_gian	date not null,
     trang_thai	bool not null default false, /*Chua thanh toan*/
@@ -45,7 +45,7 @@ create table don_mua (
 );
 
 create table may_in (
-	ma_may_in	varchar(255) not null,
+	  ma_may_in	varchar(255) not null,
     hang 		varchar(50) not null default 'Canon',
     trang_thai_may_in	varchar(50) not null default true,
     doi			varchar(50) not null,
@@ -58,7 +58,7 @@ create table may_in (
 );
 
 create table don_in (
-	ma_don_in	varchar(255) not null,
+	  ma_don_in	varchar(255) not null,
     trang_thai_don_in	boolean not null default false,
     primary key(ma_don_in)
 );

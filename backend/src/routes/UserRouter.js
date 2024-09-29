@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const controller = require('../controllers/UserController');
-router.get('/profile', controller.UserInfo);
-router.get('/acceptedDocument', controller.getAcceptedDocument);
-router.get('/activePrinter', controller.getActivePrinter);
-router.get('/printOrder', controller.getPrintOrder);
-router.get('/printOrder/NoPagesEachDay', controller.getNoPagesEachDay);
-router.post('/upload', controller.uploadDocument);
-router.post('/buy', controller.Buy);
+const UserController = require('../controllers/UserController');
+
+router.get('/diary', UserController.diary);
+router.get('/profile', UserController.UserInfo);
+router.get('/acceptedDocument', UserController.getAcceptedDocument);
+router.get('/activePrinter', UserController.getActivePrinter);
+router.get('/printOrder', UserController.getPrintOrder);
+router.get('/printOrder/NoPagesEachDay', UserController.getNoPagesEachDay);
+router.post('/upload', UserController.uploadDocument);
+router.post('/buy', UserController.Buy);
+
 module.exports = router

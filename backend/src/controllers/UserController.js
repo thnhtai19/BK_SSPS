@@ -1,3 +1,4 @@
+const { message } = require('antd');
 const UserService = require('../services/UserService')
 const PuchaseOrderService = require('../services/PurchaseOrderService')
 class UserController {
@@ -107,6 +108,14 @@ class UserController {
         }
         catch(err){
             res.status(500).json({message: 'Lỗi server'});
+        }
+    }
+    diary = async (req, res) => {
+        try {
+            const result = await UserService.diary(req);
+            return res.status(200).send(result);
+        } catch(err) {
+            return res.status(200).json({status: false, error: err});
         }
     }
 }
