@@ -1,6 +1,5 @@
 const db = require('../config/db');
 const support = require('../services/support');
-const { v4: uuidv4 } = require('uuid');
 class UserService {
     getUserById = async(Id) => {
         try{
@@ -135,7 +134,7 @@ class UserService {
         try {
             const ten_tep = data.ten_tep;
             const loai_tep = data.loai_tep;
-            const ma_tep = uuidv4();
+            const ma_tep = String(Date.now());
             await db.execute('INSERT INTO tep (ma_tep, ten_tep, loai_tep) VALUES (?, ?, ?)', [ma_tep, ten_tep, loai_tep]);
             await db.execute('INSERT INTO so_huu (id, ma_tep) VALUES (?, ?)', [id, ma_tep]);
         } catch (err) {

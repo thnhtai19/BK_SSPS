@@ -1,6 +1,5 @@
 const db = require('../config/db');
 const UserService = require('./UserService');
-const { v4: uuidv4 } = require('uuid');
 class PrintService {
     AcceptFile = async (data) => {
         try {
@@ -14,7 +13,7 @@ class PrintService {
     }
     createPrintOrder = async (data, id) => {
         try {
-            const ma_don_in = uuidv4();
+            const ma_don_in = String(Date.now());
             const ma_may_in = data.ma_may_in;
             const ma_tep = data.ma_tep;
             const so_ban_in = data.so_ban_in;
