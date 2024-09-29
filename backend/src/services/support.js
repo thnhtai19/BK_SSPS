@@ -20,6 +20,16 @@ class Support {
         else start += month + "-" + year;
         return start; 
     }
+    formatDateTime = (dateTime) => {
+        const date = new Date(dateTime);
+        const hours = ('0' + date.getHours()).slice(-2);
+        const minutes = ('0' + date.getMinutes()).slice(-2);
+        const seconds = ('0' + date.getSeconds()).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        const month = ('0' + (date.getMonth() + 1)).slice(-2); // Tháng bắt đầu từ 0, nên cần +1
+        const year = date.getFullYear();
+        return `${hours}:${minutes}:${seconds} ${day}-${month}-${year}`;
+    };
 }
 
-module.exports = new Support
+module.exports = new Support;
