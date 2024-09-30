@@ -2,6 +2,7 @@ import { RightOutlined } from '@ant-design/icons';
 import { Select } from "antd";
 import React from "react";
 import { Button, ConfigProvider } from "antd";
+import FormInput from "../../components/FormInputComponent/FormInput";
 
 const { Option } = Select;
 const AdminSystemSettingPage = () => {
@@ -18,44 +19,31 @@ const AdminSystemSettingPage = () => {
       <form className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-6">
 			 	<legend className="font-bold text-xl">Cấu hình hệ thống</legend>
         <fieldset className="grid grid-cols-1 sm:grid-cols-4 gap-4 col-span-4">
-          <div className="flex flex-col">
-            <label htmlFor="page-number" className="text-gray-700 mb-1 font-medium">Số trang mặc định</label>
-            <input 
-              id="page-number" 
-              type="text" 
-              value="100" 
-              className="w-full h-10 px-3 bg-gray-100 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
 
-          <div className="flex flex-col">
-            <label htmlFor="date" className="text-gray-700 mb-1 font-medium">Ngày reset số trang</label>
-            <input 
-              id="date" 
-              type="number" 
-              value="1" 
-              className="w-full h-10 px-3 bg-gray-100 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="format" className="text-gray-700 mb-1 font-medium">Chấp nhận định dạng</label>
-            <input 
-              id="format" 
-              type="text" 
-              value=".pdf, .doc" 
-              className="w-full h-10 px-3 bg-gray-100 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="price" className="text-gray-700 mb-1 font-medium">Giá mỗi trang in mua thêm</label>
-            <input 
-              id="price" 
-              type="text" 
-              value="500 vnđ" 
-              className="w-full h-10 px-3 bg-gray-100 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
+					<FormInput 
+						ID={"page-number"}
+						Type={"text"}
+						initialValue={"100"}
+						Text={"Số trang mặc định"}
+					/>
+					<FormInput 
+						ID={"date"}
+						Type={"number"}
+						initialValue={"1"}
+						Text={"Ngày reset số trang"}
+					/>
+					<FormInput 
+						ID={"format"}
+						Type={"text"}
+						initialValue={".pdf, .doc"}
+						Text={"Chấp nhận định dạng"}
+					/>
+					<FormInput 
+						ID={"price"}
+						Type={"text"}
+						initialValue={"500 vnđ"}
+						Text={"Giá mỗi trang in mua thêm"}
+					/>
           
 					<div className="flex flex-col">
             <label htmlFor="referrer" className="text-gray-700 mb-1 font-medium">Bảo trì hệ thống</label>		
@@ -96,26 +84,21 @@ const AdminSystemSettingPage = () => {
 			<form className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-6">
 				<legend className="font-bold text-xl mb-2">Quản lí học kỳ</legend>
 				<fieldset className="grid grid-cols-1 sm:grid-cols-4 gap-4 col-span-4">
-          <div className="flex flex-col">
-            <label htmlFor="term" className="text-gray-700 mb-1 font-medium">Học kỳ hiện tại</label>
-            <input 
-              id="term" 
-							type="text"
-							value="HK241"
-							className="w-full h-10 px-3 bg-gray-100 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-						/>
-          </div>
-          
-					<div className="flex flex-col">
-            <label htmlFor="newTerm" className="text-gray-700 mb-1 font-medium">Thêm học kỳ mới</label>
-            <input 
-              id="newTerm" 
-							type="text"
-							value=""
-							placeholder="Nhập tên học kỳ"
-              className="w-full h-10 px-3 bg-gray-100 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-						/>
-          </div>
+
+					<FormInput 
+						ID={"term"}
+						Type={"text"}
+						initialValue={"HK241"}
+						Text={"Học kỳ hiện tại"}
+					/>
+
+					<FormInput 
+						ID={"newTerm"}
+						Type={"text"}
+						initialValue={""}
+						Text={"Thêm học kỳ mới"}
+						Placeholder="Nhập tên học kỳ"
+					/>
 
 				</fieldset>
 			</form>
