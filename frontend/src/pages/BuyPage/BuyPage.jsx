@@ -62,21 +62,18 @@ const BuyPage = () =>{
                     <FormInput 
                       ID={"mssv"}
                       Type={"text"}
-                      Value={""}
                       Text={"Mã số sinh viên"}
                       Placeholder={"Nhập MSSV"}
                     />
                     <FormInput 
                       ID={"full-name"}
                       Type={"text"}
-                      Value={""}
                       Text={"Họ và tên"}
                       Placeholder={"Nhập tên sinh viên"}
                     />
                     <FormInput 
                       ID={"amount-to-buy"}
-                      Type={"text"}
-                      Value={""}
+                      Type={"password"}
                       Text={"Số trang mua"}
                       Placeholder={"Nhập số trang cần mua"}
                     />

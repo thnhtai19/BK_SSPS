@@ -23,25 +23,25 @@ const AdminSystemSettingPage = () => {
 					<FormInput 
 						ID={"page-number"}
 						Type={"text"}
-						Value={"100"}
+						initialValue={"100"}
 						Text={"Số trang mặc định"}
 					/>
 					<FormInput 
 						ID={"date"}
 						Type={"number"}
-						Value={"1"}
+						initialValue={"1"}
 						Text={"Ngày reset số trang"}
 					/>
 					<FormInput 
 						ID={"format"}
 						Type={"text"}
-						Value={".pdf, .doc"}
+						initialValue={".pdf, .doc"}
 						Text={"Chấp nhận định dạng"}
 					/>
 					<FormInput 
 						ID={"price"}
 						Type={"text"}
-						Value={"500 vnđ"}
+						initialValue={"500 vnđ"}
 						Text={"Giá mỗi trang in mua thêm"}
 					/>
           
@@ -88,14 +88,14 @@ const AdminSystemSettingPage = () => {
 					<FormInput 
 						ID={"term"}
 						Type={"text"}
-						Value={"HK241"}
+						initialValue={"HK241"}
 						Text={"Học kỳ hiện tại"}
 					/>
 
 					<FormInput 
 						ID={"newTerm"}
 						Type={"text"}
-						Value={""}
+						initialValue={""}
 						Text={"Thêm học kỳ mới"}
 						Placeholder="Nhập tên học kỳ"
 					/>
