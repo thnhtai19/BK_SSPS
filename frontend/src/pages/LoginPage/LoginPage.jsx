@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useRef, useEffect, useState } from "react";
-import { EyeInvisibleOutlined, EyeOutlined, CloseOutlined } from "@ant-design/icons";
-
+import { EyeInvisibleOutlined, EyeOutlined, CloseOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import ImgLogin from "../../assets/image.png";
 import Logocnpm from "../../assets/logocnpm.png";
 
@@ -9,6 +8,7 @@ function ForgetPassword({ setShowForgetPassword }) {
   const modelRef = useRef(null);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   function closeForgetPassword() {
     if (modelRef.current) {
@@ -25,18 +25,18 @@ function ForgetPassword({ setShowForgetPassword }) {
       setMessage('Vui lòng nhập địa chỉ email.');
       return;
     }
-
+  
     try {
-      const response = await fetch('http://localhost:3001/auth/forgot_password', {
+      const response = await fetch(`${apiUrl}auth/forgot_password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email }),
       });
-
+  
       const data = await response.json();
-
+  
       if (data.status === false) {
         setMessage(data.message);
       } else {
@@ -46,6 +46,7 @@ function ForgetPassword({ setShowForgetPassword }) {
       setMessage('Không thể kết nối đến máy chủ.');
     }
   };
+  
 
   return (
     <div className="bg-[rgba(128,128,128,0.5)] absolute top-0 right-0 left-0 bottom-0  flex items-center justify-center">
@@ -84,11 +85,14 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [iconShowPassword, setIconShowPassword] = useState(true);
   const [showForgetPassword, setShowForgetPassword] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [countdown, setCountdown] = useState(3);
   const passwordRef = useRef(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const passwordInput = passwordRef.current;
@@ -118,7 +122,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/auth/log_in', {
+      const response = await fetch(`${apiUrl}auth/log_in`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +134,15 @@ function Login() {
 
       if (data.status) {
         setMessage('Đăng nhập thành công!');
-        navigate('/');
+        setShowSuccessPopup(true); 
+        const interval = setInterval(() => {
+          setCountdown(prev => prev - 1);
+        }, 1000);
+
+        setTimeout(() => {
+          clearInterval(interval);
+          navigate('/home'); 
+        }, 3000);
       } else {
         setMessage(data.message);
       }
@@ -219,6 +231,15 @@ function Login() {
       {/* pop up forget password */}
       {showForgetPassword && (
         <ForgetPassword setShowForgetPassword={setShowForgetPassword} />
+      )}
+      {showSuccessPopup && (
+        <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center">
+          <div className="bg-white p-6 rounded-xl text-center">
+            <CheckCircleOutlined style={{ fontSize: '50px', color: '#4CAF50' }} />
+            <h2 className="text-2xl font-bold mt-4">Đăng nhập thành công!</h2>
+            <p className="mt-4">Tự động chuyển hướng sau {countdown} giây...</p>
+          </div>
+        </div>
       )}
     </div>
   );
