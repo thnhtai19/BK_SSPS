@@ -18,30 +18,15 @@ class UserController {
             res.status(500).json({ message: 'Lỗi server' });
         }
     }
-    getAcceptedDocument = async(req, res) => {
-        try{
+    getDocumentAndPrinterInfo = async (req, res) => {
+        try {
             if (!req.session.user) {
                 return res.status(401).json({ message: 'Chưa xác thực thông tin người dùng' });
             }
-            const result = await UserService.fetchAcceptedDocument();
+            const result = await UserService.fetchDocumentAndPrinterInfo();
             res.json(result);
         }
-        catch(err){
-            res.status(500).json({ message: err.message });
-        }
-    }
-    getActivePrinter = async(req, res) => {
-        try{
-            if (!req.session.user) {
-                return res.status(401).json({ message: 'Chưa xác thực thông tin người dùng' });
-            }
-            const result = await UserService.fetchActivePrinter();
-            if(result.length === 0){
-                return res.json({message: 'Không có máy in nào hoạt động'});
-            }
-            res.json(result);
-        }
-        catch(err){
+        catch (err) {
             res.status(500).json({ message: err.message });
         }
     }
