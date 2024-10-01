@@ -3,7 +3,8 @@ const UserService = require('./UserService');
 class PrintService {
     AcceptFile = async (data) => {
         try {
-            const acceptedDocument = await UserService.fetchAcceptedDocument();
+            const result1 = await UserService.fetchDocumentAndPrinterInfo();
+            const acceptedDocument = result1.acceptedDocuments;
             const fileType = data.loai_tep;
             return acceptedDocument.some(doc => doc.loai_tep === fileType);
         }
@@ -13,9 +14,14 @@ class PrintService {
     }
     createPrintOrder = async (data, id) => {
         try {
+            const ten_tep = data.ten_tep;
+            const loai_tep = data.loai_tep;
+            const ma_tep = String(Date.now());
+            await db.execute('INSERT INTO tep (ma_tep, ten_tep, loai_tep) VALUES (?, ?, ?)', [ma_tep, ten_tep, loai_tep]);
+            await db.execute('INSERT INTO so_huu (id, ma_tep) VALUES (?, ?)', [id, ma_tep]);
+
             const ma_don_in = String(Date.now());
             const ma_may_in = data.ma_may_in;
-            const ma_tep = data.ma_tep;
             const so_ban_in = data.so_ban_in;
             const so_mat = data.so_mat;
             const kich_thuoc = data.kich_thuoc;

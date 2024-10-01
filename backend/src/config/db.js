@@ -4,7 +4,7 @@ require('dotenv').config();
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "Vnpt@123",
+    password: "mydatabase",
     database: "hcmut_ssps"
 }).promise();
 
