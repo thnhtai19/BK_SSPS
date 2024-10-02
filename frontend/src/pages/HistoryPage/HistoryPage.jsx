@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Table, DatePicker, Breadcrumb, Input, Row, Col } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import axios from 'axios';
 
 const { Search } = Input;
 
@@ -12,6 +13,21 @@ const HistoryPage = () => {
 	const [endDate, setEndDate] = useState(null);
 	const [filteredChartData, setFilteredChartData] = useState([]);
 	const [searchValue, setSearchValue] = useState('');
+	const [datas, setdatas] = useState([]);
+
+
+	const apiUrl = process.env.REACT_APP_API_URL;
+
+	useEffect(() => {
+	  // Gọi API từ Node.js server
+	  axios.get(apiUrl+'spso//getAllPrintOrder')
+		.then(response => {
+			setdatas(response.data);
+		})
+		.catch(error => {
+		  console.error('Lỗi khi lấy dữ liệu:', error);
+		});
+	}, []);
 
 	const handlePageSizeChange = (value) => {
 		setPageSize(value);
@@ -78,17 +94,17 @@ const HistoryPage = () => {
 		},
 	];
 
-	const data = Array.from({ length: 10 }).map((_, i) => ({
-		key: i,
-		id: `212484${i}`,
-		printerId: `908${i}`,
-		document: `Document_${i}.pdf`,
-		startTime: `1${i}-09-2024 09:${i}:00`,
-		endTime: `1${i}-09-2024 09:${i + 1}:42`,
-		size: i % 2 === 0 ? 'A4' : 'A3',
-		pages: i * 5 + 10,
-		status: i % 3 === 0 ? 'Hoàn tất' : i % 3 === 1 ? 'Đang chờ in' : 'Đã hủy',
-	}));
+	// const data = Array.from({ length: 10 }).map((_, i) => ({
+	// 	key: i,
+	// 	id: `212484${i}`,
+	// 	printerId: `908${i}`,
+	// 	document: `Document_${i}.pdf`,
+	// 	startTime: `1${i}-09-2024 09:${i}:00`,
+	// 	endTime: `1${i}-09-2024 09:${i + 1}:42`,
+	// 	size: i % 2 === 0 ? 'A4' : 'A3',
+	// 	pages: i * 5 + 10,
+	// 	status: i % 3 === 0 ? 'Hoàn tất' : i % 3 === 1 ? 'Đang chờ in' : 'Đã hủy',
+	// }));
 
 	const chartData = [
 		{ date: '10-07-2024', A3: 180, A4: 100 },
@@ -128,7 +144,7 @@ const HistoryPage = () => {
 		setSearchValue(value);
 	};
 
-	const filteredData = data.filter((item) => item.document.toLowerCase().includes(searchValue.toLowerCase()));
+	const filteredData = datas.filter((item) => item.document.toLowerCase().includes(searchValue.toLowerCase()));
 
 	return (
 		<div className='p-2 min-h-screen ml-2'>
@@ -199,3 +215,5 @@ const HistoryPage = () => {
 };
 
 export default HistoryPage;
+
+
