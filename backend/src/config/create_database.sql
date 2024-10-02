@@ -119,6 +119,7 @@ create table don_in_gom_tep (
 	so_ban_in	int not null default 1,
 	so_mat		int not null check (so_mat in (1, 2)),
 	kich_thuoc	enum('A3', 'A4'),
+    so_trang    varchar(50) not null,
 -- 	trang_bat_dau	int not null default 1,
 -- 	trang_ket_thuc 	int not null,
     primary key(ma_don_in, ma_tep),
