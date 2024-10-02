@@ -1,19 +1,19 @@
 const { message } = require('antd');
-const UserService = require('../services/UserService')
+const SPSOService = require('../services/SPSOService')
 
-class UserController {
-    diary = async (req, res) => {
+class SPSOController {
+    updateStatus = async (req, res) => {
         try {
-            const result = await UserService.diary(req);
+            const result = await SPSOService.updateStatus(req.body, req);
             return res.status(200).send(result);
         } catch(err) {
             return res.status(200).json({status: false, error: err});
         }
     }
 
-    history_buying = async (req, res) => {
+    student_manager = async (req, res) => {
         try {
-            const result = await UserService.history_buying(req);
+            const result = await SPSOService.student_manager(req);
             return res.status(200).send(result);
         } catch(err) {
             return res.status(200).json({status: false, error: err});
@@ -21,4 +21,4 @@ class UserController {
     }
 }
 
-module.exports = new UserController
+module.exports = new SPSOController

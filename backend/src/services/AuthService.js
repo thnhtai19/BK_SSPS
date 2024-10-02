@@ -76,33 +76,37 @@ class AuthService {
                     resolve({ status: false, message: "Mật khẩu sai" });
                     return;
                 }
+                if (user.role == 'SV') {
+                    const [sinh_vien] = await db.query('SELECT * FROM sinh_vien WHERE id = ?', [user.id]);
+                    const SV = sinh_vien[0];
+                    if (SV.trang_thai == 0) {
+                        resolve({ status: false, message: "Tài khoản đã bị cấm" });
+                        return;   
+                    }
+                }
                 fetch("https://api.ipify.org?format=json")
                 .then(response => response.json())
                 .then(async data => {
                     const IP = data.ip;
-                    const [sinh_vien] = await db.query('SELECT * FROM sinh_vien WHERE id = ?', [user.id]);
-                    const SV = sinh_vien[0];
-                    if (SV.trang_thai == 1) {
-                        req.session.user = {
-                            id: user.id,
-                            name: user.ten,
+                    req.session.user = {
+                        id: user.id,
+                        name: user.ten,
+                        email: user.email,
+                        role: user.role
+                    };
+                    const thoi_gian = supportFunction.startTime();
+                    const [result] = await db.query(
+                        'INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)', 
+                        [user.id, `Đã đăng nhập tài khoản IP: ${IP}`, thoi_gian]
+                    );
+                    if (result.affectedRows === 1) {
+                        resolve({
+                            status: true,
+                            name: user.name,
                             email: user.email,
-                        };
-                        const thoi_gian = supportFunction.startTime();
-                        const [result] = await db.query(
-                            'INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)', 
-                            [user.id, `Đã đăng nhập tài khoản IP: ${IP}`, thoi_gian]
-                        );
-                        if (result.affectedRows === 1) {
-                            resolve({
-                                status: true,
-                                name: user.name,
-                                email: user.email,
-                            });
-                        } 
-                        else resolve({ status: false, message: "Không thể lưu IP" });
+                        });
                     } 
-                    else resolve({ status: false, message: "Tài khoản đã bị ban" });
+                    else resolve({ status: false, message: "Không thể lưu IP" });
                 });
             } 
             catch (error) {
