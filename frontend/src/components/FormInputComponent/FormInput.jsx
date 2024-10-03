@@ -13,7 +13,8 @@ const FormInput = ({ID, Type, Text, Placeholder, initialValue}) =>{
 				<label htmlFor={ID} className="text-gray-700 mb-1 font-medium">{Text}</label>
 				<input 
 					id={ID}
-					type={Type} 
+					type={Type}
+					{...(Type === 'number' ? { min: "1", step: "1" } : {})}  
 					value={inputValue}
 					placeholder={Placeholder}
 					onChange={handleInputChange}
