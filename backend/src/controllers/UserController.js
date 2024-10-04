@@ -56,20 +56,6 @@ class UserController {
             res.status(500).json({ message: err.message });
         }
     }
-    uploadDocument = async(req, res) => {
-        try{
-            if (!req.session.user) {
-                return res.status(401).json({ message: 'Chưa xác thực thông tin người dùng' });
-            }
-            const data = req.body;
-            const id = req.session.user.id;
-            await UserService.uploadFile(data, id);
-            res.json({message: 'Tải lên file thành công!'});
-        }
-        catch(err){
-            res.status(500).json({ message: err.message });
-        }
-    }
     Buy = async(req, res) => {
         try{
             if(!req.session.user) {
