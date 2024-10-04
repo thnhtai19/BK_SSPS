@@ -35,7 +35,7 @@ create table sinh_vien (
 );
 
 create table don_mua (
-	  ma_don_mua 	varchar(255) not null,
+	ma_don_mua 	varchar(50) not null,
     so_trang 	int not null,
     thoi_gian	date not null,
     trang_thai	bool not null default false, /*Chua thanh toan*/
@@ -45,7 +45,7 @@ create table don_mua (
 );
 
 create table may_in (
-	  ma_may_in	varchar(255) not null,
+	ma_may_in	varchar(50) not null,
     hang 		varchar(50) not null default 'Canon',
     trang_thai_may_in	varchar(50) not null default true,
     doi			varchar(50) not null,
@@ -58,7 +58,7 @@ create table may_in (
 );
 
 create table don_in (
-	  ma_don_in	varchar(255) not null,
+	ma_don_in	varchar(50) not null,
     trang_thai_don_in	boolean not null default false,
     primary key(ma_don_in)
 );
@@ -94,6 +94,8 @@ create table tep (
 	ma_tep		varchar(50) not null,
     ten_tep		varchar(50) not null,
     loai_tep	varchar(50) not null,
+    duong_dan   varchar(255) not null,
+    so_trang    int not null,
 	primary key(ma_tep)
 );
 
@@ -114,11 +116,12 @@ create table xac_nhan (		/* SSPO xac nhan Don in*/
 );
 
 create table don_in_gom_tep (
-	ma_don_in	varchar(255) not null,
-	ma_tep		varchar(255) not null,
+	ma_don_in	varchar(50) not null,
+	ma_tep		varchar(50) not null,
 	so_ban_in	int not null default 1,
 	so_mat		int not null check (so_mat in (1, 2)),
-	kich_thuoc	enum('A3', 'A4'),
+    so_trang_in int not null,
+	kich_thuoc	enum('A3', 'A4'),   
 -- 	trang_bat_dau	int not null default 1,
 -- 	trang_ket_thuc 	int not null,
     primary key(ma_don_in, ma_tep),

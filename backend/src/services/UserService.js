@@ -138,33 +138,16 @@ class UserService {
 
         return jsondata;
     }
-
-    getAllPrintOrder = async () => {
+    getPrintOrder = async (id) => {
         try {
             const [result] = await db.execute(`
-                SELECT * 
-                FROM don_in_gom_tep dt 
-                JOIN in_tai_lieu ON dt.ma_don_in = in_tai_lieu.ma_don_in`);
-            const formattedResult = result.map(record => {
-                return {
-                    ...record,
-                    tg_bat_dau: support.formatDateTime(record.tg_bat_dau),
-                    tg_ket_thuc: support.formatDateTime(record.tg_ket_thuc)
-                };
-            });
-            
-            return formattedResult;
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    getPrintOrderByStudent = async (id) => {
-        try {
-            const [result] = await db.execute(`
-                SELECT * 
-                FROM don_in_gom_tep dt 
-                JOIN in_tai_lieu ON dt.ma_don_in = in_tai_lieu.ma_don_in
+                SELECT d.ma_don_in,d.trang_thai_don_in, mi.ten_may, t.ten_tep, t.duong_dan, 
+                       itl.tg_bat_dau, itl.tg_ket_thuc, dt.kich_thuoc, dt.so_trang_in
+                FROM don_in d 
+                left join don_in_gom_tep dt on d.ma_don_in = dt.ma_don_in
+                left join in_tai_lieu itl on d.ma_don_in = itl.ma_don_in
+                left join may_in mi on itl.ma_may_in = mi.ma_may_in
+                left join tep t on dt.ma_tep = t.ma_tep
                 WHERE id = ?`, [id]);
             const formattedResult = result.map(record => {
                 return {
