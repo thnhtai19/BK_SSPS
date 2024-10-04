@@ -36,15 +36,8 @@ class UserController {
                 return res.status(401).json({ message: 'Chưa xác thực thông tin người dùng' });
             }          
             const id = req.session.user.id;
-            const role = req.session.user.role;
-            if(role === 'SPSO'){
-                const result = await UserService.getAllPrintOrder();
-                res.json(result);
-            }
-            else{
-                const result = await UserService.getPrintOrderByStudent(id);
-                res.json(result);
-            }
+            const result = await UserService.getPrintOrder(id);
+            res.json(result);
         }
         catch(err){
             res.status(500).json({ message: err.message });
