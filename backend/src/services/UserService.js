@@ -23,7 +23,28 @@ class UserService {
                 }
                 resolve({ status: true, message: result });
             } 
-            else resolve({ status: false, message: 'Người dùng chưa đăng nhập' });
+            else reject({ status: false, message: 'Người dùng chưa đăng nhập' });
+        });
+    }
+
+    history_buying = async (req) => {
+        return new Promise(async (resolve, reject) => {
+            if (req.session.user) {
+                const result = [];
+                const [don_mua] = await db.query('SELECT * FROM don_mua WHERE id = ?', [req.session.user.id]);
+                if (don_mua.length > 0) {
+                    don_mua.forEach(don => {
+                        result.push({
+                            ID: don.ma_don_mua,
+                            thoi_gian: don.thoi_gian,
+                            so_trang: don.so_trang,
+                            trang_thai: don.trang_thai
+                        });
+                    })
+                }
+                resolve({ status: true, message: result });
+            } 
+            else reject({ status: false, message: 'Người dùng chưa đăng nhập' });
         });
     }
     getUserById = async(Id) => {
@@ -107,7 +128,6 @@ class UserService {
                     }
                 }
             });
-
             const json = {
                 date: formatDate(new Date(i)),
                 A3Pages: A3,

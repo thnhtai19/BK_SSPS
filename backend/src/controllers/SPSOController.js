@@ -1,4 +1,6 @@
-const SPSOService = require('../services/SPSOService');
+const { message } = require('antd');
+const SPSOService = require('../services/SPSOService')
+
 class SPSOController {
     getAllPrinter = async (req, res) => {
         try {
@@ -61,6 +63,24 @@ class SPSOController {
         }
         catch (err) {
             res.status(400).json(err);
+        }
+    }
+  
+    updateStatus = async (req, res) => {
+        try {
+            const result = await SPSOService.updateStatus(req.body, req);
+            return res.status(200).send(result);
+        } catch(err) {
+            return res.status(200).json({status: false, error: err});
+        }
+    }
+
+    student_manager = async (req, res) => {
+        try {
+            const result = await SPSOService.student_manager(req);
+            return res.status(200).send(result);
+        } catch(err) {
+            return res.status(200).json({status: false, error: err});
         }
     }
 }

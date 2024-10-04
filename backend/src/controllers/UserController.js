@@ -103,6 +103,15 @@ class UserController {
             return res.status(200).json({status: false, error: err});
         }
     }
+
+    history_buying = async (req, res) => {
+        try {
+            const result = await UserService.history_buying(req);
+            return res.status(200).send(result);
+        } catch(err) {
+            return res.status(200).json({status: false, error: err});
+        }
+    }
 }
 
 module.exports = new UserController
