@@ -73,7 +73,7 @@ const BuyPage = () =>{
                     />
                     <FormInput 
                       ID={"amount-to-buy"}
-                      Type={"password"}
+                      Type={"number"}
                       Text={"Số trang mua"}
                       Placeholder={"Nhập số trang cần mua"}
                     />
