@@ -23,52 +23,77 @@ class UserService {
                 }
                 resolve({ status: true, message: result });
             } 
-            else resolve({ status: false, message: 'Người dùng chưa đăng nhập' });
+            else reject({ status: false, message: 'Người dùng chưa đăng nhập' });
+        });
+    }
+
+    history_buying = async (req) => {
+        return new Promise(async (resolve, reject) => {
+            if (req.session.user) {
+                const result = [];
+                const [don_mua] = await db.query('SELECT * FROM don_mua WHERE id = ?', [req.session.user.id]);
+                if (don_mua.length > 0) {
+                    don_mua.forEach(don => {
+                        result.push({
+                            ID: don.ma_don_mua,
+                            thoi_gian: don.thoi_gian,
+                            so_trang: don.so_trang,
+                            trang_thai: don.trang_thai
+                        });
+                    })
+                }
+                resolve({ status: true, message: result });
+            } 
+            else reject({ status: false, message: 'Người dùng chưa đăng nhập' });
         });
     }
     getUserById = async(Id) => {
         try{
-            const [result, ] = await db.execute(`SELECT id, 
-                                                        ten, 
-                                                        DATE_FORMAT(ngay_dk, '%d-%m-%Y') as ngay_dk,
-                                                        email,
-                                                        role
-                                                        FROM user WHERE id = ?`, [Id]);
+            const [result, ] = await db.execute(`SELECT user.id, 
+                                                        user.ten, 
+                                                        ngay_dk,
+                                                        user.email,
+                                                        user.role,
+                                                        ifnull(so_giay_con, 0) as so_giay_con                                                                     
+                FROM user left join sinh_vien 
+                on user.id = sinh_vien.id and user.role = 'SV'
+                WHERE user.id = ?`, [Id]); 
             return result[0];
         }
         catch(err){
             throw err;
         }
     }
-    fetchAcceptedDocument = async () => {
+    fetchDocumentAndPrinterInfo = async () => {
         try {
-            const [result, ] = await db.execute(`
-                SELECT loai_tep
-                FROM he_thong h 
-                LEFT JOIN loai_tep_chap_nhan l 
-                ON h.ma_hoc_ki = l.ma_hoc_ki
-                WHERE h.ngay_cap_nhat = (
-                    SELECT h.ngay_cap_nhat
-                    FROM he_thong h
-                    ORDER BY ABS(TIMESTAMPDIFF(SECOND, h.ngay_cap_nhat, NOW())) ASC
-                    LIMIT 1
-                );`);
-            return result;
+            const [acceptedDocuments, activePrinters] = await Promise.all([
+                db.execute(`
+                    SELECT loai_tep
+                    FROM he_thong h 
+                    LEFT JOIN loai_tep_chap_nhan l 
+                    ON h.ma_hoc_ki = l.ma_hoc_ki
+                    WHERE h.ngay_cap_nhat = (
+                        SELECT h.ngay_cap_nhat
+                        FROM he_thong h
+                        ORDER BY ABS(TIMESTAMPDIFF(SECOND, h.ngay_cap_nhat, NOW())) ASC
+                        LIMIT 1
+                    );
+                `),
+                db.execute(`
+                    SELECT ma_may_in, ten_may 
+                    FROM may_in 
+                    WHERE trang_thai_may_in = 'true';
+                `)
+            ]);
+    
+            return {
+                acceptedDocuments: acceptedDocuments[0], 
+                activePrinters: activePrinters[0]        
+            };
         } catch (err) {
             throw err;
         }
-    }
-    fetchActivePrinter = async () => {
-        try {
-            const [result, ] = await db.execute(`
-                SELECT ma_may_in, ten_may 
-                FROM may_in 
-                WHERE trang_thai_may_in = 'true';`);
-            return result;
-        } catch (err) {
-            throw err;
-        }
-    }
+    };
     NoPagesEachDay = async (id) => {
         const [result1] = await db.execute(`
             SELECT DATE(thoi_gian) as create_day 
@@ -103,7 +128,6 @@ class UserService {
                     }
                 }
             });
-
             const json = {
                 date: formatDate(new Date(i)),
                 A3Pages: A3,
@@ -114,33 +138,16 @@ class UserService {
 
         return jsondata;
     }
-
-    getAllPrintOrder = async () => {
+    getPrintOrder = async (id) => {
         try {
             const [result] = await db.execute(`
-                SELECT * 
-                FROM don_in_gom_tep dt 
-                JOIN in_tai_lieu ON dt.ma_don_in = in_tai_lieu.ma_don_in`);
-            const formattedResult = result.map(record => {
-                return {
-                    ...record,
-                    tg_bat_dau: support.formatDateTime(record.tg_bat_dau),
-                    tg_ket_thuc: support.formatDateTime(record.tg_ket_thuc)
-                };
-            });
-            
-            return formattedResult;
-        } catch (err) {
-            throw err;
-        }
-    }
-
-    getPrintOrderByStudent = async (id) => {
-        try {
-            const [result] = await db.execute(`
-                SELECT * 
-                FROM don_in_gom_tep dt 
-                JOIN in_tai_lieu ON dt.ma_don_in = in_tai_lieu.ma_don_in
+                SELECT d.ma_don_in,d.trang_thai_don_in, mi.ten_may, t.ten_tep, t.duong_dan, 
+                       itl.tg_bat_dau, itl.tg_ket_thuc, dt.kich_thuoc, dt.so_trang_in
+                FROM don_in d 
+                left join don_in_gom_tep dt on d.ma_don_in = dt.ma_don_in
+                left join in_tai_lieu itl on d.ma_don_in = itl.ma_don_in
+                left join may_in mi on itl.ma_may_in = mi.ma_may_in
+                left join tep t on dt.ma_tep = t.ma_tep
                 WHERE id = ?`, [id]);
             const formattedResult = result.map(record => {
                 return {
@@ -151,17 +158,6 @@ class UserService {
             });
         
             return formattedResult;
-        } catch (err) {
-            throw err;
-        }
-    }
-    uploadFile = async (data, id) => {
-        try {
-            const ten_tep = data.ten_tep;
-            const loai_tep = data.loai_tep;
-            const ma_tep = String(Date.now());
-            await db.execute('INSERT INTO tep (ma_tep, ten_tep, loai_tep) VALUES (?, ?, ?)', [ma_tep, ten_tep, loai_tep]);
-            await db.execute('INSERT INTO so_huu (id, ma_tep) VALUES (?, ?)', [id, ma_tep]);
         } catch (err) {
             throw err;
         }
