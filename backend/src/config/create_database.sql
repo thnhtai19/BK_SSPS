@@ -38,7 +38,6 @@ create table don_mua (
 	ma_don_mua 	varchar(50) not null,
     so_trang 	int not null,
     thoi_gian	date not null,
-    trang_thai	bool not null default false, /*Chua thanh toan*/
     id			varchar(50) not null,
     primary key(id, ma_don_mua),
     foreign key(id) references sinh_vien(id)    
