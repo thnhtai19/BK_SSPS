@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, DatePicker, Breadcrumb, Input, Row, Col } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
@@ -18,15 +18,19 @@ const HistoryPage = () => {
 
 	const apiUrl = process.env.REACT_APP_API_URL;
 
+	const fetchApiHistoryPrintOrder = () => {
+		 // Gọi API từ Node.js server
+		 axios.get(apiUrl+'user/printOrder')
+		 .then(response => {
+			 setdatas(response.data);
+		 })
+		 .catch(error => {
+		   console.error('Lỗi khi lấy dữ liệu:', error);
+		 });
+	}
+
 	useEffect(() => {
-	  // Gọi API từ Node.js server
-	  axios.get(apiUrl+'spso//getAllPrintOrder')
-		.then(response => {
-			setdatas(response.data);
-		})
-		.catch(error => {
-		  console.error('Lỗi khi lấy dữ liệu:', error);
-		});
+		fetchApiHistoryPrintOrder();
 	}, []);
 
 	const handlePageSizeChange = (value) => {
@@ -43,23 +47,23 @@ const HistoryPage = () => {
 	const columns = [
 		{
 			title: 'ID',
-			dataIndex: 'id',
+			dataIndex: 'ma_don_in',
 		},
 		{
-			title: 'ID máy in',
-			dataIndex: 'printerId',
+			title: 'Máy in',
+			dataIndex: 'ten_may',
 		},
 		{
 			title: 'Tài liệu',
-			dataIndex: 'document',
+			dataIndex: 'ten_tep',
 		},
 		{
 			title: 'Thời gian bắt đầu',
-			dataIndex: 'startTime',
+			dataIndex: 'tg_bat_dau',
 		},
 		{
 			title: 'Thời gian kết thúc',
-			dataIndex: 'endTime',
+			dataIndex: 'tg_ket_thuc',
 			render: (endTime, record) => {
 				if (record.status === 'Đang chờ in') {
 					return '---';
@@ -69,42 +73,32 @@ const HistoryPage = () => {
 		},
 		{
 			title: 'Kích thước',
-			dataIndex: 'size',
+			dataIndex: 'kich_thuoc',
 		},
 		{
 			title: 'Số trang',
-			dataIndex: 'pages',
+			dataIndex: 'so_trang_in',
 		},
 		{
 			title: 'Trạng thái',
-			dataIndex: 'status',
+			dataIndex: 'trang_thai_don_in',
 			render: (status) => (
 				<button
 					style={{
-						backgroundColor: status === 'Hoàn tất' ? '#bfffd8' : status === 'Đang chờ in' ? '#f7f9fb' : '#ffd4d4',
-						color: status === 'Hoàn tất' ? '#00750c' : status === 'Đang chờ in' ? '#444444' : '#c40000', // Màu chữ đỏ đậm cho "Đã hủy"
+						backgroundColor: status === 0 ? '#bfffd8' : status === 1 ? '#f7f9fb' : '#ffd4d4',
+						color: status === 0 ? '#00750c' : status === 1 ? '#444444' : '#c40000', // Màu chữ đỏ đậm cho "Đã hủy"
 						borderRadius: '5px',
 						padding: '5px 10px',
-						border: 'none',
+						border: 'none',	
 					}}
 				>
-					{status === 'Hoàn tất' ? 'Hoàn tất in' : status === 'Đang chờ in' ? 'Đang chờ in' : 'Đã hủy'}
+					{status === 0 ? 'Hoàn tất' : status === 1 ? 'Đang chờ in' : 'Đã hủy'}
 				</button>
 			),
 		},
 	];
 
-	// const data = Array.from({ length: 10 }).map((_, i) => ({
-	// 	key: i,
-	// 	id: `212484${i}`,
-	// 	printerId: `908${i}`,
-	// 	document: `Document_${i}.pdf`,
-	// 	startTime: `1${i}-09-2024 09:${i}:00`,
-	// 	endTime: `1${i}-09-2024 09:${i + 1}:42`,
-	// 	size: i % 2 === 0 ? 'A4' : 'A3',
-	// 	pages: i * 5 + 10,
-	// 	status: i % 3 === 0 ? 'Hoàn tất' : i % 3 === 1 ? 'Đang chờ in' : 'Đã hủy',
-	// }));
+
 
 	const chartData = [
 		{ date: '10-07-2024', A3: 180, A4: 100 },
@@ -144,7 +138,7 @@ const HistoryPage = () => {
 		setSearchValue(value);
 	};
 
-	const filteredData = datas.filter((item) => item.document.toLowerCase().includes(searchValue.toLowerCase()));
+	const filteredData = datas.filter((item) => item.ten_tep.toLowerCase().includes(searchValue.toLowerCase()));
 
 	return (
 		<div className='p-2 min-h-screen ml-2'>
