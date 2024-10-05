@@ -15,7 +15,7 @@ class PaymentService {
             buyerName, buyerEmail, cancelUrl, returnUrl 
         } = info;
         const expiredAt = Math.floor(Date.now() / 1000) + 15 * 60;
-        const [rows] = await db.execute(`SELECT gia FROM he_thong LIMIT 1`);
+        const [rows] = await db.execute(`SELECT gia FROM he_thong ORDER BY ma_hoc_ki DESC LIMIT 1`);
         let gia = 0;
         if (rows.length > 0) {
             gia = rows[0].gia;
@@ -34,7 +34,6 @@ class PaymentService {
         return new Promise((resolve, reject) => {
             payos.createPaymentLink(data)
                 .then(response => {
-                    console.log(response)
                     resolve(response);
                 })
                 .catch(error => {
