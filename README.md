@@ -16,6 +16,7 @@ npm i bcryptjs
 npm i express-session
 npm install tailwindcss postcss autoprefixer
 npm i react-apexcharts
+npm i @payos/node
 ```
 
 ## Cài Đặt node_modules
