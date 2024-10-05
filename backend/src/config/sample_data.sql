@@ -90,18 +90,18 @@ insert into don_in (ma_don_in, trang_thai_don_in) values -- 0-Hoàn tất; 1-Đa
 
 INSERT INTO in_tai_lieu (id, ma_may_in, ma_don_in, tg_bat_dau, tg_ket_thuc) VALUES 
 ('5', '1', '1', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '1', '2', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '1', '3', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '1', '4', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '2', '5', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '2', '6', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '2', '7', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '3', '8', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '4', '9', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '5', '10', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '6', '11', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '6', '12', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '6', '13', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'));
+('5', '1', '2', '2024-10-02 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('5', '1', '3', '2024-10-03 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('5', '1', '4', '2024-10-04 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('5', '2', '5', '2024-10-05 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('5', '2', '6', '2024-10-05 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('5', '2', '7', '2024-10-06 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('5', '3', '8', '2024-10-06 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('5', '4', '9', '2024-10-06 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('6', '5', '10', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('6', '6', '11', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('6', '6', '12', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('6', '6', '13', '2024-10-08 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'));
 
 insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat) values
 ('223', 200, 50, '2024-10-12'),
@@ -129,14 +129,14 @@ insert into tep (ma_tep, ten_tep, loai_tep) values
 ('8', 'sample1.txt', '.txt');
 
 insert into so_huu (id, ma_tep) values
-('1', '1'),
-('1', '2'),
-('1', '3'),
-('1', '4'),
-('1', '5'),
-('2', '6'),
-('3', '7'),
-('3', '8');
+('5', '1'),
+('5', '2'),
+('5', '3'),
+('5', '4'),
+('6', '5'),
+('7', '6'),
+('8', '7'),
+('8', '8');
 
 insert into xac_nhan (id, ma_don_in) values 
 ('1', '1'),
@@ -151,16 +151,16 @@ insert into don_in_gom_tep (ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so
 ('1', '2', 2, 1, 'A4', '1-15'),
 ('2', '3', 3, 1, 'A4', '1-15'),
 ('2', '4', 3, 2, 'A4', '1-15'),
-('3', '5', 4, 2, 'A4', '1-15'),
-('4', '6', 4, 2, 'A4', '9-15'),
-('5', '7', 4, 2, 'A4', '10-15'),
-('6', '8', 4, 2, 'A4', '10-15');
+('3', '4', 4, 2, 'A4', '1-15'),
+('4', '4', 4, 2, 'A4', '9-15'),
+('5', '4', 4, 2, 'A4', '10-15'),
+('6', '4', 4, 2, 'A4', '10-15');
 
-insert into cau_hinh (id, ma_hoc_ki, ghi_chu) values
-('1', '233', 'Test API'),
-('1', '233', 'Test API'),
-('1', '241', 'Test API'),
-('2', '241', 'Test API');
+insert into cau_hinh (id, uid, ma_hoc_ki, ghi_chu) values
+('1', '1', '233', 'Test API'),
+('2', '1', '233', 'Test API'),
+('3', '1', '241', 'Test API'),
+('4', '2', '241', 'Test API');
 
 
 
