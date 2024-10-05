@@ -1,22 +1,6 @@
 ## Cài Đặt Các Phụ Thuộc
 ```bash
-npm i react-scripts
-npm i concurrently
-npm i web-vitals
-npm i nodemon
-npm i cors
-npm i react-helmet-async
-npm i axios
-npm i slick-carousel react-slick
-npm i antd
-npm i styled-components
-npm i mysql2
-npm i cookie-parser
-npm i bcryptjs
-npm i express-session
-npm install tailwindcss postcss autoprefixer
-npm i react-apexcharts
-npm i @payos/node
+npm i react-scripts concurrently web-vitals nodemon cors react-helmet-async axios slick-carousel react-slick antd styled-components mysql2 cookie-parser bcryptjs express-session tailwindcss postcss autoprefixer react-apexcharts @payos/node
 ```
 
 ## Cài Đặt node_modules

@@ -2,7 +2,7 @@ import check from '../../assets/check.png';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { message, Spin } from 'antd';
+import { Spin } from 'antd';
 
 const BuySuccessPage = () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -35,29 +35,21 @@ const BuySuccessPage = () => {
           }else if(res.data && res.data.status === 'PAID') {
             // cập nhật đơn mua
             try {
-              const response = await axios.post(`${apiUrl}user/buy`, {
+              await axios.post(`${apiUrl}user/buy`, {
                 pagesNumber: pageAmount,
+                purchaseID: orderId
               }, {
                 headers: {
                   'Content-Type': 'application/json',
                 },
                 withCredentials: true,
               });
-              if(response.data.message !== "Mua thành công!"){
-                message.error("Đã xảy ra lỗi hãy liên hệ admin")
-                window.location.href = '/buy/error'
-                return
-              }
             } catch (error) {
-              message.error("Đã xảy ra lỗi hãy liên hệ admin")
-              window.location.href = '/buy/error'
               return
             }
           }
           setLoading(false);
         } catch (error) {
-          message.error("Đã xảy ra lỗi hãy liên hệ admin")
-          window.location.href = '/buy/error'
           return
         }
       };
