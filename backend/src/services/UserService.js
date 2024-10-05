@@ -159,5 +159,26 @@ class UserService {
             throw err;
         }
     }
+
+    studentHomepage = async (id) => {
+        try {
+            const [result] = await db.execute(`
+                SELECT * 
+                FROM don_in_gom_tep dt 
+                JOIN in_tai_lieu ON dt.ma_don_in = in_tai_lieu.ma_don_in
+                WHERE id = ?`, [id]);
+            const formattedResult = result.map(record => {
+                return {
+                    ...record,
+                    tg_bat_dau: support.formatDateTime(record.tg_bat_dau),
+                    tg_ket_thuc: support.formatDateTime(record.tg_ket_thuc)
+                };
+            });
+        
+            return formattedResult;
+        } catch (err) {
+            throw err;
+        }
+    }
 }
 module.exports = new UserService
