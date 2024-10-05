@@ -10,7 +10,8 @@ const session = require('express-session');
 app.use(cors({
   origin: "http://localhost:3000",
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -20,7 +21,10 @@ app.use(session({
   secret: 'abcxyz',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } 
+  cookie: { 
+    secure: false, 
+    maxAge: 30 * 24 * 60 * 60 * 1000
+  } 
 }));
 
 routes(app);

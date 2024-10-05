@@ -68,7 +68,7 @@ create table in_tai_lieu (
     ma_may_in	varchar(50) not null,
     ma_don_in	varchar(50) not null,
     tg_bat_dau 	datetime not null,
-    gt_ket_thuc datetime not null,
+    tg_ket_thuc datetime not null,
     primary key(id, ma_may_in, ma_don_in),
     foreign key(id) references sinh_vien(id),
     foreign key(ma_may_in) references may_in(ma_may_in),
@@ -94,6 +94,8 @@ create table tep (
 	ma_tep		varchar(50) not null,
     ten_tep		varchar(50) not null,
     loai_tep	varchar(50) not null,
+    duong_dan   varchar(255) not null,
+    so_trang    int not null,
 	primary key(ma_tep)
 );
 
@@ -118,7 +120,8 @@ create table don_in_gom_tep (
 	ma_tep		varchar(50) not null,
 	so_ban_in	int not null default 1,
 	so_mat		int not null check (so_mat in (1, 2)),
-	kich_thuoc	enum('A3', 'A4'),
+    so_trang_in int not null,
+	kich_thuoc	enum('A3', 'A4'),   
 -- 	trang_bat_dau	int not null default 1,
 -- 	trang_ket_thuc 	int not null,
     primary key(ma_don_in, ma_tep),

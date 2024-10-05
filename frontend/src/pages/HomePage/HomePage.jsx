@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Breadcrumb } from 'antd';
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 const HomePage = () => {
@@ -13,16 +14,14 @@ const HomePage = () => {
 	];
 
 	return (
-		<div className='p-4 bg-gray-100 min-h-screen'>
+		<div className='p-4 min-h-screen'>
 			<div className='text-sm mb-5'>
-				<Link to='/' className='text-black no-underline transition-colors duration-300 hover:text-gray-500'>
-					bkssps.vn
-				</Link>{' '}
-				&gt;
-				<Link to='/home' className='text-black no-underline transition-colors duration-300 hover:text-gray-500'>
-					{' '}
-					Trang chủ
-				</Link>
+				<Breadcrumb separator='>'>
+					<Breadcrumb.Item>
+						<Link to='/'>bkssps.vn</Link>
+					</Breadcrumb.Item>
+					<Breadcrumb.Item>Trang chủ</Breadcrumb.Item>
+				</Breadcrumb>
 			</div>
 
 			<div className='flex flex-wrap justify-between gap-8 mb-10'>
