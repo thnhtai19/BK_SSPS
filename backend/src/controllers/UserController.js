@@ -18,6 +18,7 @@ class UserController {
             res.status(500).json({ message: 'Lỗi server' });
         }
     }
+
     getDocumentAndPrinterInfo = async (req, res) => {
         try {
             if (!req.session.user) {
@@ -30,6 +31,7 @@ class UserController {
             res.status(500).json({ message: err.message });
         }
     }
+
     getPrintOrder = async(req, res) => {
         try{
             if (!req.session.user) {
@@ -43,6 +45,7 @@ class UserController {
             res.status(500).json({ message: err.message });
         }
     }
+
     getNoPagesEachDay = async(req, res) => {
         try{
             if (!req.session.user) {
@@ -56,6 +59,7 @@ class UserController {
             res.status(500).json({ message: err.message });
         }
     }
+
     Buy = async(req, res) => {
         try{
             if(!req.session.user) {
@@ -74,6 +78,7 @@ class UserController {
             res.status(500).json({message: 'Lỗi server'});
         }
     }
+    
     diary = async (req, res) => {
         try {
             const result = await UserService.diary(req);

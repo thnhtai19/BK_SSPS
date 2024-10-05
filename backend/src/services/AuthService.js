@@ -15,6 +15,11 @@ class AuthService {
                     resolve({ status: false, message: "Email đã được dùng" });
                     return;
                 }
+                const [existingUsersUID] = await db.query('SELECT * FROM user WHERE id = ?', [uid]);
+                if (existingUsersUID.length > 0) { 
+                    resolve({ status: false, message: "Người dùng đã tạo tài khoản" });
+                    return;
+                }
                 if (typeof email === 'object' && email !== null) email = String(email.address);
                 if (typeof email !== 'string' || !email.endsWith('@hcmut.edu.vn')) {
                     resolve({ status: false, message: "Email không đúng định dạng" });
