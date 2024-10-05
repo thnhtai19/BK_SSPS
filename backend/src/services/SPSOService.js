@@ -1,9 +1,9 @@
 const { data } = require('autoprefixer');
 const db = require('../config/db');
 const { message } = require('antd');
-const supportFunction = require('./support');
+const support = require('./support');
 
-class UserService {
+class SPSOService {
     updateStatus = async (data, req) => {
         const { status, id } = data;
         return new Promise(async (resolve, reject) => {
@@ -47,4 +47,4 @@ class UserService {
     }
 }
 
-module.exports = new UserService
+module.exports = new SPSOService

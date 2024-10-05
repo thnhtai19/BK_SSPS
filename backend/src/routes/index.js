@@ -7,7 +7,7 @@ const routes = (app) => {
     app.use('/test', TestRouter);
     app.use('/auth', AuthRouter);
     app.use('/user', UserRouter);
-    app.use('/SPSO', SPSORouter);
+    app.use('/spso', SPSORouter);
 }
 
 module.exports = routes;
