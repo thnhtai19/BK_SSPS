@@ -79,7 +79,7 @@ create table he_thong (
 	ma_hoc_ki	varchar(50) not null,
 	gia 		int not null default 500,
     so_giay_mac_dinh	int not null default 50,
-    ngay_cap_nhat		date not null,
+    ngay_cap_nhat		varchar(50) not null,
     primary key(ma_hoc_ki)
 );
 
