@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, DatePicker, Breadcrumb, Input, Row, Col } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
@@ -14,19 +14,44 @@ const HistoryPage = () => {
 	const [filteredChartData, setFilteredChartData] = useState([]);
 	const [searchValue, setSearchValue] = useState('');
 	const [datas, setdatas] = useState([]);
+	const [chartData, setChartData] = useState([]);
 
 
 	const apiUrl = process.env.REACT_APP_API_URL;
 
 	const fetchApiHistoryPrintOrder = () => {
-		 // Gọi API từ Node.js server
-		 axios.get(apiUrl+'user/printOrder')
-		 .then(response => {
-			 setdatas(response.data);
-		 })
-		 .catch(error => {
-		   console.error('Lỗi khi lấy dữ liệu:', error);
-		 });
+		axios.get(apiUrl + 'user/printOrder')
+			.then(response => {
+				setdatas(response.data);
+				getChartData(response.data);
+			})
+			.catch(error => {
+				console.error('Lỗi khi lấy dữ liệu:', error);
+			});
+	}
+	const getChartData = (data) => {
+		const tempData = [];
+		data.forEach((item) => {
+			const date = item.tg_bat_dau.split(" ")[1]; // Lấy phần ngày từ thời gian bắt đầu
+
+			// Tìm đối tượng có cùng ngày trong kết quả
+			let found = tempData.find((el) => el.date === date);
+
+			if (!found) {
+				// Nếu chưa tồn tại, tạo một đối tượng mới
+				found = { date, A3: 0, A4: 0 };
+				tempData.push(found);
+			}
+
+			// Cập nhật số lượng trang in theo kích thước
+			if (item.kich_thuoc === "A3") {
+				found.A3 += item.so_trang_in;
+			} else if (item.kich_thuoc === "A4") {
+				found.A4 += item.so_trang_in;
+			}
+		});
+
+		setChartData(tempData);
 	}
 
 	useEffect(() => {
@@ -89,25 +114,13 @@ const HistoryPage = () => {
 						color: status === 0 ? '#00750c' : status === 1 ? '#444444' : '#c40000', // Màu chữ đỏ đậm cho "Đã hủy"
 						borderRadius: '5px',
 						padding: '5px 10px',
-						border: 'none',	
+						border: 'none',
 					}}
 				>
 					{status === 0 ? 'Hoàn tất' : status === 1 ? 'Đang chờ in' : 'Đã hủy'}
 				</button>
 			),
 		},
-	];
-
-
-
-	const chartData = [
-		{ date: '10-07-2024', A3: 180, A4: 100 },
-		{ date: '11-07-2024', A3: 160, A4: 80 },
-		{ date: '12-08-2024', A3: 140, A4: 60 },
-		{ date: '13-08-2024', A3: 170, A4: 90 },
-		{ date: '14-09-2024', A3: 150, A4: 70 },
-		{ date: '15-09-2024', A3: 130, A4: 50 },
-		{ date: '16-09-2024', A3: 190, A4: 100 },
 	];
 
 	const handleDateChange = (date, type) => {
@@ -132,7 +145,7 @@ const HistoryPage = () => {
 		} else {
 			setFilteredChartData(chartData);
 		}
-	}, [startDate, endDate]);
+	}, [chartData, startDate, endDate]);
 
 	const handleSearch = (value) => {
 		setSearchValue(value);
