@@ -41,20 +41,20 @@ insert into sinh_vien (id, trang_thai, so_giay_con) values
 ('13', true, 0),
 ('14', true, 0);
 
-insert into don_mua (ma_don_mua, so_trang, tong_tien, thoi_gian, trang_thai, id) values 
-('1', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '5'),
-('2', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '5'),
-('3', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '6'),
-('4', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '6'),
-('5', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '7'),
-('6', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '7'),
-('7', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '7'),
-('8', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '7'),
-('9', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '8'),
-('10', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '9'),
-('11', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '10'),
-('12', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '11'),
-('13', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), true, '12');
+insert into don_mua (ma_don_mua, so_trang, tong_tien, thoi_gian, id) values 
+('1', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '5'),
+('2', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '5'),
+('3', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '6'),
+('4', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '6'),
+('5', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '7'),
+('6', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '7'),
+('7', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '7'),
+('8', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '7'),
+('9', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '8'),
+('10', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '9'),
+('11', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '10'),
+('12', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '11'),
+('13', 20, 40000, DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), '12');
 
 insert into may_in (ma_may_in, hang, trang_thai_may_in, doi, mo_ta, ten_may, co_so, toa, phong) values
 ('1', 'Canon', true, '2020', 'May in xin xo', 'Canon-Express', '1', 'A5', '101'),
@@ -118,15 +118,15 @@ insert into loai_tep_chap_nhan (ma_hoc_ki, loai_tep) values
 ('241', '.txt'),
 ('241', '.ppt');
 
-insert into tep (ma_tep, ten_tep, loai_tep) values
-('1', 'sample1.txt', '.txt'),
-('2', 'sample1.txt', '.txt'),
-('3', 'sample1.txt', '.txt'),
-('4', 'sample1.txt', '.txt'),
-('5', 'sample1.txt', '.txt'),
-('6', 'sample1.txt', '.txt'),
-('7', 'sample1.txt', '.txt'),
-('8', 'sample1.txt', '.txt');
+insert into tep (ma_tep, ten_tep, loai_tep, duong_dan, so_trang) values
+('1', 'sample1.txt', '.txt', './sample1.txt', 1),
+('2', 'sample1.txt', '.txt', './sample2.txt', 1),
+('3', 'sample1.txt', '.txt', './sample3.txt', 1),
+('4', 'sample1.txt', '.txt', './sample4.txt', 1),
+('5', 'sample1.txt', '.txt', './sample5.txt', 1),
+('6', 'sample1.txt', '.txt', './sample6.txt', 1),
+('7', 'sample1.txt', '.txt', './sample7.txt', 1),
+('8', 'sample1.txt', '.txt', './sample8.txt', 1);
 
 insert into so_huu (id, ma_tep) values
 ('5', '1'),
@@ -146,15 +146,15 @@ insert into xac_nhan (id, ma_don_in) values
 ('1', '5'),
 ('1', '6');
 
-insert into don_in_gom_tep (ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang) values
-('1', '1', 2, 1, 'A3', '1-15'),
-('1', '2', 2, 1, 'A4', '1-15'),
-('2', '3', 3, 1, 'A4', '1-15'),
-('2', '4', 3, 2, 'A4', '1-15'),
-('3', '4', 4, 2, 'A4', '1-15'),
-('4', '4', 4, 2, 'A4', '9-15'),
-('5', '4', 4, 2, 'A4', '10-15'),
-('6', '4', 4, 2, 'A4', '10-15');
+insert into don_in_gom_tep (ma_don_in, ma_tep, so_ban_in, so_mat, so_trang_in, kich_thuoc) values
+('1', '1', 2, 1, 5, 'A3'),
+('1', '2', 2, 1, 5, 'A4'),
+('2', '3', 3, 1, 5, 'A4'),
+('2', '4', 3, 2, 5, 'A4'),
+('3', '4', 4, 2, 5, 'A4'),
+('4', '4', 4, 2, 5, 'A4'),
+('5', '4', 4, 2, 5, 'A4'),
+('6', '4', 4, 2, 5, 'A4');
 
 insert into cau_hinh (id, uid, ma_hoc_ki, ghi_chu) values
 ('1', '1', '233', 'Test API'),

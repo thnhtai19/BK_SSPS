@@ -39,7 +39,6 @@ create table don_mua (
     so_trang 	int not null,
     tong_tien   int not null default 0,
     thoi_gian	varchar(50) not null,
-    trang_thai	bool not null default false, /*Chua thanh toan*/
     id			varchar(50) not null,
     primary key(id, ma_don_mua),
     foreign key(id) references sinh_vien(id)    
@@ -95,6 +94,8 @@ create table tep (
 	ma_tep		varchar(50) not null,
     ten_tep		varchar(50) not null,
     loai_tep	varchar(50) not null,
+    duong_dan   varchar(255) not null,
+    so_trang    int not null,
 	primary key(ma_tep)
 );
 
@@ -120,7 +121,7 @@ create table don_in_gom_tep (
 	so_ban_in	int not null default 1,
 	so_mat		int not null check (so_mat in (1, 2)),
 	kich_thuoc	enum('A3', 'A4'),
-    so_trang    varchar(50) not null,
+    so_trang_in    int not null,
 -- 	trang_bat_dau	int not null default 1,
 -- 	trang_ket_thuc 	int not null,
     primary key(ma_don_in, ma_tep),
