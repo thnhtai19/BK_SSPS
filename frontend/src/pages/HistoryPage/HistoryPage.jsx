@@ -13,7 +13,7 @@ const HistoryPage = () => {
 	const [endDate, setEndDate] = useState(null);
 	const [filteredChartData, setFilteredChartData] = useState([]);
 	const [searchValue, setSearchValue] = useState('');
-	const [datas, setdatas] = useState([]);
+	const [data, setdata] = useState([]);
 	const [chartData, setChartData] = useState([]);
 
 
@@ -22,7 +22,7 @@ const HistoryPage = () => {
 	const fetchApiHistoryPrintOrder = () => {
 		axios.get(apiUrl + 'user/printOrder')
 			.then(response => {
-				setdatas(response.data);
+				setdata(response.data);
 				getChartData(response.data);
 			})
 			.catch(error => {
@@ -151,7 +151,7 @@ const HistoryPage = () => {
 		setSearchValue(value);
 	};
 
-	const filteredData = datas.filter((item) => item.ten_tep.toLowerCase().includes(searchValue.toLowerCase()));
+	const filteredData = data.filter((item) => item.ten_tep.toLowerCase().includes(searchValue.toLowerCase()));
 
 	return (
 		<div className='p-2 min-h-screen ml-2'>
