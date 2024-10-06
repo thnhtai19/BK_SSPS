@@ -30,7 +30,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
 
   const handleLogout = async () => {
     try {
-        await axios.post(apiUrl + 'auth/log_out');
+        await axios.post(`${apiUrl}auth/log_out`, {}, { withCredentials: true });
         localStorage.clear();
         window.location.href = '/';
     } catch (error) {
