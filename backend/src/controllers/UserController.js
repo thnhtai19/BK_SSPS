@@ -36,15 +36,8 @@ class UserController {
                 return res.status(401).json({ message: 'Chưa xác thực thông tin người dùng' });
             }          
             const id = req.session.user.id;
-            const role = req.session.user.role;
-            if(role === 'SPSO'){
-                const result = await UserService.getAllPrintOrder();
-                res.json(result);
-            }
-            else{
-                const result = await UserService.getPrintOrderByStudent(id);
-                res.json(result);
-            }
+            const result = await UserService.getPrintOrder(id);
+            res.json(result);
         }
         catch(err){
             res.status(500).json({ message: err.message });
@@ -63,35 +56,26 @@ class UserController {
             res.status(500).json({ message: err.message });
         }
     }
-    uploadDocument = async(req, res) => {
-        try{
-            if (!req.session.user) {
-                return res.status(401).json({ message: 'Chưa xác thực thông tin người dùng' });
-            }
-            const data = req.body;
-            const id = req.session.user.id;
-            await UserService.uploadFile(data, id);
-            res.json({message: 'Tải lên file thành công!'});
-        }
-        catch(err){
-            res.status(500).json({ message: err.message });
-        }
-    }
     Buy = async(req, res) => {
         try{
             if(!req.session.user) {
                 return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
             }
             const pagesNumber = req.body.pagesNumber;
+            const purchaseID = req.body.purchaseID;
+            console.log(pagesNumber, purchaseID);
             const id = req.session.user.id;
             if(!pagesNumber || !id) {
                 return res.status(400).json({message: 'Yêu cầu không hợp lệ'});
             }
-            await PuchaseOrderService.createPurchaseOrder(pagesNumber, id);
+            await PuchaseOrderService.createPurchaseOrder(pagesNumber, id, purchaseID);
             await PuchaseOrderService.updateStudentPages(pagesNumber, id);
             res.json({message: 'Mua thành công!'});
         }
         catch(err){
+            if(err.message === 'Mã đơn mua đã tồn tại') {
+                return res.status(400).json({message: err.message});
+            }
             res.status(500).json({message: 'Lỗi server'});
         }
     }
@@ -122,6 +106,15 @@ class UserController {
         // catch(err){
         //     res.status(500).json({message: 'Lỗi server'});
         // }
+    }
+
+    history_buying = async (req, res) => {
+        try {
+            const result = await UserService.history_buying(req);
+            return res.status(200).send(result);
+        } catch(err) {
+            return res.status(200).json({status: false, error: err});
+        }
     }
 }
 

@@ -4,6 +4,7 @@ const AuthRouter = require('./AuthRouter');
 const PrintRouter = require('./PrintRouter');
 const SPSORouter = require('./SPSORouter');
 const BuyRouter = require('./BuyRouter');
+const PaymentRouter = require('./PaymentRouter');
 
 const routes = (app) => {
     app.use('/test', TestRouter);
@@ -12,6 +13,7 @@ const routes = (app) => {
     app.use('/print', PrintRouter);
     app.use('/spso', SPSORouter);
     app.use('/buy', BuyRouter);
+    app.use('/payment', PaymentRouter);
 }
 
 module.exports = routes;
