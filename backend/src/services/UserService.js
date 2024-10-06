@@ -38,7 +38,7 @@ class UserService {
                             ID: don.ma_don_mua,
                             thoi_gian: don.thoi_gian,
                             so_trang: don.so_trang,
-                            trang_thai: don.trang_thai
+                            trang_thai: don.trang_thai  
                         });
                     })
                 }
@@ -47,6 +47,7 @@ class UserService {
             else reject({ status: false, message: 'Người dùng chưa đăng nhập' });
         });
     }
+
     getUserById = async(Id) => {
         try{
             const [result, ] = await db.execute(`SELECT user.id, 
@@ -64,6 +65,7 @@ class UserService {
             throw err;
         }
     }
+
     fetchDocumentAndPrinterInfo = async () => {
         try {
             const [acceptedDocuments, activePrinters] = await Promise.all([
@@ -94,6 +96,7 @@ class UserService {
             throw err;
         }
     };
+
     NoPagesEachDay = async (id) => {
         const [result1] = await db.execute(`
             SELECT DATE(thoi_gian) as create_day 
@@ -138,6 +141,7 @@ class UserService {
 
         return jsondata;
     }
+
     getPrintOrder = async (id) => {
         try {
             const [result] = await db.execute(`
@@ -162,5 +166,52 @@ class UserService {
             throw err;
         }
     }
+
+    studentHomepage = async (id) => {
+        try {
+            const [data1] = await db.execute(`
+                SELECT 
+                    SUM(dm.tong_tien) AS tong_tien_da_dung, 
+                    sv.so_giay_con AS so_giay_in_con_lai
+                FROM don_mua AS dm 
+                LEFT JOIN sinh_vien AS sv ON dm.id = sv.id
+                WHERE dm.id = ?
+                GROUP BY sv.so_giay_con;`, [id]);
+            const [data2] = await db.execute(`
+                SELECT count(*) AS tong_tai_lieu_da_in
+                FROM don_in_gom_tep digt
+                WHERE digt.ma_don_in
+                IN 
+                (SELECT ma_don_in FROM in_tai_lieu WHERE id = ?);`, [id])
+                const [data3] = await db.execute(`
+                    SELECT 
+                        DATE_FORMAT(DATE(itl.tg_bat_dau), '%d-%m-%Y') AS date,
+                    --     COUNT(DISTINCT di.ma_don_in) AS so_don_in_trong_ngay,
+                        COUNT(digt.ma_tep) AS so_tai_lieu_in_trong_ngay,
+                        SUM(digt.so_trang) AS so_trang_da_dung_trong_ngay
+                    FROM 
+                        in_tai_lieu itl
+                    JOIN 
+                        don_in_gom_tep digt ON itl.ma_don_in = digt.ma_don_in
+                    JOIN 
+                        don_in di ON digt.ma_don_in = di.ma_don_in
+                    WHERE 
+                        itl.id = ?
+                    GROUP BY 
+                        DATE_FORMAT(DATE(itl.tg_bat_dau), '%d-%m-%Y')
+                    ORDER BY 
+                        date ASC
+                    LIMIT 7;`, [id]);
+                             
+            const result = {
+                ...data1[0],
+                ...data2[0],
+                thong_ke: data3}
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    }
 }
+
 module.exports = new UserService

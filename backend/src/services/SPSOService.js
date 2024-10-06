@@ -2,6 +2,7 @@ const { data } = require('autoprefixer');
 const db = require('../config/db');
 const { message } = require('antd');
 const support = require('./support');
+
 class SPSOService {
     fetchAllPrinter = async () => {
         try {
@@ -109,4 +110,5 @@ class SPSOService {
         });
     }
 }
+
 module.exports = new SPSOService;

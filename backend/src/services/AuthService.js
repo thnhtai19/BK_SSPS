@@ -15,6 +15,11 @@ class AuthService {
                     resolve({ status: false, message: "Email đã được dùng" });
                     return;
                 }
+                const [existingUsersUID] = await db.query('SELECT * FROM user WHERE id = ?', [uid]);
+                if (existingUsersUID.length > 0) { 
+                    resolve({ status: false, message: "Người dùng đã tạo tài khoản" });
+                    return;
+                }
                 if (typeof email === 'object' && email !== null) email = String(email.address);
                 if (typeof email !== 'string' || !email.endsWith('@hcmut.edu.vn')) {
                     resolve({ status: false, message: "Email không đúng định dạng" });
@@ -22,6 +27,12 @@ class AuthService {
                 }
                 const hashedPassword = await bcrypt.hash(password, 10);
                 const start = supportFunction.startTime();
+                const [trang_in] = await db.query('SELECT * FROM he_thong');
+                    if (trang_in.length == 0) {
+                        resolve({ status: false, message: "Chưa cài đặt hệ thống" });
+                        return;
+                    }
+                const page = trang_in[0].so_giay_mac_dinh;
                 const [result] = await db.query(
                     'INSERT INTO user (email, password, ten, id, ngay_dk, role) VALUES (?, ?, ?, ?, ?, ?)', 
                     [email, hashedPassword, name, uid, start, 'SV']
@@ -29,7 +40,7 @@ class AuthService {
                 if (result.affectedRows === 1) {
                     const [sinh_vien] = await db.query(
                         'INSERT INTO sinh_vien (id, trang_thai, so_giay_con) VALUES (?, ?, ?)', 
-                        [uid, '1', 0]
+                        [uid, '1', page]
                     );
                     if (sinh_vien.affectedRows === 1) {
                         resolve({
@@ -37,6 +48,7 @@ class AuthService {
                             name: name,
                             email: email,
                             role: 'SV',
+                            so_giay_con: page
                         });
                     }
                     else resolve({ status: false, message: "Không thể tạo sinh viên" });
@@ -102,7 +114,7 @@ class AuthService {
                     if (result.affectedRows === 1) {
                         resolve({
                             status: true,
-                            name: user.name,
+                            name: user.ten,
                             email: user.email,
                         });
                     } 

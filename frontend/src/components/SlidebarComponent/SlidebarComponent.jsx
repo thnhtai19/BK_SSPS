@@ -57,8 +57,8 @@ const SlidebarComponent = ({ curentpage }) => {
                 <div className='wrap-user-container'>
                     <img src={user} alt='user' width="40px" />
                     <div className='wrap-name'>
-                        <div className='text-base font-bold'>Trần Thành Tài</div>
-                        <div style={{ fontSize: '11px' }}>tai.tranthanh@hcmut.edu.vn</div>
+                        <div className='text-base font-bold'>{localStorage.getItem("name")}</div>
+                        <div style={{ fontSize: '11px' }}>{localStorage.getItem("email")}</div>
                     </div>
                 </div>
             </div>
