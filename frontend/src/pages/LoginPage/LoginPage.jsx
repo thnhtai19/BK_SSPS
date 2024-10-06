@@ -134,6 +134,8 @@ function Login() {
       const data = await response.json();
 
       if (data.status) {
+        localStorage.setItem("name", data.name);
+        localStorage.setItem("email", data.email);
         setMessage('Đăng nhập thành công!');
         setShowSuccessPopup(true); 
         const interval = setInterval(() => {
