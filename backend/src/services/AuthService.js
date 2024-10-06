@@ -114,7 +114,7 @@ class AuthService {
                     if (result.affectedRows === 1) {
                         resolve({
                             status: true,
-                            name: user.name,
+                            name: user.ten,
                             email: user.email,
                         });
                     } 

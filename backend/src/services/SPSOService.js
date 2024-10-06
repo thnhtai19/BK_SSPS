@@ -109,6 +109,8 @@ class SPSOService {
             else reject({ status: false, message: 'Người dùng chưa đăng nhập' });
         });
     }
+
+    
 }
 
 module.exports = new SPSOService;
