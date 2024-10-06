@@ -66,15 +66,20 @@ class UserController {
                 return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
             }
             const pagesNumber = req.body.pagesNumber;
+            const purchaseID = req.body.purchaseID;
+            console.log(pagesNumber, purchaseID);
             const id = req.session.user.id;
             if(!pagesNumber || !id) {
                 return res.status(400).json({message: 'Yêu cầu không hợp lệ'});
             }
-            await PuchaseOrderService.createPurchaseOrder(pagesNumber, id);
+            await PuchaseOrderService.createPurchaseOrder(pagesNumber, id, purchaseID);
             await PuchaseOrderService.updateStudentPages(pagesNumber, id);
             res.json({message: 'Mua thành công!'});
         }
         catch(err){
+            if(err.message === 'Mã đơn mua đã tồn tại') {
+                return res.status(400).json({message: err.message});
+            }
             res.status(500).json({message: 'Lỗi server'});
         }
     }
@@ -86,6 +91,26 @@ class UserController {
         } catch(err) {
             return res.status(200).json({status: false, error: err});
         }
+    }
+    
+    studentHomepage = async (req, res) => {
+        // try{
+        //     if(!req.session.user) {
+        //         return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
+        //     }
+        //     const id = req.session.user.id;
+            const id ='5';
+            try {
+                const result = await UserService.studentHomepage(id);
+                return res.status(200).send(result);
+            } catch(err) {
+                // return res.status(200).json({status: false, error: err});
+                return res.status(200).json({status: false, error: 'Lỗi cơ sở dữ liệu'});
+            }
+        // }
+        // catch(err){
+        //     res.status(500).json({message: 'Lỗi server'});
+        // }
     }
 
     history_buying = async (req, res) => {

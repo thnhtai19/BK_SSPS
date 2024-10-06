@@ -28,7 +28,7 @@ class Support {
         const day = ('0' + date.getDate()).slice(-2);
         const month = ('0' + (date.getMonth() + 1)).slice(-2); // Tháng bắt đầu từ 0, nên cần +1
         const year = date.getFullYear();
-        return `${hours}:${minutes}:${seconds} ${day}-${month}-${year}`;
+        return `${hours}:${minutes}:${seconds} ${day}-${month}-${year}`; //11:14:25 05-10-2024
     };
 }
 
