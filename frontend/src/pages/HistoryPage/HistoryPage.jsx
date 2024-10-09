@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Table, DatePicker, Breadcrumb, Input, Row, Col } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
@@ -19,15 +19,30 @@ const HistoryPage = () => {
 
 	const apiUrl = process.env.REACT_APP_API_URL;
 
+  const navigate = useNavigate();
+  
 	const fetchApiHistoryPrintOrder = () => {
-		axios.get(apiUrl + 'user/printOrder')
+		axios.get(apiUrl + 'user/printOrder',{withCredentials: true})
 			.then(response => {
 				setdata(response.data);
 				getChartData(response.data);
 			})
 			.catch(error => {
-				console.error('Lỗi khi lấy dữ liệu:', error);
-			});
+        if (error.response) {
+            // Server trả về lỗi không phải 2xx
+            if (error.response.status === 401) {
+                console.error('Chưa xác thực, yêu cầu đăng nhập');
+                navigate('/auth/login');
+            } else {
+                console.error('Lỗi server:', error.response.data.message);
+            }
+        } else if (error.request) {
+            console.error('Không thể kết nối tới server');
+        } else {
+            // Lỗi khác
+            console.error('Lỗi:', error.message);
+        }
+    });
 	}
 	const getChartData = (data) => {
 		const tempData = [];
