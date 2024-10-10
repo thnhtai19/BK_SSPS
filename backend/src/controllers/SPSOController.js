@@ -7,6 +7,9 @@ class SPSOController {
             if(!req.session.user) {
                 return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
             }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
+            }
             const result = await SPSOService.fetchAllPrinter();
             res.json(result);
         }
@@ -18,6 +21,9 @@ class SPSOController {
         try {
             if(!req.session.user) {
                 return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
+            }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
             }
             const { ma_may_in, trang_thai } = req.body;
             await SPSOService.updatePrinterStatus(ma_may_in, trang_thai);
@@ -32,6 +38,9 @@ class SPSOController {
             if(!req.session.user) {
                 return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
             }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
+            }
             const data = req.body;
             await SPSOService.addPrinter(data);
             res.json({ message: 'Thêm máy in thành công!'});
@@ -45,6 +54,9 @@ class SPSOController {
             if(!req.session.user) {
                 return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
             }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
+            }
             const result = await SPSOService.fetchAllPrintOrder();
             res.json(result);
         }
@@ -57,8 +69,24 @@ class SPSOController {
             if(!req.session.user) {
                 return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
             }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
+            }
             const { ma_don_in, trang_thai } = req.body;
-            await SPSOService.updatePrintOrderStatus(ma_don_in, trang_thai);
+            let insert;
+            if(trang_thai == 'Đã in') {
+                insert = 0;
+            }
+            else if(trang_thai == 'Đang in'){
+                insert = 2;
+            }
+            else if(trang_thai == 'Chờ in'){
+                insert = 1;
+            }
+            else {
+                return res.json({ message: 'Trạng thái không hợp lệ!' });
+            }
+            await SPSOService.updatePrintOrderStatus(ma_don_in, insert);
             res.json({ message: 'Cập nhật trạng thái thành công!'});
         }
         catch (err) {

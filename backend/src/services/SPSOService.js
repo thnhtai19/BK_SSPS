@@ -42,11 +42,16 @@ class SPSOService {
     fetchAllPrintOrder = async () => {
         try {
             const [result, ] = await db.execute(`
-                SELECT * 
+                SELECT d.ma_don_in, itl.id as MSSV, mi.ten_may, t.ten_tep, t.duong_dan, 
+                        itl.tg_bat_dau, itl.tg_ket_thuc, d.trang_thai_don_in, dt.kich_thuoc, dt.so_trang_in
                 FROM don_in d left join don_in_gom_tep dt
                 on d.ma_don_in = dt.ma_don_in
                 left join in_tai_lieu itl
-                on dt.ma_don_in = itl.ma_don_in`);
+                on dt.ma_don_in = itl.ma_don_in
+                left join may_in mi
+                on itl.ma_may_in = mi.ma_may_in
+                left join tep t
+                on dt.ma_tep = t.ma_tep`);
                 const formattedResult = result.map(record => {
                     return {
                         ...record,

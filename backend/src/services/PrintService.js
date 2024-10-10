@@ -1,11 +1,15 @@
 const db = require('../config/db');
+const path = require('path');
 const UserService = require('./UserService');
 class PrintService {
     AcceptFile = async (data) => {
         try {
             const result1 = await UserService.fetchDocumentAndPrinterInfo();
             const acceptedDocument = result1.acceptedDocuments;
-            const fileType = data.loai_tep;
+            const ma_tep = data.ma_tep;
+            const [result2] = await db.execute('SELECT loai_tep FROM tep WHERE ma_tep = ?', [ma_tep]);
+            console.log(result2);
+            const fileType = result2[0].loai_tep;
             return acceptedDocument.some(doc => doc.loai_tep === fileType);
         }
         catch(err){
@@ -14,14 +18,9 @@ class PrintService {
     }
     createPrintOrder = async (data, id) => {
         try {
-            const ten_tep = data.ten_tep;
-            const loai_tep = data.loai_tep;
-            const duong_dan = data.duong_dan;
-            const so_trang = data.so_trang;
-            const ma_tep = String(Date.now());
-            await db.execute('INSERT INTO tep (ma_tep, ten_tep, loai_tep, duong_dan, so_trang) VALUES (?, ?, ?, ?, ?)', [ma_tep, ten_tep, loai_tep, duong_dan, so_trang]);
-            await db.execute('INSERT INTO so_huu (id, ma_tep) VALUES (?, ?)', [id, ma_tep]);
-
+            const ma_tep = data.ma_tep;
+            const result0 = await db.execute('SELECT so_trang FROM tep WHERE ma_tep = ?', [ma_tep]);
+            const so_trang = result0[0][0].so_trang;
             const ma_don_in = String(Date.now());
             const ma_may_in = data.ma_may_in;
             const so_ban_in = data.so_ban_in;
@@ -56,6 +55,21 @@ class PrintService {
             await db.execute('INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)', [id, `Đã tạo đơn in mã ${ma_don_in}`, tg_bat_dau]);
             await db.execute('UPDATE sinh_vien SET so_giay_con = so_giay_con - ? WHERE id = ?', [so_trang_in, id]);
         } catch (err) {
+            throw err;
+        }
+    }
+    saveFile = async (file, id) => {
+        try {
+            console.log(file);
+            const duong_dan = file.path;
+            const ten_tep = file.originalname;
+            const loai_tep = path.extname(file.originalname).slice(1);
+            const so_trang = 50;
+            const ma_tep = String(Date.now());
+            await db.execute('INSERT INTO tep (ma_tep, ten_tep, loai_tep, duong_dan, so_trang) VALUES (?, ?, ?, ?, ?)', [ma_tep, ten_tep, loai_tep, duong_dan, so_trang]);
+            await db.execute('INSERT INTO so_huu (id, ma_tep) VALUES (?, ?)', [id, ma_tep]);
+        }
+        catch(err){
             throw err;
         }
     }
