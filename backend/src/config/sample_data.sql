@@ -101,7 +101,11 @@ INSERT INTO in_tai_lieu (id, ma_may_in, ma_don_in, tg_bat_dau, tg_ket_thuc) VALU
 ('6', '5', '10', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
 ('6', '6', '11', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
 ('6', '6', '12', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('6', '6', '13', '2024-10-08 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'));
+('6', '6', '13', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('6', '6', '14', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('6', '6', '15', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('6', '6', '16', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
+('6', '6', '17', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'));
 
 insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat) values
 ('223', 200, 50, '2024-10-12'),
