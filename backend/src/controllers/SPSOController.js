@@ -99,7 +99,7 @@ class SPSOController {
             const result = await SPSOService.updateStatus(req.body, req);
             return res.status(200).send(result);
         } catch(err) {
-            return res.status(200).json({status: false, error: err});
+            return res.status(200).json(err);
         }
     }
 
@@ -108,7 +108,31 @@ class SPSOController {
             const result = await SPSOService.student_manager(req);
             return res.status(200).send(result);
         } catch(err) {
-            return res.status(200).json({status: false, error: err});
+            return res.status(200).json(err);
+        }
+    }
+
+    reportList = async (req, res) => {
+        try {
+            const createReportList = await SPSOService.createReportList(req);
+            const result = await SPSOService.reportList(req);
+            return res.status(200).send(result);
+        } catch(err) {
+            return res.status(200).json(err);
+        }
+    }
+
+    report = async (req, res) => {
+        try {
+            const detail = await SPSOService.reportDetail(req, req.body);
+            const using = await SPSOService.reportUsing(req, req.body);
+            return res.status(200).send({
+                status: true,
+                thong_ke_chi_tiet: detail,
+                thong_ke_su_dung: using
+            });
+        } catch(err) {
+            return res.status(200).json(err);
         }
     }
 }

@@ -1,8 +1,8 @@
 INSERT INTO user (id, ten, ngay_dk, email, password, role) VALUES
-('1', 'spso1', DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), 'spso1@hcmut.edu.vn', '$2a$10$MVH7lqOh6kCkHimpuIEyg.0ABo/QcHWO0eNQcVtamRNk7OpWcC22y', 'SSPO'), 
-('2', 'spso2', DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), 'spso2@hcmut.edu.vn', '$2a$10$MVH7lqOh6kCkHimpuIEyg.0ABo/QcHWO0eNQcVtamRNk7OpWcC22y', 'SSPO'),
-('3', 'spso3', DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), 'spso3@hcmut.edu.vn', '$2a$10$MVH7lqOh6kCkHimpuIEyg.0ABo/QcHWO0eNQcVtamRNk7OpWcC22y', 'SSPO'),
-('4', 'spso4', DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), 'spso4@hcmut.edu.vn', '$2a$10$MVH7lqOh6kCkHimpuIEyg.0ABo/QcHWO0eNQcVtamRNk7OpWcC22y', 'SSPO'),
+('1', 'spso1', DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), 'spso1@hcmut.edu.vn', '$2a$10$MVH7lqOh6kCkHimpuIEyg.0ABo/QcHWO0eNQcVtamRNk7OpWcC22y', 'SPSO'), 
+('2', 'spso2', DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), 'spso2@hcmut.edu.vn', '$2a$10$MVH7lqOh6kCkHimpuIEyg.0ABo/QcHWO0eNQcVtamRNk7OpWcC22y', 'SPSO'),
+('3', 'spso3', DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), 'spso3@hcmut.edu.vn', '$2a$10$MVH7lqOh6kCkHimpuIEyg.0ABo/QcHWO0eNQcVtamRNk7OpWcC22y', 'SPSO'),
+('4', 'spso4', DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), 'spso4@hcmut.edu.vn', '$2a$10$MVH7lqOh6kCkHimpuIEyg.0ABo/QcHWO0eNQcVtamRNk7OpWcC22y', 'SPSO'),
 ('5', 'st5', DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), 'st5@hcmut.edu.vn', '$2a$10$MVH7lqOh6kCkHimpuIEyg.0ABo/QcHWO0eNQcVtamRNk7OpWcC22y', 'SV'),
 ('6', 'st6', DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), 'st6@hcmut.edu.vn', '$2a$10$MVH7lqOh6kCkHimpuIEyg.0ABo/QcHWO0eNQcVtamRNk7OpWcC22y', 'SV'),
 ('7', 'st7', DATE_FORMAT(NOW(), '%H:%i:%s %d-%m-%Y'), 'st7@hcmut.edu.vn', '$2a$10$MVH7lqOh6kCkHimpuIEyg.0ABo/QcHWO0eNQcVtamRNk7OpWcC22y', 'SV'),
@@ -25,7 +25,7 @@ insert into nhat_ky (id, uid, thoi_gian, noi_dung) values
 ('8', '5', '11:14:25 04-10-2024', 'Đã đăng nhập tài khoản IP: 127.0.0.1'),
 ('9', '5', '11:14:25 05-10-2024', 'Đã đăng nhập tài khoản IP: 127.0.0.1');
 
-insert into sspo (id) values
+insert into SPSO (id) values
 ('1'), ('2'), ('3'), ('4');
 
 insert into sinh_vien (id, trang_thai, so_giay_con) values 
@@ -89,26 +89,26 @@ insert into don_in (ma_don_in, trang_thai_don_in) values -- 0-Hoàn tất; 1-Đa
 ('17', 2);
 
 INSERT INTO in_tai_lieu (id, ma_may_in, ma_don_in, tg_bat_dau, tg_ket_thuc) VALUES 
-('5', '1', '1', '2024-10-01 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '1', '2', '2024-10-02 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '1', '3', '2024-10-03 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '1', '4', '2024-10-04 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '2', '5', '2024-10-05 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '2', '6', '2024-10-05 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '2', '7', '2024-10-06 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '3', '8', '2024-10-06 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('5', '4', '9', '2024-10-06 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('6', '5', '10', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('6', '6', '11', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('6', '6', '12', '2024-10-07 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')),
-('6', '6', '13', '2024-10-08 11:14:25', DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s'));
+('5', '1', '2', '11:14:25 02-10-2024', '10:14:25 10-10-2024'),
+('5', '1', '3', '11:14:25 03-10-2024', '10:14:25 10-10-2024'),
+('5', '1', '4', '11:14:25 04-10-2024', '10:14:25 10-10-2024'),
+('5', '2', '5', '11:14:25 05-10-2024', '10:14:25 10-10-2024'),
+('5', '1', '1', '11:14:25 01-10-2024', '10:14:25 10-10-2024'),
+('5', '2', '6', '11:14:25 05-10-2024', '10:14:25 10-10-2024'),
+('5', '2', '7', '11:14:25 06-10-2024', '10:14:25 10-10-2024'),
+('5', '3', '8', '11:14:25 06-10-2024', '10:14:25 10-10-2024'),
+('5', '4', '9', '11:14:25 06-10-2024', '10:14:25 10-10-2024'),
+('6', '5', '10', '11:14:25 07-10-2024', '10:14:25 10-10-2024'),
+('6', '6', '11', '11:14:25 07-10-2024', '10:14:25 10-10-2024'),
+('6', '6', '12', '11:14:25 07-10-2024', '10:14:25 10-10-2024'),
+('6', '6', '13', '11:14:25 08-10-2024', '10:14:25 10-10-2024');
 
 insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat) values
-('223', 200, 50, '2024-10-12'),
-('231', 200, 50, '2024-10-12'),
-('232', 200, 50, '2024-10-12'),
-('233', 200, 50, '2024-10-12'),
-('241', 200, 50, '2024-10-12');
+('223', 200, 50, '12-10-2024'),
+('231', 200, 50, '12-10-2024'),
+('232', 200, 50, '12-10-2024'),
+('233', 200, 50, '12-10-2024'),
+('241', 200, 50, '12-10-2024');
 
 insert into loai_tep_chap_nhan (ma_hoc_ki, loai_tep) values 
 ('241', '.doc'),
@@ -162,13 +162,7 @@ insert into cau_hinh (id, uid, ma_hoc_ki, ghi_chu) values
 ('3', '1', '241', 'Test API'),
 ('4', '2', '241', 'Test API');
 
-
-
-
-
-
-
-
-
-
-
+insert into bao_cao (id, thoi_gian, hoc_ky) values
+('1', '00:55:44 13-07-2024', '241'),
+('2', '17:38:41 10-08-2024', '241'),
+('3', '17:38:41 10-09-2024', '241');

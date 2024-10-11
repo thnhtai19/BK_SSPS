@@ -1,8 +1,8 @@
 class Support {
-    startTime(){
+    startTime(data){
         const now = new Date();
         const year = now.getFullYear();
-        const month = now.getMonth() + 1;
+        const month = data;
         const day = now.getDate();
         const hour = now.getHours();
         const minute = now.getMinutes();
@@ -20,6 +20,7 @@ class Support {
         else start += month + "-" + year;
         return start; 
     }
+    
     formatDateTime = (dateTime) => {
         const date = new Date(dateTime);
         const hours = ('0' + date.getHours()).slice(-2);
@@ -30,6 +31,24 @@ class Support {
         const year = date.getFullYear();
         return `${hours}:${minutes}:${seconds} ${day}-${month}-${year}`; //11:14:25 05-10-2024
     };
+
+    checkLastDayOfCurrentMonth = () => {
+        const today = new Date();
+        const month = today.getMonth() + 1;
+        const year = today.getFullYear();
+        const lastDayOfMonth = new Date(year, month, 0).getDate();
+        return today.getDate() === lastDayOfMonth;
+    }
+
+    getmonth = (time) => {
+        return parseInt(time.split(' ')[1].split('-')[1]);
+    }
+
+    getSemester = (month, year) => {
+        if (month >= 8 && month <= 12) return (year - 2000) * 10 + 1;
+        if (month >= 1 && month <= 5) return (year - 2000) * 10 + 2;
+        return (year - 2000) * 10 + 3;
+    }
 }
 
 module.exports = new Support;

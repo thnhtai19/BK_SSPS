@@ -38,7 +38,7 @@ class UserService {
                             ID: don.ma_don_mua,
                             thoi_gian: don.thoi_gian,
                             so_trang: don.so_trang,
-                            trang_thai: don.trang_thai  
+                            tong_tien: don.tong_tien
                         });
                     })
                 }

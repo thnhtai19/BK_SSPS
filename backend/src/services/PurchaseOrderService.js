@@ -4,7 +4,7 @@ class PurchaseService {
     createPurchaseOrder = async (pages, id, purchaseID) => {
         try {
             const day = new Date();
-            const CurrentTime = support.startTime();
+            const CurrentTime = support.startTime(new Date().getMonth() + 1);
             const formattedDate = day.toISOString().split('T')[0];
             const purchaseList = await db.execute('SELECT ma_don_mua FROM don_mua');
             await db.execute('INSERT INTO don_mua (ma_don_mua, thoi_gian, so_trang, id) VALUES (?, ?, ?, ?)', [purchaseID, formattedDate, pages, id]);

@@ -9,5 +9,7 @@ router.post('/updatePrinterStatus', SPSOController.UpdatePrinterStatus);
 router.post('/addPrinter', SPSOController.AddPrinter);
 router.get('/getAllPrintOrder', SPSOController.getAllPrintOrder);
 router.post('/updatePrintOrderStatus', SPSOController.UpdatePrintOrderStatus);
+router.get('/report_list', SPSOController.reportList);
+router.get('/report', SPSOController.report);
 
 module.exports = router

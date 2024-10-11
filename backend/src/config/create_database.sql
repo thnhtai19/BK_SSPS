@@ -12,6 +12,13 @@ create table user (
     primary 	key (id)
 );
 
+create table bao_cao (
+	id 			int not null auto_increment,
+    thoi_gian   varchar(50) not null,
+    hoc_ky   	varchar(50) not null,
+    primary 	key (id)
+);
+
 create table nhat_ky (
 	id			int not null auto_increment,
 	uid			varchar(50) not null,
@@ -35,7 +42,7 @@ create table sinh_vien (
 );
 
 create table don_mua (
-	  ma_don_mua 	varchar(50) not null,
+	ma_don_mua 	varchar(50) not null,
     so_trang 	int not null,
     tong_tien   int not null default 0,
     thoi_gian	varchar(50) not null,
@@ -67,8 +74,8 @@ create table in_tai_lieu (
 	id		varchar(50) not null,
     ma_may_in	varchar(50) not null,
     ma_don_in	varchar(50) not null,
-    tg_bat_dau 	datetime not null,
-    tg_ket_thuc datetime not null,
+    tg_bat_dau 	varchar(50) not null,
+    tg_ket_thuc varchar(50) not null,
     primary key(id, ma_may_in, ma_don_in),
     foreign key(id) references sinh_vien(id),
     foreign key(ma_may_in) references may_in(ma_may_in),
