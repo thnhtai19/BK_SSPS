@@ -26,7 +26,7 @@ class AuthService {
                     return;
                 }
                 const hashedPassword = await bcrypt.hash(password, 10);
-                const start = supportFunction.startTime();
+                const start = supportFunction.startTime(new Date().getMonth() + 1);
                 const [trang_in] = await db.query('SELECT * FROM he_thong');
                     if (trang_in.length == 0) {
                         resolve({ status: false, message: "Chưa cài đặt hệ thống" });
@@ -106,7 +106,7 @@ class AuthService {
                         email: user.email,
                         role: user.role
                     };
-                    const thoi_gian = supportFunction.startTime();
+                    const thoi_gian = supportFunction.startTime(new Date().getMonth() + 1);
                     const [result] = await db.query(
                         'INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)', 
                         [user.id, `Đã đăng nhập tài khoản IP: ${IP}`, thoi_gian]

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, DatePicker, Breadcrumb, Input, Row, Col } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import axios from 'axios';
 
 const { Search } = Input;
 
@@ -12,6 +13,50 @@ const HistoryPage = () => {
 	const [endDate, setEndDate] = useState(null);
 	const [filteredChartData, setFilteredChartData] = useState([]);
 	const [searchValue, setSearchValue] = useState('');
+	const [data, setdata] = useState([]);
+	const [chartData, setChartData] = useState([]);
+
+
+	const apiUrl = process.env.REACT_APP_API_URL;
+
+	const fetchApiHistoryPrintOrder = () => {
+		axios.get(apiUrl + 'user/printOrder')
+			.then(response => {
+				setdata(response.data);
+				getChartData(response.data);
+			})
+			.catch(error => {
+				console.error('Lỗi khi lấy dữ liệu:', error);
+			});
+	}
+	const getChartData = (data) => {
+		const tempData = [];
+		data.forEach((item) => {
+			const date = item.tg_bat_dau.split(" ")[1]; // Lấy phần ngày từ thời gian bắt đầu
+
+			// Tìm đối tượng có cùng ngày trong kết quả
+			let found = tempData.find((el) => el.date === date);
+
+			if (!found) {
+				// Nếu chưa tồn tại, tạo một đối tượng mới
+				found = { date, A3: 0, A4: 0 };
+				tempData.push(found);
+			}
+
+			// Cập nhật số lượng trang in theo kích thước
+			if (item.kich_thuoc === "A3") {
+				found.A3 += item.so_trang_in;
+			} else if (item.kich_thuoc === "A4") {
+				found.A4 += item.so_trang_in;
+			}
+		});
+
+		setChartData(tempData);
+	}
+
+	useEffect(() => {
+		fetchApiHistoryPrintOrder();
+	}, []);
 
 	const handlePageSizeChange = (value) => {
 		setPageSize(value);
@@ -27,23 +72,23 @@ const HistoryPage = () => {
 	const columns = [
 		{
 			title: 'ID',
-			dataIndex: 'id',
+			dataIndex: 'ma_don_in',
 		},
 		{
-			title: 'ID máy in',
-			dataIndex: 'printerId',
+			title: 'Máy in',
+			dataIndex: 'ten_may',
 		},
 		{
 			title: 'Tài liệu',
-			dataIndex: 'document',
+			dataIndex: 'ten_tep',
 		},
 		{
 			title: 'Thời gian bắt đầu',
-			dataIndex: 'startTime',
+			dataIndex: 'tg_bat_dau',
 		},
 		{
 			title: 'Thời gian kết thúc',
-			dataIndex: 'endTime',
+			dataIndex: 'tg_ket_thuc',
 			render: (endTime, record) => {
 				if (record.status === 'Đang chờ in') {
 					return '---';
@@ -53,51 +98,29 @@ const HistoryPage = () => {
 		},
 		{
 			title: 'Kích thước',
-			dataIndex: 'size',
+			dataIndex: 'kich_thuoc',
 		},
 		{
 			title: 'Số trang',
-			dataIndex: 'pages',
+			dataIndex: 'so_trang_in',
 		},
 		{
 			title: 'Trạng thái',
-			dataIndex: 'status',
+			dataIndex: 'trang_thai_don_in',
 			render: (status) => (
 				<button
 					style={{
-						backgroundColor: status === 'Hoàn tất' ? '#bfffd8' : status === 'Đang chờ in' ? '#f7f9fb' : '#ffd4d4',
-						color: status === 'Hoàn tất' ? '#00750c' : status === 'Đang chờ in' ? '#444444' : '#c40000', // Màu chữ đỏ đậm cho "Đã hủy"
+						backgroundColor: status === 0 ? '#bfffd8' : status === 1 ? '#f7f9fb' : '#ffd4d4',
+						color: status === 0 ? '#00750c' : status === 1 ? '#444444' : '#c40000', // Màu chữ đỏ đậm cho "Đã hủy"
 						borderRadius: '5px',
 						padding: '5px 10px',
 						border: 'none',
 					}}
 				>
-					{status === 'Hoàn tất' ? 'Hoàn tất in' : status === 'Đang chờ in' ? 'Đang chờ in' : 'Đã hủy'}
+					{status === 0 ? 'Hoàn tất' : status === 1 ? 'Đang chờ in' : 'Đã hủy'}
 				</button>
 			),
 		},
-	];
-
-	const data = Array.from({ length: 10 }).map((_, i) => ({
-		key: i,
-		id: `212484${i}`,
-		printerId: `908${i}`,
-		document: `Document_${i}.pdf`,
-		startTime: `1${i}-09-2024 09:${i}:00`,
-		endTime: `1${i}-09-2024 09:${i + 1}:42`,
-		size: i % 2 === 0 ? 'A4' : 'A3',
-		pages: i * 5 + 10,
-		status: i % 3 === 0 ? 'Hoàn tất' : i % 3 === 1 ? 'Đang chờ in' : 'Đã hủy',
-	}));
-
-	const chartData = [
-		{ date: '10-07-2024', A3: 180, A4: 100 },
-		{ date: '11-07-2024', A3: 160, A4: 80 },
-		{ date: '12-08-2024', A3: 140, A4: 60 },
-		{ date: '13-08-2024', A3: 170, A4: 90 },
-		{ date: '14-09-2024', A3: 150, A4: 70 },
-		{ date: '15-09-2024', A3: 130, A4: 50 },
-		{ date: '16-09-2024', A3: 190, A4: 100 },
 	];
 
 	const handleDateChange = (date, type) => {
@@ -122,13 +145,13 @@ const HistoryPage = () => {
 		} else {
 			setFilteredChartData(chartData);
 		}
-	}, [startDate, endDate]);
+	}, [chartData, startDate, endDate]);
 
 	const handleSearch = (value) => {
 		setSearchValue(value);
 	};
 
-	const filteredData = data.filter((item) => item.document.toLowerCase().includes(searchValue.toLowerCase()));
+	const filteredData = data.filter((item) => item.ten_tep.toLowerCase().includes(searchValue.toLowerCase()));
 
 	return (
 		<div className='p-2 min-h-screen ml-2'>
@@ -199,3 +222,5 @@ const HistoryPage = () => {
 };
 
 export default HistoryPage;
+
+

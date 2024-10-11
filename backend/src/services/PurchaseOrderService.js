@@ -1,15 +1,18 @@
 const db = require('../config/db');
 const support = require('../services/support');
 class PurchaseService {
-    createPurchaseOrder = async (pages, id) => {
+    createPurchaseOrder = async (pages, id, purchaseID) => {
         try {
             const day = new Date();
-            const CurrentTime = support.startTime();
+            const CurrentTime = support.startTime(new Date().getMonth() + 1);
             const formattedDate = day.toISOString().split('T')[0];
-            const ma_don_mua = String(Date.now());
-            await db.execute('INSERT INTO don_mua (ma_don_mua, thoi_gian, so_trang, id) VALUES (?, ?, ?, ?)', [ma_don_mua, formattedDate, pages, id]);
+            const purchaseList = await db.execute('SELECT ma_don_mua FROM don_mua');
+            await db.execute('INSERT INTO don_mua (ma_don_mua, thoi_gian, so_trang, id) VALUES (?, ?, ?, ?)', [purchaseID, formattedDate, pages, id]);
             await db.execute('INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)', [id, `Đã tạo đơn mua giấy`, CurrentTime]);
         } catch (err) {
+            if (err.code === 'ER_DUP_ENTRY') {
+                throw new Error('Mã đơn mua đã tồn tại');
+            }
             throw err;
         }
     }

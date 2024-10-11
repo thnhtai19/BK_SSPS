@@ -12,6 +12,13 @@ create table user (
     primary 	key (id)
 );
 
+create table bao_cao (
+	id 			int not null auto_increment,
+    thoi_gian   varchar(50) not null,
+    hoc_ky   	varchar(50) not null,
+    primary 	key (id)
+);
+
 create table nhat_ky (
 	id			int not null auto_increment,
 	uid			varchar(50) not null,
@@ -37,15 +44,15 @@ create table sinh_vien (
 create table don_mua (
 	ma_don_mua 	varchar(50) not null,
     so_trang 	int not null,
+    tong_tien   int not null default 0,
     thoi_gian	varchar(50) not null,
-    trang_thai	bool not null default false, /*Chua thanh toan*/
     id			varchar(50) not null,
     primary key(id, ma_don_mua),
     foreign key(id) references sinh_vien(id)    
 );
 
 create table may_in (
-	ma_may_in	varchar(50) not null,
+	  ma_may_in	varchar(50) not null,
     hang 		varchar(50) not null default 'Canon',
     trang_thai_may_in	varchar(50) not null default true,
     doi			varchar(50) not null,
@@ -58,8 +65,8 @@ create table may_in (
 );
 
 create table don_in (
-	ma_don_in	varchar(50) not null,
-    trang_thai_don_in	boolean not null default false,
+	  ma_don_in	varchar(50) not null,
+    trang_thai_don_in	int not null check(trang_thai_don_in in (0, 1, 2)), -- 0-Hoàn tất; 1-Đang chờ in; 2-Đã hủy
     primary key(ma_don_in)
 );
 
@@ -67,8 +74,8 @@ create table in_tai_lieu (
 	id		varchar(50) not null,
     ma_may_in	varchar(50) not null,
     ma_don_in	varchar(50) not null,
-    tg_bat_dau 	datetime not null,
-    tg_ket_thuc datetime not null,
+    tg_bat_dau 	varchar(50) not null,
+    tg_ket_thuc varchar(50) not null,
     primary key(id, ma_may_in, ma_don_in),
     foreign key(id) references sinh_vien(id),
     foreign key(ma_may_in) references may_in(ma_may_in),
@@ -120,7 +127,7 @@ create table don_in_gom_tep (
 	ma_tep		varchar(50) not null,
 	so_ban_in	int not null default 1,
 	so_mat		int not null check (so_mat in (1, 2)),
-    so_trang_in int not null,
+  so_trang_in int not null,
 	kich_thuoc	enum('A3', 'A4'),   
 -- 	trang_bat_dau	int not null default 1,
 -- 	trang_ket_thuc 	int not null,
@@ -130,10 +137,11 @@ create table don_in_gom_tep (
 );
 
 create table cau_hinh (
-	id			varchar(50) not null,
+    id          varchar(50) not null,
+	uid			varchar(50) not null,
     ma_hoc_ki	varchar(50) not null,
     ghi_chu		varchar(500) not null default 'Cau hinh he thong',
-    primary key(id, ma_hoc_ki),
-    foreign key(id) references sspo(id),
+    primary key(id),
+    foreign key(uid) references sspo(id),
     foreign key(ma_hoc_ki) references he_thong(ma_hoc_ki)
 );
