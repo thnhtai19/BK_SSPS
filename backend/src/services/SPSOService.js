@@ -1,6 +1,4 @@
-const { data } = require('autoprefixer');
 const db = require('../config/db');
-const { message } = require('antd');
 const support = require('./support');
 
 class SPSOService {
@@ -53,11 +51,7 @@ class SPSOService {
                 left join tep t
                 on dt.ma_tep = t.ma_tep`);
                 const formattedResult = result.map(record => {
-                    return {
-                        ...record,
-                        tg_bat_dau: support.formatDateTime(record.tg_bat_dau),
-                        tg_ket_thuc: support.formatDateTime(record.tg_ket_thuc)
-                    };
+                    return record;
                 });
             return formattedResult;
         }
@@ -68,6 +62,15 @@ class SPSOService {
     updatePrintOrderStatus = async (ma_don_in, trang_thai) => {
         try {
             await db.execute(`UPDATE don_in SET trang_thai_don_in = ? WHERE ma_don_in = ?`, [trang_thai, ma_don_in]);
+            const now = support.getCurrentFormattedDateTime();
+            if (ma_don_in == 'Đang in') await db.execute(`
+                UPDATE in_tai_lieu 
+                SET tg_bat_dau = ?
+                WHERE ma_don_in = ?`, [now, ma_don_in]);
+            else if (ma_don_in == 'Đã in') await db.execute(`
+                UPDATE in_tai_lieu 
+                SET tg_ket_thuc = ?
+                WHERE ma_don_in = ?`, [now, ma_don_in]);
         } catch (err) {
             throw err;
         }

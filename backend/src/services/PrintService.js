@@ -1,6 +1,8 @@
 const db = require('../config/db');
 const path = require('path');
 const UserService = require('./UserService');
+const support = require('./support');
+
 class PrintService {
     AcceptFile = async (data) => {
         try {
@@ -45,15 +47,26 @@ class PrintService {
             if(result[0][0].so_giay_con < so_trang_in){
                 throw new Error('Số trang in vượt quá số giấy còn lại');
             }
-            const day = new Date();
-            const tg_bat_dau = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate() + ' ' + day.getHours() + ':' + day.getMinutes() + ':' + day.getSeconds();
-            const tg_ket_thuc_date = new Date(day.getTime() + 30 * 60 * 1000);  // Thêm 30 phút
-            const tg_ket_thuc = tg_ket_thuc_date.getFullYear() + '-' + (tg_ket_thuc_date.getMonth() + 1) + '-' + tg_ket_thuc_date.getDate() + ' ' + tg_ket_thuc_date.getHours() + ':' + tg_ket_thuc_date.getMinutes() + ':' + tg_ket_thuc_date.getSeconds();
-            await db.execute('INSERT INTO don_in (ma_don_in) VALUES (?)', [ma_don_in]);
-            await db.execute('INSERT INTO don_in_gom_tep (ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in) VALUES (?, ?, ?, ?, ?, ?)', [ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in]);
-            await db.execute('INSERT INTO in_tai_lieu (id, ma_don_in, ma_may_in, tg_bat_dau, tg_ket_thuc) VALUES (?, ?, ?, ?, ?)', [id, ma_don_in, ma_may_in, tg_bat_dau, tg_ket_thuc]);   
-            await db.execute('INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)', [id, `Đã tạo đơn in mã ${ma_don_in}`, tg_bat_dau]);
-            await db.execute('UPDATE sinh_vien SET so_giay_con = so_giay_con - ? WHERE id = ?', [so_trang_in, id]);
+            // const day = new Date();
+            // const tg_bat_dau = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate() + ' ' + day.getHours() + ':' + day.getMinutes() + ':' + day.getSeconds();
+            // const tg_ket_thuc_date = new Date(day.getTime() + 30 * 60 * 1000);  // Thêm 30 phút
+            // const tg_ket_thuc = tg_ket_thuc_date.getFullYear() + '-' + (tg_ket_thuc_date.getMonth() + 1) + '-' + tg_ket_thuc_date.getDate() + ' ' + tg_ket_thuc_date.getHours() + ':' + tg_ket_thuc_date.getMinutes() + ':' + tg_ket_thuc_date.getSeconds();
+            // await db.execute('INSERT INTO don_in (ma_don_in) VALUES (?)', [ma_don_in]);
+            // await db.execute('INSERT INTO don_in_gom_tep (ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in) VALUES (?, ?, ?, ?, ?, ?)', [ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in]);
+            // await db.execute('INSERT INTO in_tai_lieu (id, ma_don_in, ma_may_in, tg_bat_dau, tg_ket_thuc) VALUES (?, ?, ?, ?, ?)', [id, ma_don_in, ma_may_in, tg_bat_dau, tg_ket_thuc]);   
+            // await db.execute('INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)', [id, `Đã tạo đơn in mã ${ma_don_in}`, tg_bat_dau]);
+            // await db.execute('UPDATE sinh_vien SET so_giay_con = so_giay_con - ? WHERE id = ?', [so_trang_in, id]);
+            const now = support.getCurrentFormattedDateTime();
+            await db.execute(`  INSERT INTO don_in (ma_don_in) VALUES (?)`, [ma_don_in]);
+            await db.execute(`  INSERT INTO don_in_gom_tep (ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in) 
+                                VALUES (?, ?, ?, ?, ?, ?)`, 
+                                [ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in]);
+            await db.execute(`  INSERT INTO in_tai_lieu (id, ma_don_in, ma_may_in) VALUES (?, ?, ?)`, 
+                                [id, ma_don_in, ma_may_in]);   
+            await db.execute(`  INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)`, 
+                                [id, `Đã tạo đơn in mã ${ma_don_in}`, now]);
+            await db.execute(`  UPDATE sinh_vien SET so_giay_con = so_giay_con - ? WHERE id = ?`, 
+                                [so_trang_in, id]);
         } catch (err) {
             throw err;
         }
@@ -62,6 +75,7 @@ class PrintService {
         try {
             console.log(file);
             const duong_dan = file.path;
+            // console.log('_' + id + '/' + file.path)
             const ten_tep = file.originalname;
             const loai_tep = path.extname(file.originalname).slice(1);
             const so_trang = 50;

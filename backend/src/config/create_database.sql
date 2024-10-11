@@ -28,7 +28,7 @@ create table nhat_ky (
     foreign key(uid) references user(id)
 );
 
-create table sspo (
+create table spso (
 	id			varchar(50),
     primary key(id)
 );
@@ -66,7 +66,7 @@ create table may_in (
 
 create table don_in (
 	  ma_don_in	varchar(50) not null,
-    trang_thai_don_in	int not null check(trang_thai_don_in in (0, 1, 2)), -- 0-Đã in; 1-Chờ in; 2-Đang in
+    trang_thai_don_in	varchar(50) not null check(trang_thai_don_in in ('Đã in', 'Chờ in', 'Đang in')) default 'Chờ in', 
     primary key(ma_don_in)
 );
 
@@ -74,8 +74,10 @@ create table in_tai_lieu (
 	id		varchar(50) not null,
     ma_may_in	varchar(50) not null,
     ma_don_in	varchar(50) not null,
-    tg_bat_dau 	varchar(50) not null,
-    tg_ket_thuc varchar(50) not null,
+    -- tg_bat_dau 	varchar(50) not null,
+    -- tg_ket_thuc varchar(50) not null,
+    tg_bat_dau 	varchar(50),
+    tg_ket_thuc varchar(50),
     primary key(id, ma_may_in, ma_don_in),
     foreign key(id) references sinh_vien(id),
     foreign key(ma_may_in) references may_in(ma_may_in),
@@ -118,7 +120,7 @@ create table xac_nhan (		/* SSPO xac nhan Don in*/
 	id		varchar(50) not null,
     ma_don_in	varchar(50) not null,
     primary key(id, ma_don_in),
-    foreign key(id) references sspo(id),
+    foreign key(id) references spso(id),
     foreign key(ma_don_in) references don_in(ma_don_in)
 );
 
@@ -142,6 +144,6 @@ create table cau_hinh (
     ma_hoc_ki	varchar(50) not null,
     ghi_chu		varchar(500) not null default 'Cau hinh he thong',
     primary key(id),
-    foreign key(uid) references sspo(id),
+    foreign key(uid) references spso(id),
     foreign key(ma_hoc_ki) references he_thong(ma_hoc_ki)
 );

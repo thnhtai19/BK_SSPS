@@ -1,8 +1,4 @@
-const { data } = require('autoprefixer');
 const db = require('../config/db');
-const { message } = require('antd');
-const supportFunction = require('./support');
-const support = require('../services/support');
 
 class UserService {
     diary = async (req) => {
@@ -154,11 +150,7 @@ class UserService {
                 left join tep t on dt.ma_tep = t.ma_tep
                 WHERE id = ?`, [id]);
             const formattedResult = result.map(record => {
-                return {
-                    ...record,
-                    tg_bat_dau: support.formatDateTime(record.tg_bat_dau),
-                    tg_ket_thuc: support.formatDateTime(record.tg_ket_thuc)
-                };
+                return record;
             });
         
             return formattedResult;
