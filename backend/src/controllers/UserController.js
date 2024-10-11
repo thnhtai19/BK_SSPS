@@ -1,6 +1,6 @@
-const { message } = require('antd');
 const UserService = require('../services/UserService')
 const PuchaseOrderService = require('../services/PurchaseOrderService')
+
 class UserController {
     UserInfo = async (req, res) => {
         try {
@@ -120,6 +120,7 @@ class UserController {
             return res.status(200).json({status: false, error: err});
         }
     }
+    
 }
 
 module.exports = new UserController

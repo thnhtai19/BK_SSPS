@@ -10,6 +10,7 @@ class SPSOService {
             throw err;
         }
     }
+
     updatePrinterStatus = async (ma_may_in, trang_thai) => {
         try {
             await db.execute(`UPDATE may_in SET trang_thai_may_in = ? WHERE ma_may_in = ?`, [trang_thai, ma_may_in]);
@@ -17,6 +18,7 @@ class SPSOService {
             throw err;
         }
     }
+
     addPrinter = async (data) => {
         try {
                 const ma_may_in = String(Date.now());
@@ -37,6 +39,7 @@ class SPSOService {
             throw err;
         }
     }
+
     fetchAllPrintOrder = async () => {
         try {
             const [result, ] = await db.execute(`
@@ -59,6 +62,7 @@ class SPSOService {
             throw err;
         }
     }
+
     updatePrintOrderStatus = async (ma_don_in, trang_thai) => {
         try {
             await db.execute(`UPDATE don_in SET trang_thai_don_in = ? WHERE ma_don_in = ?`, [trang_thai, ma_don_in]);
@@ -259,6 +263,41 @@ class SPSOService {
             else reject({status: false, message: 'Người dùng chưa đăng nhập'});
         });
     }
+
+    adminHomePage = async(req, res) => {
+        try {
+            const [data1] = await db.execute(`SELECT COUNT(*) AS tong_nguoi_dung FROM user WHERE user.role = 'SV';`);
+            const [data2] = await db.execute(`SELECT SUM(don_mua.tong_tien) AS tong_doanh_thu FROM don_mua;`)
+            const [data3] = await db.execute(`SELECT COUNT(*) AS so_luong_don_in FROM don_in;`);
+                             
+            const [data4] = await db.execute(`
+                SELECT 
+                    COUNT(itl.id) AS so_nguoi_su_dung,
+                    COUNT(itl.ma_don_in) AS so_don_in,
+                    DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y')    AS date
+                FROM 
+                    in_tai_lieu itl
+                GROUP BY 
+                    DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y')
+                ORDER BY 
+                    DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y') DESC 
+                LIMIT 7;
+                `);
+            
+            const result = {
+                thong_ke_1: {
+                    ...data1[0],
+                    ...data2[0],
+                    ...data3[0]
+                },
+                thong_ke_2: data4
+                }
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    }
+
 }
 
 module.exports = new SPSOService;

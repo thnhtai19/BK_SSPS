@@ -42,7 +42,7 @@ create table sinh_vien (
 );
 
 create table don_mua (
-	ma_don_mua 	varchar(50) not null,
+	ma_don_mua 	varchar(50) not null unique,
     so_trang 	int not null,
     tong_tien   int not null default 0,
     thoi_gian	varchar(50) not null,
@@ -147,3 +147,25 @@ create table cau_hinh (
     foreign key(uid) references spso(id),
     foreign key(ma_hoc_ki) references he_thong(ma_hoc_ki)
 );
+
+DELIMITER //
+
+CREATE TRIGGER calculate_tong_tien
+BEFORE INSERT ON don_mua
+FOR EACH ROW
+BEGIN
+    DECLARE current_gia INT;
+    
+    IF NEW.tong_tien = 0 OR NEW.tong_tien = NULL THEN
+        SET current_gia = (
+            SELECT gia 
+            FROM he_thong 
+            WHERE ma_hoc_ki = (SELECT MAX(ma_hoc_ki) FROM he_thong)
+            LIMIT 1
+        );
+        
+        SET NEW.tong_tien = NEW.so_trang * current_gia;
+    END IF;
+END//
+
+DELIMITER ;

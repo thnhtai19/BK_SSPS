@@ -1,4 +1,3 @@
-const { message } = require('antd');
 const SPSOService = require('../services/SPSOService')
 
 class SPSOController {
@@ -17,6 +16,7 @@ class SPSOController {
             res.status(400).json(err);
         }
     }
+
     UpdatePrinterStatus = async (req, res) => {
         try {
             if(!req.session.user) {
@@ -33,6 +33,7 @@ class SPSOController {
             res.status(400).json(err);
         }
     }
+
     AddPrinter = async (req, res) => {
         try {
             if(!req.session.user) {
@@ -49,6 +50,7 @@ class SPSOController {
             res.status(400).json(err);
         }
     }
+
     getAllPrintOrder = async (req, res) => {
         try {
             if(!req.session.user) {
@@ -64,6 +66,7 @@ class SPSOController {
             res.status(400).json(err);
         }
     }
+
     UpdatePrintOrderStatus = async (req, res) => {
         try {
             if(!req.session.user) {
@@ -135,5 +138,22 @@ class SPSOController {
             return res.status(200).json(err);
         }
     }
+
+    adminHomPage = async (req, res) => {
+        try {
+            if(!req.session.user) {
+                return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
+            }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
+            }
+            const result = await SPSOService.adminHomePage();
+            return res.status(200).send(result);
+        }
+        catch (err) {
+            res.status(400).json(err);
+        }
+    }
+
 }
 module.exports = new SPSOController;

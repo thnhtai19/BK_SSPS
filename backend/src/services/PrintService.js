@@ -18,6 +18,7 @@ class PrintService {
             throw err;
         }
     }
+
     createPrintOrder = async (data, id) => {
         try {
             const ma_tep = data.ma_tep;
@@ -71,6 +72,7 @@ class PrintService {
             throw err;
         }
     }
+    
     saveFile = async (file, id) => {
         try {
             console.log(file);
