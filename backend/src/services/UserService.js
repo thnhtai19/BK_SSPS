@@ -38,7 +38,7 @@ class UserService {
                             ID: don.ma_don_mua,
                             thoi_gian: don.thoi_gian,
                             so_trang: don.so_trang,
-                            trang_thai: don.trang_thai
+                            tong_tien: don.tong_tien
                         });
                     })
                 }
@@ -47,6 +47,7 @@ class UserService {
             else reject({ status: false, message: 'Người dùng chưa đăng nhập' });
         });
     }
+
     getUserById = async(Id) => {
         try{
             const [result, ] = await db.execute(`SELECT user.id, 
@@ -64,6 +65,7 @@ class UserService {
             throw err;
         }
     }
+
     fetchDocumentAndPrinterInfo = async () => {
         try {
             const [acceptedDocuments, activePrinters] = await Promise.all([
@@ -94,6 +96,7 @@ class UserService {
             throw err;
         }
     };
+
     NoPagesEachDay = async (id) => {
         const [result1] = await db.execute(`
             SELECT DATE(thoi_gian) as create_day 
@@ -138,6 +141,7 @@ class UserService {
 
         return jsondata;
     }
+
     getPrintOrder = async (id) => {
         try {
             const [result] = await db.execute(`
@@ -209,4 +213,5 @@ class UserService {
         }
     }
 }
+
 module.exports = new UserService

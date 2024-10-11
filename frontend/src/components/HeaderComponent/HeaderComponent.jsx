@@ -30,7 +30,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
 
   const handleLogout = async () => {
     try {
-        await axios.post(apiUrl + 'auth/log_out');
+        await axios.post(`${apiUrl}auth/log_out`, {}, { withCredentials: true });
         localStorage.clear();
         window.location.href = '/';
     } catch (error) {
@@ -93,9 +93,9 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
     <Menu style={{ width: '250px', maxHeight: '300px' }}>
       <div style={{ marginLeft: '15px', padding: '10px 0' }}>
         <div style={{ fontSize: '18px', fontWeight: 'bold' }}>
-          Trần Thành Tài
+          {localStorage.getItem("name")}
         </div>
-        <div style={{ fontSize: '11px', color: '#444' }}>tai.tranthanh@hcmut.edu.vn</div>
+        <div style={{ fontSize: '11px', color: '#444' }}>{localStorage.getItem("email")}</div>
       </div>
 
       <Menu.Item key="0">

@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-
+import { useState, useEffect,  } from "react";
+import { useNavigate } from 'react-router-dom';
 import ChangePassword from "../../components/ChangePassword/ChangePassword";
 import UserInfo from "../../components/UserInfo/UserInfo";
 import DiaryTable from "../../components/DiaryTable/DiaryTable";
+import { message } from 'antd';
 
 function MyAccount() {
   const [userInfo, setUserInfo] = useState(null);
@@ -12,6 +13,7 @@ function MyAccount() {
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingDiary, setLoadingDiary] = useState(true);
 
+  const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -32,7 +34,8 @@ function MyAccount() {
             if (response.ok) {
                 setUserInfo(data);
             } else {
-                setErrorMessage(data.message || 'Failed to fetch user profile');
+              message.error("Vui lòng đăng nhập!")
+              navigate("/auth/login");
             }
         } catch (error) {
             setErrorMessage('Lỗi kết nối đến server');
@@ -70,7 +73,7 @@ function MyAccount() {
 
     fetchUserProfile();
     fetchUserDiary();
-  }, [apiUrl]);
+  }, [apiUrl,navigate]);
 
   return (
     <div className="sm:p-8 p-3 pt-0 text-[#444444]">
