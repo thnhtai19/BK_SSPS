@@ -76,20 +76,10 @@ class SPSOController {
                 return res.status(403).json({message: 'Không có quyền truy cập!'});
             }
             const { ma_don_in, trang_thai } = req.body;
-            let insert;
-            if(trang_thai == 'Đã in') {
-                insert = 0;
-            }
-            else if(trang_thai == 'Đang in'){
-                insert = 2;
-            }
-            else if(trang_thai == 'Chờ in'){
-                insert = 1;
-            }
-            else {
+            if (trang_thai != 'Đã in' && trang_thai != 'Đang in' && trang_thai != 'Chờ in') {
                 return res.json({ message: 'Trạng thái không hợp lệ!' });
             }
-            await SPSOService.updatePrintOrderStatus(ma_don_in, insert);
+            await SPSOService.updatePrintOrderStatus(ma_don_in, trang_thai);
             res.json({ message: 'Cập nhật trạng thái thành công!'});
         }
         catch (err) {

@@ -52,7 +52,7 @@ create table don_mua (
 );
 
 create table may_in (
-	  ma_may_in	varchar(50) not null,
+	ma_may_in	varchar(50) not null,
     hang 		varchar(50) not null default 'Canon',
     trang_thai_may_in	varchar(50) not null default true,
     doi			varchar(50) not null,
@@ -65,7 +65,7 @@ create table may_in (
 );
 
 create table don_in (
-	  ma_don_in	varchar(50) not null,
+	ma_don_in	varchar(50) not null,
     trang_thai_don_in	varchar(50) not null check(trang_thai_don_in in ('Đã in', 'Chờ in', 'Đang in')) default 'Chờ in', 
     primary key(ma_don_in)
 );
