@@ -1,8 +1,4 @@
-const { data } = require('autoprefixer');
 const db = require('../config/db');
-const { message } = require('antd');
-const supportFunction = require('./support');
-const support = require('../services/support');
 
 class UserService {
     diary = async (req) => {
@@ -154,11 +150,7 @@ class UserService {
                 left join tep t on dt.ma_tep = t.ma_tep
                 WHERE id = ?`, [id]);
             const formattedResult = result.map(record => {
-                return {
-                    ...record,
-                    tg_bat_dau: support.formatDateTime(record.tg_bat_dau),
-                    tg_ket_thuc: support.formatDateTime(record.tg_ket_thuc)
-                };
+                return record;
             });
         
             return formattedResult;
@@ -185,10 +177,10 @@ class UserService {
                 (SELECT ma_don_in FROM in_tai_lieu WHERE id = ?);`, [id])
                 const [data3] = await db.execute(`
                     SELECT 
-                        DATE_FORMAT(DATE(itl.tg_bat_dau), '%d-%m-%Y') AS date,
+                        DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y') AS date,
                     --     COUNT(DISTINCT di.ma_don_in) AS so_don_in_trong_ngay,
                         COUNT(digt.ma_tep) AS so_tai_lieu_in_trong_ngay,
-                        SUM(digt.so_trang) AS so_trang_da_dung_trong_ngay
+                        SUM(digt.so_trang_in) AS so_trang_da_dung_trong_ngay
                     FROM 
                         in_tai_lieu itl
                     JOIN 
@@ -198,9 +190,9 @@ class UserService {
                     WHERE 
                         itl.id = ?
                     GROUP BY 
-                        DATE_FORMAT(DATE(itl.tg_bat_dau), '%d-%m-%Y')
+                        DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y')
                     ORDER BY 
-                        date ASC
+                        STR_TO_DATE(date, '%d-%m-%Y') ASC
                     LIMIT 7;`, [id]);
                              
             const result = {
