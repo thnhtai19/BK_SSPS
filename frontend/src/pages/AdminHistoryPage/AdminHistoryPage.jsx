@@ -32,8 +32,13 @@ const AdminHistoryPage = () => {
           credentials: 'include',
         });
 
+
         const data = await response.json();
-        console.log(data);
+        console.log(data.message)
+        if(data.message === 'Không có quyền truy cập!'){
+          navigate('/404');
+          return;
+        }
 
         if (response.ok) {
           setHis(data);
@@ -83,18 +88,18 @@ const AdminHistoryPage = () => {
     },
     {
       title: 'MSSV',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'MSSV',
+      key: 'MSSV',
     },
     {
-      title: 'Mã máy in',
-      dataIndex: 'ma_may_in',
-      key: 'ma_may_in',
+      title: 'Tên máy in',
+      dataIndex: 'ten_may',
+      key: 'ten_may',
     },
     {
       title: 'Tên tài liệu',
-      dataIndex: 'documentName',
-      key: 'documentName',
+      dataIndex: 'ten_tep',
+      key: 'ten_tep',
     },
     {
       title: 'Thời gian bắt đầu',
@@ -103,8 +108,8 @@ const AdminHistoryPage = () => {
     },
     {
       title: 'Thời gian kết thúc',
-      dataIndex: 'tg_bat_dau',
-      key: 'tg_bat_dau',
+      dataIndex: 'tg_ket_thuc',
+      key: 'tg_ket_thuc',
     },
     {
       title: 'Cỡ giấy',
@@ -123,21 +128,21 @@ const AdminHistoryPage = () => {
       render: (text) => {
         let style = {};
 
-        if (text === 'Đã in') {
+        if (text === 2) {
           style = {
             backgroundColor: '#BFFFD9',
             color: '#00760C',
             borderRadius: '10px',
             padding: '6px 8px',
           };
-        } else if (text === 'Đang in') {
+        } else if (text === 1) {
           style = {
             backgroundColor: '#FFF3CD',
             color: '#856404',
             borderRadius: '10px',
             padding: '6px 8px',
           };
-        } else if (text === 'Chờ in') {
+        } else if (text === 0) {
           style = {
             backgroundColor: '#F8D7DA',
             color: '#721C24',
@@ -153,7 +158,20 @@ const AdminHistoryPage = () => {
           };
         }
 
-        return <span style={style}>{text}</span>;
+        const renderText = (text) => {
+          switch (text) {
+            case 0:
+              return 'Chờ in'; 
+            case 1:
+              return 'Đang in';
+            case 2:
+              return 'Đã in'; 
+            default:
+              return 'Không xác định';  
+          }
+        };
+        
+        return <span style={style}>{renderText(text)}</span>;
       },
     },
     {
