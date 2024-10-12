@@ -38,7 +38,7 @@ function ForgetPassword({ setShowForgetPassword }) {
       const data = await response.json();
   
       if (data.status === false) {
-        setMessage(data.message);
+        setMessage(data.message);   
       } else {
         setMessage(`Mật khẩu mới đã được gửi tới ${data.email}`);
       }
