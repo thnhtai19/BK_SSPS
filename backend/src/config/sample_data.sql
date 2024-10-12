@@ -108,12 +108,12 @@ INSERT INTO in_tai_lieu (id, ma_may_in, ma_don_in, tg_bat_dau, tg_ket_thuc) VALU
 ('6', '6', '17', '11:14:25 07-10-2024', '10:14:25 10-10-2024');
 
 
-insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat) values
-('223', 200, 50, '12-10-2024'),
-('231', 200, 50, '12-10-2024'),
-('232', 200, 50, '12-10-2024'),
-('233', 200, 50, '12-10-2024'),
-('241', 200, 50, '12-10-2024');
+insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat, trang_thai_bao_tri) values
+('223', 200, 50, '12-10-2024', 'Đã tạm ngưng'),
+('231', 200, 50, '12-10-2024', 'Đã tạm ngưng'),
+('232', 200, 50, '12-10-2024', 'Đã tạm ngưng'),
+('233', 200, 50, '12-10-2024', 'Đã tạm ngưng'),
+('241', 200, 50, '12-10-2024', 'Đang Hoạt động');
 
 insert into loai_tep_chap_nhan (ma_hoc_ki, loai_tep) values 
 ('241', '.doc'),
