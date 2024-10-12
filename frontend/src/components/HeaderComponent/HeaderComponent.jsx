@@ -30,16 +30,9 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
 
   const handleLogout = async () => {
     try {
-        const res = await fetch(`${apiUrl}auth/log_out`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-        });
-        console.log(res)
-        //localStorage.clear();
-        //window.location.href = '/';
+        await axios.post(`${apiUrl}auth/log_out`, {}, { withCredentials: true });
+        localStorage.clear();
+        window.location.href = '/';
     } catch (error) {
         console.error('Logout failed:', error);
     }

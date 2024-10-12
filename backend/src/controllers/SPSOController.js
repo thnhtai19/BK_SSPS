@@ -1,4 +1,3 @@
-const { message } = require('antd');
 const SPSOService = require('../services/SPSOService')
 
 class SPSOController {
@@ -7,6 +6,9 @@ class SPSOController {
             if(!req.session.user) {
                 return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
             }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
+            }
             const result = await SPSOService.fetchAllPrinter();
             res.json(result);
         }
@@ -14,10 +16,14 @@ class SPSOController {
             res.status(400).json(err);
         }
     }
+
     UpdatePrinterStatus = async (req, res) => {
         try {
             if(!req.session.user) {
                 return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
+            }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
             }
             const { ma_may_in, trang_thai } = req.body;
             await SPSOService.updatePrinterStatus(ma_may_in, trang_thai);
@@ -27,10 +33,14 @@ class SPSOController {
             res.status(400).json(err);
         }
     }
+
     AddPrinter = async (req, res) => {
         try {
             if(!req.session.user) {
                 return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
+            }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
             }
             const data = req.body;
             await SPSOService.addPrinter(data);
@@ -40,10 +50,14 @@ class SPSOController {
             res.status(400).json(err);
         }
     }
+
     getAllPrintOrder = async (req, res) => {
         try {
             if(!req.session.user) {
                 return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
+            }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
             }
             const result = await SPSOService.fetchAllPrintOrder();
             res.json(result);
@@ -52,13 +66,30 @@ class SPSOController {
             res.status(400).json(err);
         }
     }
+
     UpdatePrintOrderStatus = async (req, res) => {
         try {
             if(!req.session.user) {
                 return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
             }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
+            }
             const { ma_don_in, trang_thai } = req.body;
-            await SPSOService.updatePrintOrderStatus(ma_don_in, trang_thai);
+            let insert;
+            if(trang_thai == 'Đã in') {
+                insert = 0;
+            }
+            else if(trang_thai == 'Đang in'){
+                insert = 2;
+            }
+            else if(trang_thai == 'Chờ in'){
+                insert = 1;
+            }
+            else {
+                return res.json({ message: 'Trạng thái không hợp lệ!' });
+            }
+            await SPSOService.updatePrintOrderStatus(ma_don_in, insert);
             res.json({ message: 'Cập nhật trạng thái thành công!'});
         }
         catch (err) {
@@ -107,5 +138,22 @@ class SPSOController {
             return res.status(200).json(err);
         }
     }
+
+    adminHomPage = async (req, res) => {
+        try {
+            if(!req.session.user) {
+                return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
+            }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
+            }
+            const result = await SPSOService.adminHomePage();
+            return res.status(200).send(result);
+        }
+        catch (err) {
+            res.status(400).json(err);
+        }
+    }
+
 }
 module.exports = new SPSOController;

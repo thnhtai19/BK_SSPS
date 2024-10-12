@@ -1,27 +1,29 @@
 const db = require('../config/db');
+const path = require('path');
 const UserService = require('./UserService');
+const support = require('./support');
+
 class PrintService {
     AcceptFile = async (data) => {
         try {
             const result1 = await UserService.fetchDocumentAndPrinterInfo();
             const acceptedDocument = result1.acceptedDocuments;
-            const fileType = data.loai_tep;
+            const ma_tep = data.ma_tep;
+            const [result2] = await db.execute('SELECT loai_tep FROM tep WHERE ma_tep = ?', [ma_tep]);
+            console.log(result2);
+            const fileType = result2[0].loai_tep;
             return acceptedDocument.some(doc => doc.loai_tep === fileType);
         }
         catch(err){
             throw err;
         }
     }
+
     createPrintOrder = async (data, id) => {
         try {
-            const ten_tep = data.ten_tep;
-            const loai_tep = data.loai_tep;
-            const duong_dan = data.duong_dan;
-            const so_trang = data.so_trang;
-            const ma_tep = String(Date.now());
-            await db.execute('INSERT INTO tep (ma_tep, ten_tep, loai_tep, duong_dan, so_trang) VALUES (?, ?, ?, ?, ?)', [ma_tep, ten_tep, loai_tep, duong_dan, so_trang]);
-            await db.execute('INSERT INTO so_huu (id, ma_tep) VALUES (?, ?)', [id, ma_tep]);
-
+            const ma_tep = data.ma_tep;
+            const result0 = await db.execute('SELECT so_trang FROM tep WHERE ma_tep = ?', [ma_tep]);
+            const so_trang = result0[0][0].so_trang;
             const ma_don_in = String(Date.now());
             const ma_may_in = data.ma_may_in;
             const so_ban_in = data.so_ban_in;
@@ -46,16 +48,44 @@ class PrintService {
             if(result[0][0].so_giay_con < so_trang_in){
                 throw new Error('Số trang in vượt quá số giấy còn lại');
             }
-            const day = new Date();
-            const tg_bat_dau = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate() + ' ' + day.getHours() + ':' + day.getMinutes() + ':' + day.getSeconds();
-            const tg_ket_thuc_date = new Date(day.getTime() + 30 * 60 * 1000);  // Thêm 30 phút
-            const tg_ket_thuc = tg_ket_thuc_date.getFullYear() + '-' + (tg_ket_thuc_date.getMonth() + 1) + '-' + tg_ket_thuc_date.getDate() + ' ' + tg_ket_thuc_date.getHours() + ':' + tg_ket_thuc_date.getMinutes() + ':' + tg_ket_thuc_date.getSeconds();
-            await db.execute('INSERT INTO don_in (ma_don_in) VALUES (?)', [ma_don_in]);
-            await db.execute('INSERT INTO don_in_gom_tep (ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in) VALUES (?, ?, ?, ?, ?, ?)', [ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in]);
-            await db.execute('INSERT INTO in_tai_lieu (id, ma_don_in, ma_may_in, tg_bat_dau, tg_ket_thuc) VALUES (?, ?, ?, ?, ?)', [id, ma_don_in, ma_may_in, tg_bat_dau, tg_ket_thuc]);   
-            await db.execute('INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)', [id, `Đã tạo đơn in mã ${ma_don_in}`, tg_bat_dau]);
-            await db.execute('UPDATE sinh_vien SET so_giay_con = so_giay_con - ? WHERE id = ?', [so_trang_in, id]);
+            // const day = new Date();
+            // const tg_bat_dau = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate() + ' ' + day.getHours() + ':' + day.getMinutes() + ':' + day.getSeconds();
+            // const tg_ket_thuc_date = new Date(day.getTime() + 30 * 60 * 1000);  // Thêm 30 phút
+            // const tg_ket_thuc = tg_ket_thuc_date.getFullYear() + '-' + (tg_ket_thuc_date.getMonth() + 1) + '-' + tg_ket_thuc_date.getDate() + ' ' + tg_ket_thuc_date.getHours() + ':' + tg_ket_thuc_date.getMinutes() + ':' + tg_ket_thuc_date.getSeconds();
+            // await db.execute('INSERT INTO don_in (ma_don_in) VALUES (?)', [ma_don_in]);
+            // await db.execute('INSERT INTO don_in_gom_tep (ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in) VALUES (?, ?, ?, ?, ?, ?)', [ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in]);
+            // await db.execute('INSERT INTO in_tai_lieu (id, ma_don_in, ma_may_in, tg_bat_dau, tg_ket_thuc) VALUES (?, ?, ?, ?, ?)', [id, ma_don_in, ma_may_in, tg_bat_dau, tg_ket_thuc]);   
+            // await db.execute('INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)', [id, `Đã tạo đơn in mã ${ma_don_in}`, tg_bat_dau]);
+            // await db.execute('UPDATE sinh_vien SET so_giay_con = so_giay_con - ? WHERE id = ?', [so_trang_in, id]);
+            const now = support.getCurrentFormattedDateTime();
+            await db.execute(`  INSERT INTO don_in (ma_don_in) VALUES (?)`, [ma_don_in]);
+            await db.execute(`  INSERT INTO don_in_gom_tep (ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in) 
+                                VALUES (?, ?, ?, ?, ?, ?)`, 
+                                [ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in]);
+            await db.execute(`  INSERT INTO in_tai_lieu (id, ma_don_in, ma_may_in) VALUES (?, ?, ?)`, 
+                                [id, ma_don_in, ma_may_in]);   
+            await db.execute(`  INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)`, 
+                                [id, `Đã tạo đơn in mã ${ma_don_in}`, now]);
+            await db.execute(`  UPDATE sinh_vien SET so_giay_con = so_giay_con - ? WHERE id = ?`, 
+                                [so_trang_in, id]);
         } catch (err) {
+            throw err;
+        }
+    }
+    
+    saveFile = async (file, id) => {
+        try {
+            console.log(file);
+            const duong_dan = file.path;
+            // console.log('_' + id + '/' + file.path)
+            const ten_tep = file.originalname;
+            const loai_tep = path.extname(file.originalname).slice(1);
+            const so_trang = 50;
+            const ma_tep = String(Date.now());
+            await db.execute('INSERT INTO tep (ma_tep, ten_tep, loai_tep, duong_dan, so_trang) VALUES (?, ?, ?, ?, ?)', [ma_tep, ten_tep, loai_tep, duong_dan, so_trang]);
+            await db.execute('INSERT INTO so_huu (id, ma_tep) VALUES (?, ?)', [id, ma_tep]);
+        }
+        catch(err){
             throw err;
         }
     }

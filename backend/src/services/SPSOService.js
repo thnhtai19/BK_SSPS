@@ -1,6 +1,4 @@
-const { data } = require('autoprefixer');
 const db = require('../config/db');
-const { message } = require('antd');
 const support = require('./support');
 
 class SPSOService {
@@ -12,6 +10,7 @@ class SPSOService {
             throw err;
         }
     }
+
     updatePrinterStatus = async (ma_may_in, trang_thai) => {
         try {
             await db.execute(`UPDATE may_in SET trang_thai_may_in = ? WHERE ma_may_in = ?`, [trang_thai, ma_may_in]);
@@ -19,6 +18,7 @@ class SPSOService {
             throw err;
         }
     }
+
     addPrinter = async (data) => {
         try {
                 const ma_may_in = String(Date.now());
@@ -39,20 +39,22 @@ class SPSOService {
             throw err;
         }
     }
+
     fetchAllPrintOrder = async () => {
         try {
             const [result, ] = await db.execute(`
-                SELECT * 
+                SELECT d.ma_don_in, itl.id as MSSV, mi.ten_may, t.ten_tep, t.duong_dan, 
+                        itl.tg_bat_dau, itl.tg_ket_thuc, d.trang_thai_don_in, dt.kich_thuoc, dt.so_trang_in
                 FROM don_in d left join don_in_gom_tep dt
                 on d.ma_don_in = dt.ma_don_in
                 left join in_tai_lieu itl
-                on dt.ma_don_in = itl.ma_don_in`);
+                on dt.ma_don_in = itl.ma_don_in
+                left join may_in mi
+                on itl.ma_may_in = mi.ma_may_in
+                left join tep t
+                on dt.ma_tep = t.ma_tep`);
                 const formattedResult = result.map(record => {
-                    return {
-                        ...record,
-                        tg_bat_dau: support.formatDateTime(record.tg_bat_dau),
-                        tg_ket_thuc: support.formatDateTime(record.tg_ket_thuc)
-                    };
+                    return record;
                 });
             return formattedResult;
         }
@@ -60,9 +62,19 @@ class SPSOService {
             throw err;
         }
     }
+
     updatePrintOrderStatus = async (ma_don_in, trang_thai) => {
         try {
             await db.execute(`UPDATE don_in SET trang_thai_don_in = ? WHERE ma_don_in = ?`, [trang_thai, ma_don_in]);
+            const now = support.getCurrentFormattedDateTime();
+            if (ma_don_in == 'Đang in') await db.execute(`
+                UPDATE in_tai_lieu 
+                SET tg_bat_dau = ?
+                WHERE ma_don_in = ?`, [now, ma_don_in]);
+            else if (ma_don_in == 'Đã in') await db.execute(`
+                UPDATE in_tai_lieu 
+                SET tg_ket_thuc = ?
+                WHERE ma_don_in = ?`, [now, ma_don_in]);
         } catch (err) {
             throw err;
         }
@@ -251,6 +263,41 @@ class SPSOService {
             else reject({status: false, message: 'Người dùng chưa đăng nhập'});
         });
     }
+
+    adminHomePage = async(req, res) => {
+        try {
+            const [data1] = await db.execute(`SELECT COUNT(*) AS tong_nguoi_dung FROM user WHERE user.role = 'SV';`);
+            const [data2] = await db.execute(`SELECT SUM(don_mua.tong_tien) AS tong_doanh_thu FROM don_mua;`)
+            const [data3] = await db.execute(`SELECT COUNT(*) AS so_luong_don_in FROM don_in;`);
+                             
+            const [data4] = await db.execute(`
+                SELECT 
+                    COUNT(itl.id) AS so_nguoi_su_dung,
+                    COUNT(itl.ma_don_in) AS so_don_in,
+                    DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y')    AS date
+                FROM 
+                    in_tai_lieu itl
+                GROUP BY 
+                    DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y')
+                ORDER BY 
+                    DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y') DESC 
+                LIMIT 7;
+                `);
+            
+            const result = {
+                thong_ke_1: {
+                    ...data1[0],
+                    ...data2[0],
+                    ...data3[0]
+                },
+                thong_ke_2: data4
+                }
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    }
+
 }
 
 module.exports = new SPSOService;

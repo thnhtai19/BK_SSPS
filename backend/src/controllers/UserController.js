@@ -1,6 +1,6 @@
-const { message } = require('antd');
 const UserService = require('../services/UserService')
 const PuchaseOrderService = require('../services/PurchaseOrderService')
+
 class UserController {
     UserInfo = async (req, res) => {
         try {
@@ -94,12 +94,11 @@ class UserController {
     }
     
     studentHomepage = async (req, res) => {
-        // try{
-        //     if(!req.session.user) {
-        //         return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
-        //     }
-        //     const id = req.session.user.id;
-            const id ='5';
+        try{
+            if(!req.session.user) {
+                return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
+            }
+            const id = req.session.user.id;
             try {
                 const result = await UserService.studentHomepage(id);
                 return res.status(200).send(result);
@@ -107,10 +106,10 @@ class UserController {
                 // return res.status(200).json({status: false, error: err});
                 return res.status(200).json({status: false, error: 'Lỗi cơ sở dữ liệu'});
             }
-        // }
-        // catch(err){
-        //     res.status(500).json({message: 'Lỗi server'});
-        // }
+        }
+        catch(err){
+            res.status(500).json({message: 'Lỗi server'});
+        }
     }
 
     history_buying = async (req, res) => {
@@ -121,6 +120,7 @@ class UserController {
             return res.status(200).json({status: false, error: err});
         }
     }
+    
 }
 
 module.exports = new UserController

@@ -21,16 +21,21 @@ class Support {
         return start; 
     }
     
-    formatDateTime = (dateTime) => {
-        const date = new Date(dateTime);
-        const hours = ('0' + date.getHours()).slice(-2);
-        const minutes = ('0' + date.getMinutes()).slice(-2);
-        const seconds = ('0' + date.getSeconds()).slice(-2);
-        const day = ('0' + date.getDate()).slice(-2);
-        const month = ('0' + (date.getMonth() + 1)).slice(-2); // Tháng bắt đầu từ 0, nên cần +1
-        const year = date.getFullYear();
-        return `${hours}:${minutes}:${seconds} ${day}-${month}-${year}`; //11:14:25 05-10-2024
-    };
+    getCurrentFormattedDateTime() {
+        const now = new Date();
+    
+        const pad = (num) => num.toString().padStart(2, '0');
+    
+        const hours = pad(now.getHours());
+        const minutes = pad(now.getMinutes());
+        const seconds = pad(now.getSeconds());
+    
+        const day = pad(now.getDate());
+        const month = pad(now.getMonth() + 1);
+        const year = now.getFullYear();
+    
+        return `${hours}:${minutes}:${seconds} ${day}-${month}-${year}`; //hh:mm:ss dd-mm-yyyy
+    }    
 
     checkLastDayOfCurrentMonth = () => {
         const today = new Date();
