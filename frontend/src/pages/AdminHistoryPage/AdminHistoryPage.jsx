@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { WrapContainer } from './style';
 import TableComponent from '../../components/TableComponent/TableComponent';
@@ -14,45 +14,49 @@ const AdminHistoryPage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [dataSource, setHis] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
-  const [selectedStatus, setSelectedStatus] = useState(''); // State for selected status
-  const [selectedRecord, setSelectedRecord] = useState(null); // State for selected record
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedId, setSelectedRecordID] = useState(null); 
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
-  useEffect(() => {
-    const gethis = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${apiUrl}spso/getAllPrintOrder`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        });
-
-
-        const data = await response.json();
-        console.log(data.message)
-        if(data.message === 'Không có quyền truy cập!'){
-          navigate('/404');
-          return;
-        }
-
-        if (response.ok) {
-          setHis(data);
-        } else {
-          message.error('Vui lòng đăng nhập!');
-          navigate('/auth/login');
-        }
-        setLoading(false);
-      } catch (error) {
-        console.error('Lỗi:', error);
+  const gethis = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${apiUrl}spso/getAllPrintOrder`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+  
+      const data = await response.json();
+      if (data.message === 'Không có quyền truy cập!') {
+        navigate('/404');
+        return;
       }
-    };
+  
+      if (response.ok) {
+        const filteredData = filterDataByDate(data, selectedDateStart, selectedDateEnd);
+        setHis(filteredData);
+      } else {
+        message.error('Vui lòng đăng nhập!');
+        navigate('/auth/login');
+      }
+    } catch (error) {
+      console.error('Lỗi:', error);
+      message.error('Đã xảy ra lỗi trong quá trình lấy dữ liệu!');
+    } finally {
+      setLoading(false);
+    }
+  }, [apiUrl, selectedDateStart, selectedDateEnd, navigate]);
+  
+
+  useEffect(() => {
     gethis();
-  }, [apiUrl, navigate]);
+  }, [selectedDateStart, selectedDateEnd, gethis]);
+  
 
   const handleChangeStart = (date, dateString) => {
     setSelectedDateStart(date);
@@ -63,17 +67,57 @@ const AdminHistoryPage = () => {
   };
 
   const handleEdit = (record) => {
-    setSelectedRecord(record);
+    setSelectedRecordID(record.ma_don_in);
     setSelectedStatus(record.trang_thai_don_in);
-    setIsModalVisible(true); // Show the modal
+    setIsModalVisible(true);
   };
 
-  const handleUpdateStatus = () => {
-    // Logic to update the status of the selected record
-    // You can make an API call here to update the record's status in the backend
-    console.log('Updated status:', selectedStatus);
-    message.success('Cập nhật trạng thái thành công!');
-    setIsModalVisible(false); // Close the modal
+  const handleUpdateStatus = async () => {
+      const load = {
+        ma_don_in: selectedId,
+        trang_thai: selectedStatus,
+      };
+      
+      try {
+        const res = await fetch(`${apiUrl}spso/updatePrintOrderStatus`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(load),
+          credentials: 'include',
+        });
+      
+        const data = await res.json();
+      
+        if (data && data.message === "Cập nhật trạng thái thành công!") {
+          gethis();
+          message.success('Cập nhật trạng thái thành công!');
+        } else {
+          message.error('Cập nhật trạng thái thất bại!');
+        }
+      } catch (error) {
+        message.error('Cập nhật trạng thái thất bại!');
+      }
+    
+    setIsModalVisible(false); 
+  };
+
+  const filterDataByDate = (data, startDate, endDate) => {
+    if (!startDate && !endDate) return data;
+  
+    return data.filter(item => {
+      const dateParts = item.tg_bat_dau.split(' ');
+      const [time, date] = dateParts;
+      const [day, month, year] = date.split('-');
+      const formattedDate = new Date(`${year}-${month}-${day}T${time}`);
+
+      const startDateCondition = startDate ? formattedDate >= startDate.toDate() : true;
+      
+      const endDateCondition = endDate ? formattedDate <= endDate.toDate() : true;
+  
+      return startDateCondition && endDateCondition;
+    });
   };
 
   const handleStatusChange = (value) => {
@@ -128,50 +172,30 @@ const AdminHistoryPage = () => {
       render: (text) => {
         let style = {};
 
-        if (text === 2) {
+        if (text === "Đã in") {
           style = {
             backgroundColor: '#BFFFD9',
             color: '#00760C',
             borderRadius: '10px',
             padding: '6px 8px',
           };
-        } else if (text === 1) {
+        } else if (text === "Đang in") {
           style = {
             backgroundColor: '#FFF3CD',
             color: '#856404',
             borderRadius: '10px',
             padding: '6px 8px',
           };
-        } else if (text === 0) {
+        } else if (text === "Chờ in") {
           style = {
             backgroundColor: '#F8D7DA',
             color: '#721C24',
             borderRadius: '10px',
             padding: '6px 8px',
           };
-        } else {
-          style = {
-            backgroundColor: 'transparent',
-            color: 'black',
-            borderRadius: '10px',
-            padding: '6px 8px',
-          };
         }
-
-        const renderText = (text) => {
-          switch (text) {
-            case 0:
-              return 'Chờ in'; 
-            case 1:
-              return 'Đang in';
-            case 2:
-              return 'Đã in'; 
-            default:
-              return 'Không xác định';  
-          }
-        };
         
-        return <span style={style}>{renderText(text)}</span>;
+        return <span style={style}>{text}</span>;
       },
     },
     {
@@ -180,15 +204,17 @@ const AdminHistoryPage = () => {
       render: (text, record) => (
         <span>
           <button
-            onClick={() => handleEdit(record)} // Call handleEdit when clicked
-            style={{
-              border: '1px solid #0688B4',
-              backgroundColor: 'transparent',
-              color: '#0688B4',
-              padding: '4px 8px',
-              borderRadius: '10px',
-              cursor: 'pointer',
-            }}
+          onClick={() => handleEdit(record)}
+          style={{
+            border: '1px solid #0688B4',
+            backgroundColor: 'transparent',
+            color: '#0688B4',
+            padding: '4px 8px',
+            borderRadius: '10px',
+            cursor: 'pointer',
+          }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#a0e1f7'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
           >
             Cập nhật
           </button>
@@ -267,13 +293,19 @@ const AdminHistoryPage = () => {
         onCancel={() => setIsModalVisible(false)}
         okText='Cập nhật'
         cancelText='Hủy'
-        style={{ width: '300px' }}
+        width={400}
       >
         <Select value={selectedStatus} onChange={handleStatusChange} style={{ width: '100%' }}>
-          <Option value='Chờ in'>Chờ in</Option>
-          <Option value='Đang in'>Đang in</Option>
-          <Option value='Đã in'>Đã in</Option>
-        </Select>
+          <Option value='Chờ in' disabled={selectedStatus === 'Chờ in' || selectedStatus === 'Đã in' || selectedStatus === 'Đang in'}>
+            Chờ in
+          </Option>
+          <Option value='Đang in' disabled={selectedStatus === 'Đã in' || selectedStatus === 'Đang in'}>
+            Đang in 
+          </Option>
+          <Option value='Đã in' disabled={selectedStatus === 'Đã in'}>
+            Đã in
+          </Option>
+      </Select>
       </Modal>
     </HelmetProvider>
   );

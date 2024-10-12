@@ -95,13 +95,33 @@ function Login() {
   const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
+    const cheklogin = async () => {
+      try {
+        const response = await fetch(`${apiUrl}auth/check`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+        });
+  
+        const data = await response.json();
+        console.log(data);
+  
+        if (response.ok && data.status === false) {
+          navigate("/home");
+        } 
+      } catch (error) {
+      }
+    };
+    cheklogin();
     const passwordInput = passwordRef.current;
     if (showPassword) {
       passwordInput.type = "text";
     } else {
       passwordInput.type = "password";
     }
-  }, [showPassword]);
+  }, [showPassword,navigate,apiUrl]);
 
   function toggleShowPassword() {
     setShowPassword(!showPassword);

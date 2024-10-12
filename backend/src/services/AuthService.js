@@ -9,8 +9,8 @@ class AuthService {
     check = async (req) => {
         return new Promise(async (resolve, reject) => {
             try {
-                if (req.session.user) resolve({ status: true, message: 'Người dùng chưa đăng nhập' });
-                else reject({ status: false, message: 'Người dùng đã đăng nhập' });
+                if (req.session.user) resolve({ status: false, message: 'Người dùng đã đăng nhập' });
+                else resolve({ status: true, message: 'Người dùng chưa đăng nhập' });
             }   
             catch (error) {
                 reject(error);
