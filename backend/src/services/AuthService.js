@@ -6,6 +6,18 @@ const axios = require('axios');
 const supportFunction = require('./support');
 
 class AuthService {
+    check = async (req) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                if (req.session.user) resolve({ status: true, message: 'Người dùng chưa đăng nhập' });
+                else reject({ status: false, message: 'Người dùng đã đăng nhập' });
+            }   
+            catch (error) {
+                reject(error);
+            } 
+        });
+    }
+
     createUser = async (data) => {
         const { email, password, name, uid } = data;
         return new Promise(async (resolve, reject) => {

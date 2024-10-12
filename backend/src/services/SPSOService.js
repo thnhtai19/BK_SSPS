@@ -255,7 +255,7 @@ class SPSOService {
                     resolve({
                         don_hang: rac1.length,
                         nguoi_dung: uniqueIds.size,
-                        doanh_thu: revenue
+                        doanh_thu: revenue / 1e5
                     });
                 }
                 else reject({status: false, message: 'Không có quyền truy cập'});
