@@ -1,138 +1,238 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { Table } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
-
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from 'react-router-dom';
+import AddPrinter from "../../components/AddPrinter/AddPrinter";
+import { Table } from "antd";
+import { message} from 'antd';
 
 function ManageUserPage() {
   const [pageSize, setPageSize] = useState(10);
-  const [searchText, setSearchText] = useState("");
+  const [printerInfo, setPrinterInfo] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
   const addPrinterRef = useRef(null);
-
+  const apiUrl = process.env.REACT_APP_API_URL;
+  const navigate = useNavigate();
+  
   const handlePageSizeChange = (value) => {
     setPageSize(value);
   };
-
+  
   const paginationOptions = {
     pageSize,
     showSizeChanger: true,
     pageSizeOptions: ["5", "10", "20"],
     onShowSizeChange: (current, size) => handlePageSizeChange(size),
   };
-
+  
+  //Cấu trúc của bảng danh sách máy in
   const columns = [
     {
       title: "ID",
-      dataIndex: "id",
+      dataIndex: "ma_may_in",
+      key: "ma_may_in"
     },
     {
       title: "Tên máy in",
-      dataIndex: "printerName",
+      dataIndex: "ten_may",
+      key: "ten_may"
     },
     {
       title: "Thương hiệu",
-      dataIndex: "brand",
+      dataIndex: "hang",
+      key: "hang"
     },
     {
-      title: "Kiểu máy in",
-      dataIndex: "printerType",
+      title: "Đời máy in",
+      dataIndex: "doi",
+      key: "doi"
     },
     {
       title: "Mô tả",
-      dataIndex: "description",
+      dataIndex: "mo_ta",
+      key: "mo_ta"
     },
     {
       title: "Vị trí",
       dataIndex: "location",
+      key: "location"
     },
     {
       title: "Trạng thái",
-      dataIndex: "status",
+      dataIndex: "trang_thai_may_in",
+      key: "trang_thai_may_in",
       render: (text) => (
         <div
           className={
-            text.toLowerCase() === "đang bật"
+            text === "1"
               ? "bg-[#BFFFD9] text-[#00760C] rounded-lg py-1  flex items-center justify-center font-medium"
               : "bg-[#FFBEBE] text-[#B90707] rounded-lg py-1  flex items-center justify-center font-medium"
           }
         >
-          {text}
+          {text === "1" ? "Đang bật" : "Đang tắt"}
         </div>
       ),
     },
     {
       title: "Hành động",
-      dataIndex: "action",
-      render: (text) => (
+      dataIndex: "trang_thai_may_in",
+      key: "trang_thai_may_in",
+      render: (text, record) => (
         <button
-          onClick={handleToggleStatus}
+          onClick={(e) => handleToggleStatus(e, record.ma_may_in, record.trang_thai_may_in)}
           className="bg-[#0688B4] text-white font-medium  py-1 w-3/5 shadow-inner  hover:shadow-[white] rounded-lg"
-        >
-          {text}
+          >
+          {text === "1" ? "Tắt" : "Bật"}
         </button>
       ),
     },
+
   ];
-  const dataSource = Array.from({
-    length: 17,
-  }).map((_, i) => ({
-    key: i,
-    id: `#${i + 1}`,
-    printerName: `Máy in 1`,
-    brand: `MSI`,
-    printerType: `In màu`,
-    description: `Máy in mượt nhất trường`,
-    location: `Tầng 1, H1, CS2`,
-    status: `${i % 2 === 0 ? "Đang bật" : "Đang tắt"}`,
-    action: `${i % 2 === 0 ? "Tắt" : "Bật"}`,
-  }));
 
-  const [filteredData, setFilteredData] = useState(dataSource);
+  useEffect(() => {
+    //Kiểm tra trạng thái đăng nhập và role của người dùng
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`${apiUrl}user/profile`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+        });
 
+        const data = await response.json();
+        console.log(data);
+        
+        if (response.ok) {
+          // Điều hướng đến trang 404 nếu người dùng là sinh viên
+          if(data.role !== 'SSPO'){
+            message.error("Không có quyền truy cập!")
+            navigate("/404");
+          }
+        } else {
+          message.error("Vui lòng đăng nhập!")
+          navigate("/auth/login");
+        }
+      } catch (error) {
+        setErrorMessage('Lỗi kết nối đến server');
+        console.error('Lỗi:', error);
+      }
+    };
+
+    //lấy dữ liệu máy in
+    const fetchPrinterInfo = async () => {
+      try {
+        const response = await fetch(`${apiUrl}spso/getAllPrinter`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+        });
+
+        const printerData = await response.json();
+        
+        if (response.ok) {
+          const updatedData = printerData.map(printer => {
+            return {
+              ...printer,
+              location: `Tầng ${printer.co_so}, ${printer.toa}, ${printer.phong}` // Gộp các dữ liệu liên quan lại thành location
+            };
+          });
+          setPrinterInfo(updatedData);
+          setFilteredData(updatedData);
+        } else {
+          setErrorMessage(printerData.message)
+        }
+      } catch (error) {
+          setErrorMessage('Lỗi kết nối đến server');
+          console.error('Lỗi:', error);
+      }
+    };
+    fetchUserProfile();
+    fetchPrinterInfo();
+  }, [apiUrl,navigate]);
+
+  //Hàm sử lí hành động đổi trạng thái máy in
+  async function handleToggleStatus(e, ma_may_in, currentStatus) {
+    e.preventDefault();
+    const newStatus = currentStatus === "1" ? false : true;
+  
+    try {
+      // Gọi API cập nhật trạng thái máy in
+      const response = await fetch(`${apiUrl}spso/updatePrinterStatus`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ma_may_in: ma_may_in,
+          trang_thai: newStatus
+        }),
+        credentials: 'include',
+      });
+  
+      const printerData = await response.json();
+
+      if (response.ok) {
+        e.target.textContent = newStatus === true ? "Tắt" : "Bật";
+  
+        const statusElement = e.target.parentElement.parentElement.children[6].children[0];
+  
+        // Thay đổi màu sắc và text dựa trên trạng thái mới
+        if (newStatus === true) {
+          // Máy in chuyển sang "Bật"
+          statusElement.classList.remove("bg-[#FFBEBE]", "text-[#B90707]");
+          statusElement.classList.add("bg-[#BFFFD9]", "text-[#00760C]");
+          statusElement.textContent = "Đang bật";
+        } else {
+          // Máy in chuyển sang "Tắt"
+          statusElement.classList.remove("bg-[#BFFFD9]", "text-[#00760C]");
+          statusElement.classList.add("bg-[#FFBEBE]", "text-[#B90707]");
+          statusElement.textContent = "Đang tắt";
+        }
+
+        const updatedPrinters = printerInfo.map(printer => 
+          printer.ma_may_in === ma_may_in ? { ...printer, trang_thai_may_in: newStatus } : printer
+        );
+
+        setPrinterInfo(updatedPrinters);
+        setFilteredData(updatedPrinters);
+
+        alert(printerData.message); 
+      } else {
+        alert(printerData.message);
+      }
+    } catch (error) {
+      console.error("Có lỗi xảy ra:", error);
+      alert("Đã xảy ra lỗi khi cập nhật trạng thái máy in.");
+    }
+  }
+  
+  const [filteredData, setFilteredData] = useState(printerInfo);
+  
   function handleSearch(e) {
     const value = e.target.value.toLowerCase();
-    setSearchText(value);
 
-    const filtered = dataSource.filter((item) =>
+    if (!value) {
+      setFilteredData(printerInfo); // Reset to original data
+      return;
+    }
+
+    const filtered = printerInfo.filter((item) =>
       Object.keys(item).some((key) =>
         String(item[key]).toLowerCase().includes(value)
       )
     );
+
     setFilteredData(filtered);
   }
 
   function handlePopupPrinter(e) {
-    e.preventDefault();
-    addPrinterRef.current.classList.toggle("hidden");
-  }
-
-  function handleToggleStatus(e) {
-    e.preventDefault();
-    e.target.textContent = e.target.textContent === "Bật" ? "Tắt" : "Bật";
-    // change color status column
-    if (e.target.textContent.toLowerCase() === "bật") {
-      e.target.parentElement.parentElement.children[6].children[0].classList.remove(
-        "bg-[#BFFFD9]",
-        "text-[#00760C]"
-      );
-      e.target.parentElement.parentElement.children[6].children[0].classList.add(
-        "bg-[#FFBEBE]",
-        "text-[#B90707]"
-      );
-    } else {
-      e.target.parentElement.parentElement.children[6].children[0].classList.remove(
-        "bg-[#FFBEBE]",
-        "text-[#B90707]"
-      );
-      e.target.parentElement.parentElement.children[6].children[0].classList.add(
-        "bg-[#BFFFD9]",
-        "text-[#00760C]"
-      );
+    if (e && e.preventDefault) {
+      e.preventDefault();
     }
-
-    // change status column (on/off)
-    e.target.parentElement.parentElement.children[6].children[0].textContent =
-      e.target.textContent.toLowerCase() === "bật" ? "Đang tắt" : "Đang bật";
+    addPrinterRef.current.classList.toggle("hidden");
   }
 
   return (
@@ -166,58 +266,13 @@ function ManageUserPage() {
           }}
           className="shadow rounded-lg border-[#EFF1F3] border-[1px] "
         />
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       </section>
       {/* popUp add new printer */}
       <div className="hidden" ref={addPrinterRef}>
-        <div className="fixed top-0 left-0 h-screen w-screen  bg-black bg-opacity-30 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg py-4 px-6 mx-4 pb-10 shadow-lg">
-            <div className="flex justify-between">
-              <h3 className="font-semibold text-lg ">Thêm máy in</h3>
-              <button
-                onClick={handlePopupPrinter}
-                className="bg-[#0688B4] hover:shadow-white shadow-inner hover:cursor-pointer text-white font-semibold px-3 py-1 rounded-lg ml-auto block "
-              >
-                <CloseOutlined />
-              </button>
-            </div>
-            <form className="flex sm:gap-10 gap-0 flex-wrap">
-              <div className="flex flex-1 flex-col">
-                <label className="my-2">Tên máy in</label>
-                <input
-                  type="text"
-                  className="border-[1px] border-gray-400 rounded-lg outline-none px-2 py-1"
-                />
-                <label className="my-2">Thương hiệu</label>
-                <input
-                  type="text"
-                  className="border-[1px] border-gray-400 rounded-lg outline-none px-2 py-1"
-                />
-                <label className="my-2">Kiểu máy in</label>
-                <input
-                  type="text"
-                  className="border-[1px] border-gray-400 rounded-lg outline-none px-2 py-1"
-                />
-              </div>
-              <div className="flex flex-1 flex-col">
-                <label className="my-2">Mô tả</label>
-                <input
-                  type="text"
-                  className="border-[1px] border-gray-400 rounded-lg outline-none px-2 py-1"
-                />
-                <label className="my-2">Vị trí</label>
-                <input
-                  type="text"
-                  className="border-[1px] border-gray-400 rounded-lg outline-none px-2 py-1"
-                />
-                <div className="flex justify-end sm:mt-auto mt-6">
-                  <button className="bg-[#0688B4] mx-auto   text-white font-medium  py-1 w-3/5 shadow-inner  hover:shadow-[white] rounded-lg">
-                    Thêm
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
+        <AddPrinter
+          onClose={handlePopupPrinter}
+        />
       </div>
     </main>
   );
