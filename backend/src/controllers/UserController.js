@@ -67,7 +67,7 @@ class UserController {
             }
             const pagesNumber = req.body.pagesNumber;
             const purchaseID = req.body.purchaseID;
-            console.log(pagesNumber, purchaseID);
+            //console.log(pagesNumber, purchaseID);
             const id = req.session.user.id;
             if(!pagesNumber || !id) {
                 return res.status(400).json({message: 'Yêu cầu không hợp lệ'});

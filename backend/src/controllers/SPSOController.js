@@ -144,6 +144,57 @@ class SPSOController {
             res.status(400).json(err);
         }
     }
-
+    getSystemInfo = async (req, res) => {
+        try{
+            // if(!req.session.user) {
+            //     return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
+            // }
+            // if(req.session.user.role != 'SPSO') {
+            //     return res.status(403).json({message: 'Không có quyền truy cập!'});
+            // }
+            const result = await SPSOService.fetchSystemInfo();
+            res.json(result);
+        }
+        catch(err){
+            res.status(400).json(err);
+        }
+    }
+    addNewSemester = async (req, res) => {
+        try{
+            if(!req.session.user) {
+                return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
+            }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
+            }
+            const data = req.body;
+            const SPSOId = req.session.user.id;
+            await SPSOService.addNewSemester(data, SPSOId);
+            res.json({ message: 'Thêm học kỳ mới thành công!'});
+        }
+        catch(err){
+            if(err.message === 'Mã học kì đã tồn tại') {
+                return res.status(400).json({message: err.message});
+            }
+            res.status(400).json(err);
+        }
+    }
+    updateSystem = async (req, res) => {
+        try{
+            if(!req.session.user) {
+                return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
+            }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
+            }
+            const data = req.body;
+            const SPSOId = req.session.user.id;
+            await SPSOService.updateSystem(data, SPSOId);
+            res.json({ message: 'Cập nhật hệ thống thành công!'});
+        }
+        catch(err){
+            res.status(400).json(err);
+        }
+    }
 }
 module.exports = new SPSOController;
