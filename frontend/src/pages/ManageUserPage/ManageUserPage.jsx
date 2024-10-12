@@ -1,12 +1,111 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { render } from "@testing-library/react";
 import { Table } from "antd";
-
-import { useEffect, useState } from "react";
+import axios from "axios";
+import { useEffect, useState, Fragment } from "react";
+import { useNavigate } from "react-router-dom";
 
 function ManageUserPage() {
   const [pageSize, setPageSize] = useState(10);
-  const [searchText, setSearchText] = useState("");
+  const [dataSource, setDataSource] = useState([]);
+  const [filteredData, setFilteredData] = useState(dataSource);
+  const [reLoad, setReLoad] = useState(false);
+
+  const apiUrl = process.env.REACT_APP_API_URL;
+  const navigate = useNavigate();
+
+  function handleToggleStatusBan(e) {
+    if (e.target.innerText === "Bị chặn") {
+      const mssv = e.target.parentElement.parentElement.children[1].innerText;
+      changeStatusUser(1, mssv);
+    } else {
+      const mssv = e.target.parentElement.parentElement.children[1].innerText;
+      changeStatusUser(0, mssv);
+    }
+  }
+
+  const fetchApiListUser = () => {
+    axios
+      .get(apiUrl + "spso/student", { withCredentials: true })
+      .then((response) => {
+        setDataSource(response.data.danh_sach);
+        setFilteredData(response.data.danh_sach);
+      })
+      .catch((error) => {
+        if (error.response) {
+          // Server trả về lỗi không phải 2xx
+          if (error.response.status === 401) {
+            console.error("Chưa xác thực, yêu cầu đăng nhập");
+            navigate("/auth/login");
+          } else {
+            console.error("Lỗi server:", error.response.data.message);
+          }
+        } else if (error.request) {
+          console.error("Không thể kết nối tới server");
+        } else {
+          // Lỗi khác
+          console.error("Lỗi:", error.message);
+        }
+      });
+  };
+
+  const fetchApiRoleUser = () => {
+    axios
+      .get(apiUrl + "user/profile", { withCredentials: true })
+      .then((response) => {
+        if (response.data.role === "SV") {
+          navigate("/404");
+        }
+      })
+      .catch((error) => {
+        if (error.response) {
+          // Server trả về lỗi không phải 2xx
+          if (error.response.status === 401) {
+            console.error("Chưa xác thực, yêu cầu đăng nhập");
+            navigate("/auth/login");
+          } else {
+            console.error("Lỗi server:", error.response.data.message);
+          }
+        } else if (error.request) {
+          console.error("Không thể kết nối tới server");
+        } else {
+          // Lỗi khác
+          console.error("Lỗi:", error.message);
+        }
+      });
+  };
+
+  const changeStatusUser = (status, id) => {
+    axios
+      .put(
+        apiUrl + "spso/update_status",
+        { status, id },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        setReLoad(!reLoad);
+      })
+      .catch((error) => {
+        if (error.response) {
+          // Server trả về lỗi không phải 2xx
+          if (error.response.status === 401) {
+            console.error("Chưa xác thực, yêu cầu đăng nhập");
+            navigate("/auth/login");
+          } else {
+            console.error("Lỗi server:", error.response.data.message);
+          }
+        } else if (error.request) {
+          console.error("Không thể kết nối tới server");
+        } else {
+          // Lỗi khác
+          console.error("Lỗi:", error.message);
+        }
+      });
+  };
+
+  useEffect(() => {
+    fetchApiRoleUser();
+    fetchApiListUser();
+  }, [reLoad]);
 
   const handlePageSizeChange = (value) => {
     setPageSize(value);
@@ -21,52 +120,40 @@ function ManageUserPage() {
   const columns = [
     {
       title: "ID",
-      dataIndex: "id",
+      dataIndex: "STT",
     },
     {
       title: "Mã số sinh viên",
-      dataIndex: "mssv",
+      dataIndex: "MSSV",
     },
     {
       title: "Họ và tên",
-      dataIndex: "fullName",
+      dataIndex: "ten",
     },
     {
       title: "Địa chỉ email",
-      dataIndex: "email",
+      dataIndex: "mail",
     },
     {
       title: "Hành động",
-      dataIndex: "action",
+      dataIndex: "status",
       render: (text) => (
         <div
           className={
-            text.toLowerCase() === "unban"
-              ? "bg-[#BFFFD9] text-[#00760C] rounded-lg py-1 w-3/5 flex items-center justify-center font-medium"
-              : "bg-[#FFBEBE] text-[#B90707] rounded-lg py-1 w-3/5 flex items-center justify-center font-medium"
+            text === 1
+              ? "bg-[#BFFFD9] text-[#00760C] rounded-lg cursor-pointer  shadow-inner hover:shadow-[#00760C] select-none py-1 w-4/5 flex items-center justify-center font-medium"
+              : "bg-[#FFBEBE] text-[#B90707] rounded-lg cursor-pointer shadow-inner hover:shadow-[#B90707] select-none py-1 w-4/5 flex items-center justify-center font-medium"
           }
+          onClick={handleToggleStatusBan}
         >
-          {text}
+          {text === 1 ? "Hoạt động" : "Bị chặn"}
         </div>
       ),
     },
   ];
-  const dataSource = Array.from({
-    length: 17,
-  }).map((_, i) => ({
-    key: i,
-    id: `#${i + 1}`,
-    mssv: `2213001`,
-    fullName: `Trần Thành Tài`,
-    email: `tai.tranthanh@hcmut.edu.vn`,
-    action: `${i % 2 === 0 ? "Ban" : "UnBan"}`,
-  }));
-
-  const [filteredData, setFilteredData] = useState(dataSource);
 
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
-    setSearchText(value);
 
     const filtered = dataSource.filter((item) =>
       Object.keys(item).some((key) =>
