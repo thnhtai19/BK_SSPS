@@ -10,7 +10,7 @@ class PrintService {
             const acceptedDocument = result1.acceptedDocuments;
             const ma_tep = data.ma_tep;
             const [result2] = await db.execute('SELECT loai_tep FROM tep WHERE ma_tep = ?', [ma_tep]);
-            console.log(result2);
+            //console.log(result2);
             const fileType = result2[0].loai_tep;
             return acceptedDocument.some(doc => doc.loai_tep === fileType);
         }
@@ -42,9 +42,9 @@ class PrintService {
             else {
                 so_trang_in = so_ban_in * Math.ceil((data.gioi_han_tren - data.gioi_han_duoi) / so_mat);
             }
-            console.log(so_trang_in);
+            //console.log(so_trang_in);
             const result = await db.execute('SELECT so_giay_con FROM sinh_vien WHERE id = ?', [id]);
-            console.log(result);
+            //console.log(result);
             if(result[0][0].so_giay_con < so_trang_in){
                 throw new Error('Số trang in vượt quá số giấy còn lại');
             }
@@ -75,7 +75,7 @@ class PrintService {
     
     saveFile = async (file, id) => {
         try {
-            console.log(file);
+            //console.log(file);
             const duong_dan = file.path;
             // console.log('_' + id + '/' + file.path)
             const ten_tep = file.originalname;
@@ -84,6 +84,7 @@ class PrintService {
             const ma_tep = String(Date.now());
             await db.execute('INSERT INTO tep (ma_tep, ten_tep, loai_tep, duong_dan, so_trang) VALUES (?, ?, ?, ?, ?)', [ma_tep, ten_tep, loai_tep, duong_dan, so_trang]);
             await db.execute('INSERT INTO so_huu (id, ma_tep) VALUES (?, ?)', [id, ma_tep]);
+            return ma_tep;
         }
         catch(err){
             throw err;

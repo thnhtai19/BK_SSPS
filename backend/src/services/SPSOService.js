@@ -297,7 +297,60 @@ class SPSOService {
             throw err;
         }
     }
-
+    fetchSystemInfo = async () => {
+        try{
+            const [systemInfo, ] = await db.query(`SELECT ht.so_giay_mac_dinh, ht.ma_hoc_ki, ht.gia, ht.ngay_cap_nhat, 
+                                                      ht.trang_thai_bao_tri, GROUP_CONCAT(lt.loai_tep SEPARATOR ', ') as loai_tep_chap_nhan 
+                                               FROM he_thong ht left join loai_tep_chap_nhan lt
+                                               on ht.ma_hoc_ki = lt.ma_hoc_ki
+                                               group by ht.ma_hoc_ki
+                                               ORDER BY CAST(ht.ma_hoc_ki as UNSIGNED) DESC, STR_TO_DATE(ht.ngay_cap_nhat, '%d-%m-%Y') DESC
+                                               LIMIT 1;`);
+            return systemInfo;
+        }
+        catch(err){
+            throw err;
+        }
+    }
+    addNewSemester = async (data, SPSOId) => {
+        try{
+            const ma_hoc_ki = data.ma_hoc_ki;
+            const so_giay_mac_dinh = data.so_giay_mac_dinh;
+            const gia = data.gia;
+            const trang_thai_bao_tri = data.trang_thai_bao_tri;
+            const loai_tep_chap_nhan = data.loai_tep_chap_nhan;
+            const ngay_cap_nhat = support.getCurrentDate();
+            const id = String(Date.now());
+            const ghi_chu = "Thêm học kỳ mới";
+            await db.execute('INSERT INTO he_thong (ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat) VALUES (?, ?, ?, ?, ?)', [ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat]);
+            await db.execute('INSERT INTO cau_hinh (id, uid, ma_hoc_ki, ghi_chu) VALUES (?, ?, ?, ?)', [id, SPSOId, ma_hoc_ki, ghi_chu]);
+            await db.execute('INSERT IGNORE INTO loai_tep_chap_nhan (ma_hoc_ki, loai_tep) VALUES (?, ?)', [ma_hoc_ki, loai_tep_chap_nhan]);
+        }
+        catch(err){
+            if (err.code === 'ER_DUP_ENTRY') {
+                throw new Error('Mã học kì đã tồn tại');
+            }
+            throw err;
+        }
+    }
+    updateSystem = async (data, SPSOId) => {
+        try{
+            const ma_hoc_ki = data.ma_hoc_ki;
+            const so_giay_mac_dinh = data.so_giay_mac_dinh;
+            const gia = data.gia;
+            const trang_thai_bao_tri = data.trang_thai_bao_tri;
+            const loai_tep_chap_nhan = data.loai_tep_chap_nhan;
+            const ngay_cap_nhat = support.getCurrentDate();
+            const ghi_chu = "Cập nhật cấu hình hệ thống";
+            const id = String(Date.now());
+            await db.execute('UPDATE he_thong SET so_giay_mac_dinh = ?, gia = ?, trang_thai_bao_tri = ?, ngay_cap_nhat = ? WHERE ma_hoc_ki = ?', [so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ma_hoc_ki]);
+            await db.execute('INSERT INTO cau_hinh (id, uid, ma_hoc_ki, ghi_chu) VALUES (?, ?, ?, ?)', [id, SPSOId, ma_hoc_ki, ghi_chu]);
+            await db.execute('INSERT IGNORE INTO loai_tep_chap_nhan (ma_hoc_ki, loai_tep) VALUES (?, ?)', [ma_hoc_ki, loai_tep_chap_nhan]);
+        }
+        catch(err){
+            throw err;
+        }
+    }
 }
 
 module.exports = new SPSOService;
