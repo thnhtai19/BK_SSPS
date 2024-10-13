@@ -1,7 +1,5 @@
-const { message } = require('antd');
 const bcrypt = require('bcryptjs');
 const db = require('../config/db');
-const { error } = require('console');
 const axios = require('axios');
 const supportFunction = require('./support');
 
@@ -9,8 +7,8 @@ class AuthService {
     check = async (req) => {
         return new Promise(async (resolve, reject) => {
             try {
-                if (req.session.user) resolve({ status: true, message: 'Người dùng chưa đăng nhập' });
-                else reject({ status: false, message: 'Người dùng đã đăng nhập' });
+                if (req.session.user) resolve({ status: false, message: 'Người dùng đã đăng nhập' });
+                else resolve({ status: true, message: 'Người dùng chưa đăng nhập' });
             }   
             catch (error) {
                 reject(error);
@@ -100,6 +98,7 @@ class AuthService {
                     resolve({ status: false, message: "Mật khẩu sai" });
                     return;
                 }
+                var page = 0;
                 if (user.role == 'SV') {
                     const [sinh_vien] = await db.query('SELECT * FROM sinh_vien WHERE id = ?', [user.id]);
                     const SV = sinh_vien[0];
@@ -107,6 +106,7 @@ class AuthService {
                         resolve({ status: false, message: "Tài khoản đã bị cấm" });
                         return;   
                     }
+                    page = SV.so_giay_con;
                 }
                 fetch("https://api.ipify.org?format=json")
                 .then(response => response.json())
@@ -128,6 +128,8 @@ class AuthService {
                             status: true,
                             name: user.ten,
                             email: user.email,
+                            role: user.role,
+                            so_trang: page
                         });
                     } 
                     else resolve({ status: false, message: "Không thể lưu IP" });
