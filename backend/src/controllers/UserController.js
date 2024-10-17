@@ -1,7 +1,36 @@
 const UserService = require('../services/UserService')
 const PuchaseOrderService = require('../services/PurchaseOrderService')
-
+const path = require('path');
+const fs = require('fs');
 class UserController {
+    getFile = async (req, res) => {
+        try{
+            if(!req.session.user) {
+                return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
+            }
+            const id = req.session.user.id;
+            const ten_tep = req.body.ten_tep;
+            if(!ten_tep) {
+                return res.status(400).json({message: 'Yêu cầu không hợp lệ'});
+            }
+            const result= await UserService.getFile(ten_tep, id);
+            if(!result || !result.duong_dan) {
+                return res.status(404).json({message: 'File không tồn tại'});
+            }
+            const duong_dan = result.duong_dan;
+            if (!fs.existsSync(duong_dan)) {
+                return res.status(404).send('File không tồn tại');
+            }
+            res.sendFile(duong_dan, (err) => {
+                if(err) {
+                    res.status(404).send('Không tìm thấy file');
+                }
+            });
+        }
+        catch(err){
+            res.status(500).json({message: 'Lỗi server'});
+        }
+    }
     UserInfo = async (req, res) => {
         try {
             if (!req.session.user) {
