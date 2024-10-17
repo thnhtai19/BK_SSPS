@@ -1,7 +1,5 @@
-const { message } = require('antd');
 const bcrypt = require('bcryptjs');
 const db = require('../config/db');
-const { error } = require('console');
 const axios = require('axios');
 const supportFunction = require('./support');
 
@@ -195,7 +193,8 @@ class AuthService {
                 reject(error);
             }
         });
-    };
+    }
+    
 }
 
 module.exports = new AuthService

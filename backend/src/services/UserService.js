@@ -9,7 +9,7 @@ class UserService {
                 if (nhat_ky.length > 0) {
                     var i = 0;
                     nhat_ky.forEach(turn => {
-                        result.push({
+                        result.unshift({ //sort
                             id: i,
                             thoi_gian: turn.thoi_gian,
                             noi_dung: turn.noi_dung
@@ -30,7 +30,7 @@ class UserService {
                 const [don_mua] = await db.query('SELECT * FROM don_mua WHERE id = ?', [req.session.user.id]);
                 if (don_mua.length > 0) {
                     don_mua.forEach(don => {
-                        result.push({
+                        result.unshift({ //sort
                             ID: don.ma_don_mua,
                             thoi_gian: don.thoi_gian,
                             so_trang: don.so_trang,
@@ -80,7 +80,8 @@ class UserService {
                 db.execute(`
                     SELECT ma_may_in, ten_may 
                     FROM may_in 
-                    WHERE trang_thai_may_in = 'true';
+                    WHERE trang_thai_may_in = true
+                    ORDER BY ma_may_in DESC;
                 `)
             ]);
     
@@ -91,9 +92,9 @@ class UserService {
         } catch (err) {
             throw err;
         }
-    };
+    }
 
-    NoPagesEachDay = async (id) => {
+    NoPagesEachDay = async (id) => { //Chưa sort
         const [result1] = await db.execute(`
             SELECT DATE(thoi_gian) as create_day 
             FROM nhat_ky
@@ -148,7 +149,8 @@ class UserService {
                 left join in_tai_lieu itl on d.ma_don_in = itl.ma_don_in
                 left join may_in mi on itl.ma_may_in = mi.ma_may_in
                 left join tep t on dt.ma_tep = t.ma_tep
-                WHERE id = ?`, [id]);
+                WHERE id = ?
+                ORDER BY ma_don_in DESC`, [id]);
             const formattedResult = result.map(record => {
                 return record;
             });
@@ -204,6 +206,7 @@ class UserService {
             throw err;
         }
     }
+
 }
 
 module.exports = new UserService

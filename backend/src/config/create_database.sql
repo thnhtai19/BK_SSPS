@@ -3,7 +3,7 @@ create database hcmut_ssps;
 use hcmut_ssps;
 
 create table user (
-	id 			varchar(50) not null,
+	id 			int not null auto_increment,
     ten 		varchar(50) not null,
     ngay_dk 	varchar(50) not null,
     email 		varchar(50) not null,
@@ -21,7 +21,7 @@ create table bao_cao (
 
 create table nhat_ky (
 	id			int not null auto_increment,
-	uid			varchar(50) not null,
+	uid			int not null,
     thoi_gian	varchar(50) not null,
     noi_dung	varchar(255) not null,
     primary key(id),
@@ -29,12 +29,12 @@ create table nhat_ky (
 );
 
 create table spso (
-	id			varchar(50),
+	id			int,
     primary key(id)
 );
 
 create table sinh_vien (
-	id 			varchar(20) not null,		/*MSSV*/
+	id 			int not null,		/*MSSV*/
     trang_thai	boolean not null default true,
     so_giay_con int not null default 0,
     primary key(id),
@@ -46,13 +46,13 @@ create table don_mua (
     so_trang 	int not null,
     tong_tien   int not null default 0,
     thoi_gian	varchar(50) not null,
-    id			varchar(50) not null,
+    id			int not null,
     primary key(id, ma_don_mua),
     foreign key(id) references sinh_vien(id)    
 );
 
 create table may_in (
-	  ma_may_in	varchar(50) not null,
+	  ma_may_in	int not null auto_increment,
     hang 		varchar(50) not null default 'Canon',
     trang_thai_may_in	varchar(50) not null default true,
     doi			varchar(50) not null,
@@ -65,15 +65,15 @@ create table may_in (
 );
 
 create table don_in (
-	  ma_don_in	varchar(50) not null,
+	  ma_don_in	int not null auto_increment,
     trang_thai_don_in	varchar(50) not null check(trang_thai_don_in in ('Đã in', 'Chờ in', 'Đang in')) default 'Chờ in', 
     primary key(ma_don_in)
 );
 
 create table in_tai_lieu (
-	id		varchar(50) not null,
-    ma_may_in	varchar(50) not null,
-    ma_don_in	varchar(50) not null,
+	id		int not null,
+    ma_may_in	int not null,
+    ma_don_in	int not null,
     -- tg_bat_dau 	varchar(50) not null,
     -- tg_ket_thuc varchar(50) not null,
     tg_bat_dau 	varchar(50),
@@ -100,7 +100,7 @@ create table loai_tep_chap_nhan (
 );
 
 create table tep (
-	ma_tep		varchar(50) not null,
+	ma_tep		int not null auto_increment,
     ten_tep		varchar(50) not null,
     loai_tep	varchar(50) not null,
     duong_dan   varchar(255) not null,
@@ -109,24 +109,24 @@ create table tep (
 );
 
 create table so_huu ( 		/* SV so huu tep */
-	id		varchar(50) not null,
-    ma_tep	varchar(50) not null,
+	id		int not null,
+    ma_tep	int not null,
     primary key(id, ma_tep),
     foreign key(id) references sinh_vien(id),
     foreign key(ma_tep) references tep(ma_tep)
 );
 
 create table xac_nhan (		/* SSPO xac nhan Don in*/
-	id		varchar(50) not null,
-    ma_don_in	varchar(50) not null,
+	id		int not null,
+    ma_don_in	int not null,
     primary key(id, ma_don_in),
     foreign key(id) references spso(id),
     foreign key(ma_don_in) references don_in(ma_don_in)
 );
 
 create table don_in_gom_tep (
-	ma_don_in	varchar(50) not null,
-	ma_tep		varchar(50) not null,
+	ma_don_in	int not null,
+	ma_tep		int not null,
 	so_ban_in	int not null default 1,
 	so_mat		int not null check (so_mat in (1, 2)),
   so_trang_in int not null,
@@ -139,8 +139,8 @@ create table don_in_gom_tep (
 );
 
 create table cau_hinh (
-    id          varchar(50) not null,
-	uid			varchar(50) not null,
+    id          int not null auto_increment,
+	uid			int null,
     ma_hoc_ki	varchar(50) not null,
     ghi_chu		varchar(500) not null default 'Cau hinh he thong',
     primary key(id),

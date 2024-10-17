@@ -1,4 +1,3 @@
-const { message } = require('antd');
 const AuthService = require('../services/AuthService')
 
 class AuthController {
@@ -49,6 +48,7 @@ class AuthController {
             return res.status(200).json({status: false, message: err});
         }
     }
+    
 }
 
 module.exports = new AuthController

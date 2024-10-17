@@ -54,6 +54,7 @@ class Support {
         if (month >= 1 && month <= 5) return (year - 2000) * 10 + 2;
         return (year - 2000) * 10 + 3;
     }
+    
 }
 
 module.exports = new Support;
