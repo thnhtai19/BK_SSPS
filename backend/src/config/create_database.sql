@@ -89,6 +89,7 @@ create table he_thong (
 	gia 		int not null default 500,
     so_giay_mac_dinh	int not null default 50,
     ngay_cap_nhat		varchar(50) not null,
+    ngay_reset            varchar(50) not null,
     trang_thai_bao_tri     varchar(50) not null default 'Đang Hoạt động',
     primary key(ma_hoc_ki)
 );
