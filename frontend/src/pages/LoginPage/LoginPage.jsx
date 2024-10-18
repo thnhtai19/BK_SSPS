@@ -156,6 +156,8 @@ function Login() {
       if (data.status) {
         localStorage.setItem("name", data.name);
         localStorage.setItem("email", data.email);
+        localStorage.setItem("role", data.role);
+        localStorage.setItem("so_trang", data.so_trang);
         setMessage('Đăng nhập thành công!');
         setShowSuccessPopup(true); 
         const interval = setInterval(() => {
