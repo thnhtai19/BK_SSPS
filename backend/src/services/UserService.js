@@ -1,6 +1,18 @@
 const db = require('../config/db');
 
 class UserService {
+    getFile = async (ten_tep, id) => {
+        try{
+            const [result, ] = await db.execute(`SELECT duong_dan 
+                                                FROM tep t join so_huu sh
+                                                on t.ma_tep = sh.ma_tep 
+                                                WHERE t.ten_tep = ? and sh.id = ?`, [ten_tep, id]); 
+            return result[0];
+        }
+        catch(err){
+            throw err;
+        }
+    }
     diary = async (req) => {
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {

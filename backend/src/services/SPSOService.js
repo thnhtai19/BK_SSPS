@@ -32,8 +32,8 @@ class SPSOService {
                     data.toa,
                     data.phong
                 ];
-            const [result, ] = await db.execute(`INSERT INTO may_in (ma_may_in, hang, trang_thai_may_in, doi, mo_ta, ten_may, co_so, toa, phong) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [ma_may_in, ...dataToInsert]);
-            return result;
+            await db.execute(`INSERT INTO may_in (ma_may_in, hang, trang_thai_may_in, doi, mo_ta, ten_may, co_so, toa, phong) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [ma_may_in, ...dataToInsert]);
+            return ma_may_in;
         }
         catch (err) {
             throw err;
@@ -324,9 +324,10 @@ class SPSOService {
             const trang_thai_bao_tri = data.trang_thai_bao_tri;
             const loai_tep_chap_nhan = data.loai_tep_chap_nhan;
             const ngay_cap_nhat = support.getCurrentDate();
+            const ngay_reset = data.ngay_reset;
             const id = String(Date.now());
             const ghi_chu = "Thêm học kỳ mới";
-            await db.execute('INSERT INTO he_thong (ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat) VALUES (?, ?, ?, ?, ?)', [ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat]);
+            await db.execute('INSERT INTO he_thong (ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ngay_reset) VALUES (?, ?, ?, ?, ?)', [ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ngay_reset]);
             await db.execute('INSERT INTO cau_hinh (id, uid, ma_hoc_ki, ghi_chu) VALUES (?, ?, ?, ?)', [id, SPSOId, ma_hoc_ki, ghi_chu]);
             await db.execute('INSERT IGNORE INTO loai_tep_chap_nhan (ma_hoc_ki, loai_tep) VALUES (?, ?)', [ma_hoc_ki, loai_tep_chap_nhan]);
         }
@@ -345,9 +346,10 @@ class SPSOService {
             const trang_thai_bao_tri = data.trang_thai_bao_tri;
             const loai_tep_chap_nhan = data.loai_tep_chap_nhan;
             const ngay_cap_nhat = support.getCurrentDate();
+            const ngay_reset = data.ngay_reset;
             const ghi_chu = "Cập nhật cấu hình hệ thống";
             const id = String(Date.now());
-            await db.execute('UPDATE he_thong SET so_giay_mac_dinh = ?, gia = ?, trang_thai_bao_tri = ?, ngay_cap_nhat = ? WHERE ma_hoc_ki = ?', [so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ma_hoc_ki]);
+            await db.execute('UPDATE he_thong SET so_giay_mac_dinh = ?, gia = ?, trang_thai_bao_tri = ?, ngay_cap_nhat = ?, ngay_reset = ? WHERE ma_hoc_ki = ?', [so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ngay_reset, ma_hoc_ki]);
             await db.execute('INSERT INTO cau_hinh (id, uid, ma_hoc_ki, ghi_chu) VALUES (?, ?, ?, ?)', [id, SPSOId, ma_hoc_ki, ghi_chu]);
             await db.execute('INSERT IGNORE INTO loai_tep_chap_nhan (ma_hoc_ki, loai_tep) VALUES (?, ?)', [ma_hoc_ki, loai_tep_chap_nhan]);
         }

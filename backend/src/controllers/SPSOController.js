@@ -44,8 +44,8 @@ class SPSOController {
                 return res.status(403).json({message: 'Không có quyền truy cập!'});
             }
             const data = req.body;
-            await SPSOService.addPrinter(data);
-            res.json({ message: 'Thêm máy in thành công!'});
+            const result = await SPSOService.addPrinter(data);
+            res.json({ma_may_in: result, message: 'Thêm máy in thành công!'});
         }
         catch (err) {
             res.status(400).json(err);
@@ -142,12 +142,12 @@ class SPSOController {
     }
     getSystemInfo = async (req, res) => {
         try{
-            // if(!req.session.user) {
-            //     return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
-            // }
-            // if(req.session.user.role != 'SPSO') {
-            //     return res.status(403).json({message: 'Không có quyền truy cập!'});
-            // }
+            if(!req.session.user) {
+                return res.status(401).json({message: 'Chưa xác thực thông tin người dùng!'});
+            }
+            if(req.session.user.role != 'SPSO') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
+            }
             const result = await SPSOService.fetchSystemInfo();
             res.json(result);
         }
