@@ -3,6 +3,7 @@ import { Breadcrumb, Modal, Slider } from "antd";
 import { Link } from "react-router-dom";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import { FrownOutlined, FileUnknownOutlined } from "@ant-design/icons";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ServicePage = () => {
@@ -11,8 +12,8 @@ const ServicePage = () => {
   const [numPages, setNumPages] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [scale, setScale] = useState(1.0);
-  const [containerHeight, setContainerHeight] = useState(0);
   const [pageOffsets, setPageOffsets] = useState([]);
+  const [fileId, setFileId] = useState(null);
 
   const [printer, setPrinter] = useState("");
   const [size, setSize] = useState("A4");
@@ -28,7 +29,6 @@ const ServicePage = () => {
   const [activePrinters, setActivePrinters] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
-  const [studentPaper, setStudentPaper] = useState(0);
 
   const fetchAcceptedDocumentsAndPrinters = useCallback(async () => {
     try {
@@ -50,7 +50,6 @@ const ServicePage = () => {
       } else {
         setAcceptedDocuments(data.acceptedDocuments.map((doc) => doc.loai_tep));
         setActivePrinters(data.activePrinters);
-        setStudentPaper(data.so_giay_con);
       }
     } catch (error) {
       setErrorMessage("Không thể kết nối đến máy chủ.");
@@ -73,7 +72,6 @@ const ServicePage = () => {
 
   const handleDrop = (event) => {
     event.preventDefault();
-    setIsDragging(false);
 
     if (event.dataTransfer.files && event.dataTransfer.files[0]) {
       const droppedFile = event.dataTransfer.files[0];
@@ -81,25 +79,40 @@ const ServicePage = () => {
       const fileExtension = fileName.split(".").pop().toLowerCase();
 
       if (acceptedDocuments.includes(fileExtension)) {
-        setFile(droppedFile);
-        setFileUrl(URL.createObjectURL(droppedFile));
+        handleFileUpload({ target: { files: [droppedFile] } });
       } else {
         alert(`Chỉ chấp nhận các định dạng: ${acceptedDocuments.join(", ")}`);
       }
     }
+
+    setTimeout(() => {
+      setIsDragging(false);
+    }, 200);
   };
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = async (event) => {
     if (event.target.files && event.target.files[0]) {
       const uploadedFile = event.target.files[0];
-      const fileName = uploadedFile.name;
-      const fileExtension = fileName.split(".").pop().toLowerCase();
+      const formData = new FormData();
+      formData.append("file", uploadedFile);
 
-      if (acceptedDocuments.includes(fileExtension)) {
-        setFile(uploadedFile);
-        setFileUrl(URL.createObjectURL(uploadedFile));
-      } else {
-        alert(`Chỉ chấp nhận các định dạng: ${acceptedDocuments.join(", ")}`);
+      try {
+        const response = await fetch(`${apiUrl}print/uploadFile`, {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        });
+
+        const data = await response.json();
+        if (data.message === "Tải file thành công!") {
+          setFile(uploadedFile);
+          setFileUrl(URL.createObjectURL(uploadedFile));
+          setFileId(data.ma_tep);
+        } else {
+          alert(data.message);
+        }
+      } catch (error) {
+        alert("Đã xảy ra lỗi khi tải tệp.");
       }
     }
   };
@@ -107,7 +120,17 @@ const ServicePage = () => {
   const handlePageSelectionChange = (event) => {
     const value = event.target.value;
     setPageSelection(value);
-    setIsCustomDisabled(value === "Tất cả");
+
+    if (
+      value === "Tất cả" ||
+      value === "Chỉ trang lẻ" ||
+      value === "Chỉ trang chẵn"
+    ) {
+      setCustomPages("");
+      setIsCustomDisabled(true);
+    } else {
+      setIsCustomDisabled(false);
+    }
   };
 
   const handleReset = () => {
@@ -120,36 +143,6 @@ const ServicePage = () => {
     setIsCustomDisabled(true);
   };
 
-  const calculateTotalPages = () => {
-    let totalPages = 0;
-
-    if (pageSelection === "Tất cả") {
-      totalPages = numPages;
-    } else if (pageSelection === "Tùy chỉnh" && customPages) {
-      const ranges = customPages.split(",").map((range) => {
-        const [start, end] = range.split("-").map(Number);
-        return end ? end - start + 1 : 1;
-      });
-      totalPages = ranges.reduce((total, pages) => total + pages, 0);
-    }
-
-    return totalPages;
-  };
-
-  const calculateTotalSheets = () => {
-    const totalPages = calculateTotalPages();
-    const totalCopies = parseInt(copies);
-
-    let totalSheets;
-
-    if (faces === "2 mặt") {
-      totalSheets = Math.ceil(totalPages / 2) * totalCopies;
-    } else {
-      totalSheets = totalPages * totalCopies;
-    }
-
-    return totalSheets;
-  };
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
 
@@ -159,8 +152,6 @@ const ServicePage = () => {
       ).map((page) => page.offsetHeight);
 
       setPageOffsets(pageHeights);
-
-      setContainerHeight(pageHeights.reduce((sum, height) => sum + height, 0));
     }, 300);
   };
   const handleScroll = (e) => {
@@ -179,14 +170,7 @@ const ServicePage = () => {
   };
   const handlePrint = () => {
     if (!file) {
-      alert("Please upload a file first!");
-      return;
-    }
-
-    const totalSheets = calculateTotalSheets();
-
-    if (totalSheets > studentPaper) {
-      alert("Bạn không đủ giấy để in.");
+      alert("Vui lòng tải tệp lên trước khi in.");
       return;
     }
 
@@ -198,24 +182,24 @@ const ServicePage = () => {
       alert("Vui lòng tải tệp lên trước khi in.");
       return;
     }
-
-    const totalPages = calculateTotalPages();
     const totalCopies = parseInt(copies);
-    const fileExtension = file.name.split(".").pop().toLowerCase();
 
     const printData = {
-      ten_tep: file.name,
-      loai_tep: fileExtension,
-      duong_dan: `/${file.name}`,
-      so_trang: totalPages,
-      dinh_dang_trang_in: pageSelection,
+      ma_tep: fileId,
+      dinh_dang_trang_in: pageSelection === "Tất cả" ? "Tất cả" : "Tùy chỉnh",
       ma_may_in: activePrinters.find((p) => p.ten_may === printer)?.ma_may_in,
       so_ban_in: totalCopies,
       so_mat: faces === "2 mặt" ? 2 : 1,
       kich_thuoc: size,
     };
-
-    if (pageSelection === "Tùy chỉnh") {
+    if (pageSelection === "Chỉ trang lẻ") {
+      printData.dinh_dang_trang_in = "Chỉ trang lẻ";
+      printData.chi_trang_le = true;
+    } else if (pageSelection === "Chỉ trang chẵn") {
+      printData.dinh_dang_trang_in = "Chỉ trang chẵn";
+      printData.chi_trang_chan = true;
+    }
+    if (pageSelection === "Tùy chỉnh" && customPages) {
       const [gioi_han_duoi, gioi_han_tren] = customPages
         .split(",")
         .map((range) => {
@@ -271,9 +255,7 @@ const ServicePage = () => {
             Tải tài liệu lên
           </h3>
           <div
-            className={`border-dashed border-2 p-6 text-center ${
-              isDragging ? "border-blue-500" : "border-gray-300"
-            }h-auto`}
+            className={`border-dashed border-2 p-6 text-center ${isDragging ? "border-blue-500" : "border-gray-300"} h-auto`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -327,21 +309,45 @@ const ServicePage = () => {
             onScroll={handleScroll}
           >
             <div style={{ width: "fit-content", margin: "0 auto" }}>
-              {fileUrl ? (
-                <Document file={fileUrl} onLoadSuccess={onDocumentLoadSuccess}>
-                  {Array.from(new Array(numPages), (el, index) => (
-                    <div key={`page_${index + 1}`} className="mb-4">
-                      <Page pageNumber={index + 1} scale={scale} />
-                    </div>
-                  ))}
-                </Document>
+              {fileUrl && file.name.endsWith(".pdf") ? (
+                <div
+                  className="relative overflow-auto"
+                  style={{ maxHeight: "600px" }}
+                  onScroll={handleScroll}
+                >
+                  <Document
+                    file={fileUrl}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                  >
+                    {Array.from(new Array(numPages), (el, index) => (
+                      <div key={`page_${index + 1}`} className="mb-4">
+                        <Page pageNumber={index + 1} scale={scale} />
+                      </div>
+                    ))}
+                  </Document>
+                  <p className="text-sm">
+                    Trang {currentPage} / {numPages}
+                  </p>
+                </div>
+              ) : fileUrl ? (
+                <div className="flex flex-col items-center justify-center text-red-500 mt-20">
+                  <FrownOutlined className="text-6xl" />
+                  <p className="text-red-500 mt-4">
+                    Không có bản xem trước cho định dạng tệp này!
+                  </p>
+                </div>
               ) : (
-                <p className="text-gray-500">Chưa có tệp nào được chọn.</p>
+                <div className="flex flex-col items-center justify-center text-red-500 mt-10">
+                  <FileUnknownOutlined className="text-6xl" />
+                  <p className="text-gray-500 mt-4">
+                    Chưa có tệp nào được chọn.
+                  </p>
+                </div>
               )}
             </div>
           </div>
 
-          {fileUrl && (
+          {fileUrl && file.name.endsWith(".pdf") && (
             <div className="flex justify-between items-center mt-4">
               <Slider
                 min={0.5}
@@ -438,6 +444,8 @@ const ServicePage = () => {
             >
               <option value="Tất cả">Tất cả</option>
               <option value="Tùy chỉnh">Tùy chỉnh</option>
+              <option value="Chỉ trang lẻ">Chỉ trang lẻ</option>
+              <option value="Chỉ trang chẵn">Chỉ trang chẵn</option>
             </select>
           </div>
 
@@ -509,12 +517,6 @@ const ServicePage = () => {
         </p>
         <p>
           <strong>Số bản sao:</strong> {copies}
-        </p>
-        <p>
-          <strong>Số trang in/bản sao:</strong> {calculateTotalPages()}
-        </p>
-        <p>
-          <strong>Số tờ in:</strong> {calculateTotalSheets()}
         </p>
         <p>
           <strong>Chọn trang in:</strong> `
