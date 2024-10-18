@@ -2,13 +2,16 @@ import { SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import AddPrinter from "../../components/AddPrinter/AddPrinter";
-import { Table } from "antd";
-import { message} from 'antd';
+import { Table, Modal, message } from 'antd';
+
 
 function ManageUserPage() {
   const [pageSize, setPageSize] = useState(10);
   const [printerInfo, setPrinterInfo] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedPrinter, setSelectedPrinter] = useState(null);
+
   const addPrinterRef = useRef(null);
   const apiUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
@@ -78,7 +81,7 @@ function ManageUserPage() {
       key: "trang_thai_may_in",
       render: (text, record) => (
         <button
-          onClick={(e) => handleToggleStatus(e, record.ma_may_in, record.trang_thai_may_in)}
+          onClick={() => showModal(record)}
           className="bg-[#0688B4] text-white font-medium  py-1 w-3/5 shadow-inner  hover:shadow-[white] rounded-lg"
           >
           {text === "1" ? "Tắt" : "Bật"}
@@ -88,46 +91,16 @@ function ManageUserPage() {
 
   ];
 
+  //lấy dữ liệu máy in
   useEffect(() => {
-    //Kiểm tra trạng thái đăng nhập và role của người dùng
-    const fetchUserProfile = async () => {
-      try {
-        const response = await fetch(`${apiUrl}user/profile`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-        });
-
-        const data = await response.json();
-        console.log(data);
-        
-        if (response.ok) {
-          // Điều hướng đến trang 404 nếu người dùng là sinh viên
-          if(data.role !== 'SSPO'){
-            message.error("Không có quyền truy cập!")
-            navigate("/404");
-          }
-        } else {
-          message.error("Vui lòng đăng nhập!")
-          navigate("/auth/login");
-        }
-      } catch (error) {
-        setErrorMessage('Lỗi kết nối đến server');
-        console.error('Lỗi:', error);
-      }
-    };
-
-    //lấy dữ liệu máy in
     const fetchPrinterInfo = async () => {
       try {
         const response = await fetch(`${apiUrl}spso/getAllPrinter`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          credentials: 'include',
         });
 
         const printerData = await response.json();
@@ -142,23 +115,30 @@ function ManageUserPage() {
           setPrinterInfo(updatedData);
           setFilteredData(updatedData);
         } else {
-          setErrorMessage(printerData.message)
+          setErrorMessage(printerData.message);
+          if(printerData.message === "Không có quyền truy cập!"){
+            message.error("Không có quyền truy cập!")
+            navigate("/404");
+          }
+          if (printerData.message === "Chưa xác thực thông tin người dùng!"){
+            message.error("Vui lòng đăng nhập!")
+            navigate("/auth/login");
+          }
         }
       } catch (error) {
-          setErrorMessage('Lỗi kết nối đến server');
-          console.error('Lỗi:', error);
+        setErrorMessage('Lỗi kết nối đến server');
+        console.error('Lỗi:', error);
       }
     };
-    fetchUserProfile();
+
     fetchPrinterInfo();
   }, [apiUrl,navigate]);
-
-  //Hàm sử lí hành động đổi trạng thái máy in
-  async function handleToggleStatus(e, ma_may_in, currentStatus) {
-    e.preventDefault();
-    const newStatus = currentStatus === "1" ? false : true;
   
+  //Handel đổi trạng thái máy in
+  async function handleToggleStatus(ma_may_in, currentStatus) {
     try {
+      const newStatus = currentStatus === "1" ? false : true;
+  
       // Gọi API cập nhật trạng thái máy in
       const response = await fetch(`${apiUrl}spso/updatePrinterStatus`, {
         method: 'POST',
@@ -173,49 +153,46 @@ function ManageUserPage() {
       });
   
       const printerData = await response.json();
-
+  
       if (response.ok) {
-        e.target.textContent = newStatus === true ? "Tắt" : "Bật";
-  
-        const statusElement = e.target.parentElement.parentElement.children[6].children[0];
-  
-        // Thay đổi màu sắc và text dựa trên trạng thái mới
-        if (newStatus === true) {
-          // Máy in chuyển sang "Bật"
-          statusElement.classList.remove("bg-[#FFBEBE]", "text-[#B90707]");
-          statusElement.classList.add("bg-[#BFFFD9]", "text-[#00760C]");
-          statusElement.textContent = "Đang bật";
-        } else {
-          // Máy in chuyển sang "Tắt"
-          statusElement.classList.remove("bg-[#BFFFD9]", "text-[#00760C]");
-          statusElement.classList.add("bg-[#FFBEBE]", "text-[#B90707]");
-          statusElement.textContent = "Đang tắt";
-        }
-
         const updatedPrinters = printerInfo.map(printer => 
-          printer.ma_may_in === ma_may_in ? { ...printer, trang_thai_may_in: newStatus } : printer
+          printer.ma_may_in === ma_may_in ? { ...printer, trang_thai_may_in: newStatus ? "1" : "0" } : printer
         );
-
+  
         setPrinterInfo(updatedPrinters);
         setFilteredData(updatedPrinters);
-
-        alert(printerData.message); 
+  
+        message.success(printerData.message); 
       } else {
-        alert(printerData.message);
+        message.error(printerData.message);
       }
     } catch (error) {
       console.error("Có lỗi xảy ra:", error);
-      alert("Đã xảy ra lỗi khi cập nhật trạng thái máy in.");
+      message.error("Đã xảy ra lỗi khi cập nhật trạng thái máy in.");
     }
   }
   
+  const showModal = (printer) => {
+    setSelectedPrinter(printer); 
+    setIsModalVisible(true);      
+  };
+  
+  const handleCancel = () => {
+    setIsModalVisible(false);   
+  }; 
+  
+  const handleConfirmToggle = async () => {
+    setIsModalVisible(false);  
+    await handleToggleStatus(selectedPrinter.ma_may_in, selectedPrinter.trang_thai_may_in);
+  };
+
   const [filteredData, setFilteredData] = useState(printerInfo);
   
   function handleSearch(e) {
     const value = e.target.value.toLowerCase();
 
     if (!value) {
-      setFilteredData(printerInfo); // Reset to original data
+      setFilteredData(printerInfo); // Reset về dữ liệu gốc
       return;
     }
 
@@ -235,10 +212,22 @@ function ManageUserPage() {
     addPrinterRef.current.classList.toggle("hidden");
   }
 
+  const handleAddPrinterSuccess = (newPrinter) => {
+    const editNewPrinter = {
+      ...newPrinter, 
+      location: `Tầng ${newPrinter.co_so}, ${newPrinter.toa}, ${newPrinter.phong}`
+    };
+  
+    setPrinterInfo((prevPrinterInfo) => [...prevPrinterInfo, editNewPrinter]);
+    setFilteredData((prevFilteredData) => [...prevFilteredData, editNewPrinter]);
+  };
+  
+
   return (
     <main className="sm:p-4 p-0 mt-6 sm:mt-0">
       {/* main content */}
       <section className="bg-white rounded-lg p-4 pb-10 sm:w-full w-dvw  shadow overflow-auto">
+
         <h3 className="font-semibold text-lg">Quản lý máy in</h3>
         <div className="flex justify-between items-center my-6">
           <div className="  rounded-lg flex items-center border-[1px] border-gray-400 px-3  w-fit">
@@ -250,6 +239,7 @@ function ManageUserPage() {
             />
             <SearchOutlined className="hover:cursor-pointer text-xl hover:scale-105   py-1" />
           </div>
+
           <button
             onClick={handlePopupPrinter}
             className="bg-[#0688B4] font-semibold text-white h-fit hover:shadow-white border-[#EFF1F3] border-[1px] shadow-inner px-3 py-1 rounded-lg"
@@ -257,6 +247,7 @@ function ManageUserPage() {
             + Thêm máy in
           </button>
         </div>
+
         <Table
           columns={columns}
           dataSource={filteredData}
@@ -267,13 +258,29 @@ function ManageUserPage() {
           className="shadow rounded-lg border-[#EFF1F3] border-[1px] "
         />
         {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+
       </section>
-      {/* popUp add new printer */}
+
+      {/* popUp thêm máy in */}
       <div className="hidden" ref={addPrinterRef}>
         <AddPrinter
           onClose={handlePopupPrinter}
+          onAddPrinterSuccess={handleAddPrinterSuccess}
         />
       </div>
+
+      {/* popUp xác nhận thay đổi trạng thái máy in */}
+      <Modal
+        title="Xác nhận thay đổi trạng thái"
+        visible={isModalVisible}
+        onOk={handleConfirmToggle}
+        onCancel={handleCancel}
+        okText="Xác nhận"
+        cancelText="Hủy"
+      >
+        <p>Bạn có chắc chắn muốn {selectedPrinter?.trang_thai_may_in === "1" ? "tắt" : "bật"} máy in này không?</p>
+      </Modal>
+
     </main>
   );
 }
