@@ -9,6 +9,7 @@ class PurchaseService {
             const formattedDate = day.toISOString().split('T')[0];
             await db.execute('INSERT INTO don_mua (ma_don_mua, thoi_gian, so_trang, id) VALUES (?, ?, ?, ?)', [purchaseID, formattedDate, pages, id]);
             await db.execute('INSERT INTO nhat_ky (uid, noi_dung, thoi_gian) VALUES (?, ?, ?)', [id, `Đã tạo đơn mua giấy`, CurrentTime]);
+            await db.execute('INSERT INTO thong_bao (uid, thoi_gian, noi_dung) VALUES (?, ?, ?)', [id, CurrentTime, `Đơn ${purchaseID} đã mua thành công`]);
         } catch (err) {
             if (err.code === 'ER_DUP_ENTRY') {
                 throw new Error('Mã đơn mua đã tồn tại');

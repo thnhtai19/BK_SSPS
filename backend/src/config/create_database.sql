@@ -28,6 +28,16 @@ create table nhat_ky (
     foreign key(uid) references user(id)
 );
 
+create table thong_bao (
+	id			int not null auto_increment,
+	uid			varchar(50) not null,
+    thoi_gian	varchar(50) not null,
+    noi_dung	varchar(255) not null,
+    trang_thai	boolean not null default false,
+    primary key(id),
+    foreign key(uid) references user(id)
+);
+
 create table spso (
 	id			varchar(50),
     primary key(id)

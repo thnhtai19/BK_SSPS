@@ -1,4 +1,5 @@
-const SPSOService = require('../services/SPSOService')
+const SPSOService = require('../services/SPSOService');
+const support = require('../services/support');
 
 class SPSOController {
     getAllPrinter = async (req, res) => {
@@ -79,7 +80,7 @@ class SPSOController {
             if (trang_thai != 'Đã in' && trang_thai != 'Đang in' && trang_thai != 'Chờ in') {
                 return res.json({ message: 'Trạng thái không hợp lệ!' });
             }
-            await SPSOService.updatePrintOrderStatus(ma_don_in, trang_thai);
+            await SPSOService.updatePrintOrderStatus(req.session.user.id, ma_don_in, trang_thai);
             res.json({ message: 'Cập nhật trạng thái thành công!'});
         }
         catch (err) {
@@ -105,25 +106,20 @@ class SPSOController {
         }
     }
 
-    reportList = async (req, res) => {
-        try {
-            const createReportList = await SPSOService.createReportList(req);
-            const result = await SPSOService.reportList(req);
-            return res.status(200).send(result);
-        } catch(err) {
-            return res.status(200).json(err);
-        }
-    }
-
     report = async (req, res) => {
         try {
-            const detail = await SPSOService.reportDetail(req, req.body);
-            const using = await SPSOService.reportUsing(req, req.body);
-            return res.status(200).send({
-                status: true,
-                thong_ke_chi_tiet: detail,
-                thong_ke_su_dung: using
-            });
+            const createReportList = await SPSOService.createReportList(req);
+            const report_list = await SPSOService.reportList(req);
+            const result = await Promise.all(report_list.map(async (temp) => {
+                const detail = await SPSOService.reportDetail(req, support.getmonth(temp.createdTime));
+                const using = await SPSOService.reportUsing(req, support.getmonth(temp.createdTime));
+                const report_detail = {
+                    printers: detail,
+                    chartData: using
+                }
+                return {...temp, ...report_detail};
+            }))
+            return res.status(200).send(result);
         } catch(err) {
             return res.status(200).json(err);
         }
