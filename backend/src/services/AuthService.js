@@ -165,7 +165,7 @@ class AuthService {
                             });
                         } 
                         else {
-                            reject({ status: false, message: "Lỗi khi gửi mail" });
+                            reject({ message: "Lỗi khi gửi mail" });
                         }
                     })
                     .catch(error => {

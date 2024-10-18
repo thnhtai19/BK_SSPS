@@ -28,6 +28,16 @@ create table nhat_ky (
     foreign key(uid) references user(id)
 );
 
+create table thong_bao (
+	id			int not null auto_increment,
+	uid			varchar(50) not null,
+    thoi_gian	varchar(50) not null,
+    noi_dung	varchar(255) not null,
+    trang_thai	boolean not null default false,
+    primary key(id),
+    foreign key(uid) references user(id)
+);
+
 create table spso (
 	id			varchar(50),
     primary key(id)
@@ -89,7 +99,6 @@ create table he_thong (
 	gia 		int not null default 500,
     so_giay_mac_dinh	int not null default 50,
     ngay_cap_nhat		varchar(50) not null,
-    trang_thai_bao_tri     varchar(50) not null default 'Đang Hoạt động',
     primary key(ma_hoc_ki)
 );
 

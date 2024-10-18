@@ -121,6 +121,14 @@ class UserController {
         }
     }
     
+    readNotice = async (req, res) => {
+        try {
+            const result = await UserService.readNotice(req);
+            return res.status(200).send(result);
+        } catch(err) {
+            return res.status(200).json({status: false, error: err});
+        }
+    }
 }
 
 module.exports = new UserController

@@ -25,6 +25,17 @@ insert into nhat_ky (id, uid, thoi_gian, noi_dung) values
 ('8', '5', '11:14:25 04-10-2024', 'Đã đăng nhập tài khoản IP: 127.0.0.1'),
 ('9', '5', '11:14:25 05-10-2024', 'Đã đăng nhập tài khoản IP: 127.0.0.1');
 
+insert into thong_bao (id, uid, thoi_gian, noi_dung, trang_thai) values
+('1', '5', '11:14:25 01-10-2024', '', false),
+('2', '5', '11:14:25 02-10-2024', '', false),
+('3', '5', '11:14:25 02-10-2024', '', false),
+('4', '5', '11:14:25 02-10-2024', '', false),
+('5', '5', '11:14:25 03-10-2024', '', false),
+('6', '5', '11:14:25 04-10-2024', '', false),
+('7', '5', '11:14:25 04-10-2024', '', false),
+('8', '5', '11:14:25 04-10-2024', '', false),
+('9', '5', '11:14:25 05-10-2024', '', false);
+
 insert into SPSO (id) values
 ('1'), ('2'), ('3'), ('4');
 
@@ -108,12 +119,12 @@ INSERT INTO in_tai_lieu (id, ma_may_in, ma_don_in, tg_bat_dau, tg_ket_thuc) VALU
 ('6', '6', '17', '11:14:25 07-10-2024', '10:14:25 10-10-2024');
 
 
-insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat, trang_thai_bao_tri) values
-('223', 200, 50, '12-10-2024', 'Đã tạm ngưng'),
-('231', 200, 50, '12-10-2024', 'Đã tạm ngưng'),
-('232', 200, 50, '12-10-2024', 'Đã tạm ngưng'),
-('233', 200, 50, '12-10-2024', 'Đã tạm ngưng'),
-('241', 200, 50, '12-10-2024', 'Đang Hoạt động');
+insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat) values
+('223', 200, 50, '12-10-2024'),
+('231', 200, 50, '12-10-2024'),
+('232', 200, 50, '12-10-2024'),
+('233', 200, 50, '12-10-2024'),
+('241', 200, 50, '12-10-2024');
 
 insert into loai_tep_chap_nhan (ma_hoc_ki, loai_tep) values 
 ('241', '.doc'),

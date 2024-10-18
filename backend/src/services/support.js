@@ -46,7 +46,11 @@ class Support {
     }
 
     getmonth = (time) => {
-        return parseInt(time.split(' ')[1].split('-')[1]);
+        return time.split(' ')[1].split('-')[1];
+    }
+
+    getyear = (time) => {
+        return time.split(' ')[1].split('-')[2];
     }
 
     getSemester = (month, year) => {

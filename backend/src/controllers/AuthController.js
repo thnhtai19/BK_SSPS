@@ -26,7 +26,7 @@ class AuthController {
             const result = await AuthService.logout(req);
             return res.status(200).send(result);
         } catch(err) {
-            return res.status(200).json({status: false, error: err});
+            return res.status(200).json(err);
         };
     }
 
