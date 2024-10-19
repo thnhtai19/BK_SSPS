@@ -4,6 +4,18 @@ const axios = require('axios');
 const supportFunction = require('./support');
 
 class AuthService {
+    check = async (req) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                if (req.session.user) resolve({ status: false, message: 'Người dùng đã đăng nhập' });
+                else resolve({ status: true, message: 'Người dùng chưa đăng nhập' });
+            }   
+            catch (error) {
+                reject(error);
+            } 
+        });
+    }
+
     createUser = async (data) => {
         const { email, password, name, uid } = data;
         return new Promise(async (resolve, reject) => {
@@ -86,6 +98,7 @@ class AuthService {
                     resolve({ status: false, message: "Mật khẩu sai" });
                     return;
                 }
+                var page = 0;
                 if (user.role == 'SV') {
                     const [sinh_vien] = await db.query('SELECT * FROM sinh_vien WHERE id = ?', [user.id]);
                     const SV = sinh_vien[0];
@@ -93,6 +106,7 @@ class AuthService {
                         resolve({ status: false, message: "Tài khoản đã bị cấm" });
                         return;   
                     }
+                    page = SV.so_giay_con;
                 }
                 fetch("https://api.ipify.org?format=json")
                 .then(response => response.json())
@@ -114,6 +128,8 @@ class AuthService {
                             status: true,
                             name: user.ten,
                             email: user.email,
+                            role: user.role,
+                            so_trang: page
                         });
                     } 
                     else resolve({ status: false, message: "Không thể lưu IP" });
@@ -149,7 +165,7 @@ class AuthService {
                             });
                         } 
                         else {
-                            reject({ status: false, message: "Lỗi khi gửi mail" });
+                            reject({ message: "Lỗi khi gửi mail" });
                         }
                     })
                     .catch(error => {

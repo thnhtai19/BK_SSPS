@@ -1,5 +1,6 @@
 const PrintService = require('../services/PrintService');
 const multer = require('multer');
+const path = require('path');
 const fs = require('fs');
 
 const storage = multer.diskStorage({
@@ -8,7 +9,7 @@ const storage = multer.diskStorage({
             return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
         }
         const id = req.session.user.id;
-        const uploadDir = `uploads/_${id}`;
+        const uploadDir = path.join(__dirname, `uploads/_${id}`);
         if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir, { recursive: true });
         }
@@ -51,10 +52,16 @@ class PrintController {
             }
 
             try {
+                if (!req.session.user) {
+                    return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
+                }
+                if (req.session.user.role != 'SV') {
+                    return res.status(403).json({message: 'Không có quyền truy cập!'});
+                }
                 const file = req.file;
                 const id = req.session.user.id;
-                await PrintService.saveFile(file, id);
-                res.json({ message: 'Tải file thành công!' });
+                const result = await PrintService.saveFile(file, id);
+                res.json({ ma_tep: result, message: 'Tải file thành công!' });
             } catch (err) {
                 res.status(500).json({ message: err.message });
             }
