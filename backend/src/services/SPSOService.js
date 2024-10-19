@@ -4,7 +4,7 @@ const support = require('./support');
 class SPSOService {
     fetchAllPrinter = async () => {
         try {
-            const [result, ] = await db.execute(`SELECT * FROM may_in`);
+            const [result, ] = await db.execute(`SELECT * FROM may_in ORDER BY ma_may_in DESC`);
             return result;
         } catch (err) {
             throw err;
@@ -52,7 +52,8 @@ class SPSOService {
                 left join may_in mi
                 on itl.ma_may_in = mi.ma_may_in
                 left join tep t
-                on dt.ma_tep = t.ma_tep`);
+                on dt.ma_tep = t.ma_tep
+                ORDER BY d.ma_don_in DESC`);
                 const formattedResult = result.map(record => {
                     return record;
                 });
@@ -111,7 +112,7 @@ class SPSOService {
                 const [nguoi_dung] = await db.query('SELECT * FROM user WHERE id = ?', [req.session.user.id]);
                 const xac_minh = nguoi_dung[0];
                 if (xac_minh.role == 'SPSO') {
-                    const [sinh_vien] = await db.query('SELECT * FROM user WHERE role = ?', ['SV']);
+                    const [sinh_vien] = await db.query('SELECT * FROM user WHERE role = ? ORDER BY id DESC', ['SV']);
                     const result = await Promise.all(sinh_vien.map(async (sv, index) => {
                         const MSSV = sv.id;
                         const ten = sv.ten;
@@ -154,7 +155,7 @@ class SPSOService {
         });
     }
 
-    createReportList = async(req) => {
+    createReportList = async(req) => { //Chưa sort id
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
                 const now = new Date();
@@ -189,7 +190,8 @@ class SPSOService {
         });
     }
 
-    reportDetail = async(req, data) => {
+
+    reportDetail = async(req, data) => { //Chưa sort id
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
                 const [nguoi_dung] = await db.query('SELECT * FROM user WHERE id = ?', [req.session.user.id]);
@@ -242,7 +244,8 @@ class SPSOService {
         });
     }
 
-    reportUsing = async(req, data) => {
+
+    reportUsing = async(req, data) => { //Chưa sort id
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
                 const [nguoi_dung] = await db.query('SELECT * FROM user WHERE id = ?', [req.session.user.id]);
@@ -269,7 +272,7 @@ class SPSOService {
         });
     }
 
-    adminHomePage = async(req, res) => {
+    adminHomePage = async() => {
         try {
             const [data1] = await db.execute(`SELECT COUNT(*) AS tong_nguoi_dung FROM user WHERE user.role = 'SV';`);
             const [data2] = await db.execute(`SELECT SUM(don_mua.tong_tien) AS tong_doanh_thu FROM don_mua;`)

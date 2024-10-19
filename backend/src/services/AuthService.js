@@ -209,7 +209,8 @@ class AuthService {
                 reject(error);
             }
         });
-    };
+    }
+    
 }
 
 module.exports = new AuthService

@@ -126,8 +126,19 @@ insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat, ngay_rese
 ('233', 200, 50, '12-10-2024','10'),
 ('241', 200, 50, '12-10-2024','10')
 
-
 insert into loai_tep_chap_nhan (ma_hoc_ki, loai_tep) values 
+('223', '.doc'),
+('223', '.docx'),
+('223', '.pdf'),
+('231', '.doc'),
+('231', '.docx'),
+('231', '.pdf'),
+('232', '.doc'),
+('232', '.docx'),
+('232', '.pdf'),
+('233', '.doc'),
+('233', '.docx'),
+('233', '.pdf'),
 ('241', '.doc'),
 ('241', '.docx'),
 ('241', '.pdf'),
