@@ -164,7 +164,9 @@ BEGIN
 		LIMIT 1;
         SELECT v_ngay_reset, v_so_giay_mac_dinh;
 		IF CURDATE() = v_ngay_reset THEN
+        SET SQL_SAFE_UPDATES = 0;
 		UPDATE sinh_vien SET so_giay_con = v_so_giay_mac_dinh;
+        SET SQL_SAFE_UPDATES = 1;
 		END IF;
 END//
 DELIMITER ;
