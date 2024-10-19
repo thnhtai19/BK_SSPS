@@ -1,5 +1,6 @@
 const PrintService = require('../services/PrintService');
 const multer = require('multer');
+const path = require('path');
 const fs = require('fs');
 
 const storage = multer.diskStorage({
@@ -8,7 +9,7 @@ const storage = multer.diskStorage({
             return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
         }
         const id = req.session.user.id;
-        const uploadDir = `uploads/_${id}`;
+        const uploadDir = path.join(__dirname, `uploads/_${id}`);
         if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir, { recursive: true });
         }

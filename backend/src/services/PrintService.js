@@ -68,6 +68,7 @@ class PrintService {
                                 [id, `Đã tạo đơn in mã ${ma_don_in}`, now]);
             await db.execute(`  UPDATE sinh_vien SET so_giay_con = so_giay_con - ? WHERE id = ?`, 
                                 [so_trang_in, id]);
+            await db.execute('INSERT INTO thong_bao (uid, thoi_gian, noi_dung) VALUES (?, ?, ?)', [id, support.startTime(new Date().getMonth() + 1), `Đơn ${ma_don_in} đang chờ in`]);
         } catch (err) {
             throw err;
         }

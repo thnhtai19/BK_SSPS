@@ -32,8 +32,8 @@ class SPSOService {
                     data.toa,
                     data.phong
                 ];
-            const [result, ] = await db.execute(`INSERT INTO may_in (ma_may_in, hang, trang_thai_may_in, doi, mo_ta, ten_may, co_so, toa, phong) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [ma_may_in, ...dataToInsert]);
-            return result;
+            await db.execute(`INSERT INTO may_in (ma_may_in, hang, trang_thai_may_in, doi, mo_ta, ten_may, co_so, toa, phong) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [ma_may_in, ...dataToInsert]);
+            return ma_may_in;
         }
         catch (err) {
             throw err;
@@ -63,18 +63,24 @@ class SPSOService {
         }
     }
 
-    updatePrintOrderStatus = async (ma_don_in, trang_thai) => {
+    updatePrintOrderStatus = async (id, ma_don_in, trang_thai) => {
         try {
             await db.execute(`UPDATE don_in SET trang_thai_don_in = ? WHERE ma_don_in = ?`, [trang_thai, ma_don_in]);
             const now = support.getCurrentFormattedDateTime();
-            if (ma_don_in == 'Đang in') await db.execute(`
-                UPDATE in_tai_lieu 
-                SET tg_bat_dau = ?
-                WHERE ma_don_in = ?`, [now, ma_don_in]);
-            else if (ma_don_in == 'Đã in') await db.execute(`
-                UPDATE in_tai_lieu 
-                SET tg_ket_thuc = ?
-                WHERE ma_don_in = ?`, [now, ma_don_in]);
+            if (trang_thai == 'Đang in') {
+                await db.execute(`
+                    UPDATE in_tai_lieu 
+                    SET tg_bat_dau = ?
+                    WHERE ma_don_in = ?`, [now, ma_don_in]);
+                await db.execute('INSERT INTO thong_bao (uid, thoi_gian, noi_dung) VALUES (?, ?, ?)', [id, support.startTime(new Date().getMonth() + 1), `Đơn ${ma_don_in} đang được in`]);
+            }
+            else if (trang_thai == 'Đã in') {
+                await db.execute(`
+                    UPDATE in_tai_lieu 
+                    SET tg_ket_thuc = ?
+                    WHERE ma_don_in = ?`, [now, ma_don_in]);
+                await db.execute('INSERT INTO thong_bao (uid, thoi_gian, noi_dung) VALUES (?, ?, ?)', [id, support.startTime(new Date().getMonth() + 1), `Đơn ${ma_don_in} đã in xong`]);
+            }
         } catch (err) {
             throw err;
         }
@@ -132,14 +138,14 @@ class SPSOService {
                     const [report] = await db.query('SELECT * FROM bao_cao');
                     report.forEach((row) => {
                         result.push({
-                            ID: row.id,
-                            hoc_ky: row.hoc_ky,
-                            thoi_gian: row.thoi_gian,
-                            thang: `0${support.getmonth(row.thoi_gian)}/2024`,
-                            noi_dung: `Báo cáo sử dụng hệ thống tháng 0${support.getmonth(row.thoi_gian)}/2024`
+                            id: row.id,
+                            semester: row.hoc_ky,
+                            createdTime: row.thoi_gian,
+                            month: `${support.getmonth(row.thoi_gian)}/2024`,
+                            content: `Báo cáo sử dụng hệ thống tháng ${support.getmonth(row.thoi_gian)}/${support.getyear(row.thoi_gian)}`
                         })
                     })
-                    resolve({ status: true, reportList: result });
+                    resolve(result);
                 }
                 else reject({ status: false, message: 'Không có quyền truy cập' });
             } 
@@ -183,7 +189,6 @@ class SPSOService {
     }
 
     reportDetail = async(req, data) => {
-        const { thang } = data;
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
                 const [nguoi_dung] = await db.query('SELECT * FROM user WHERE id = ?', [req.session.user.id]);
@@ -192,7 +197,7 @@ class SPSOService {
                     // Xử lí tiền dữ liệu
                     const rac = await db.query('SELECT * FROM in_tai_lieu');
                     var rac1 = rac[0].filter((rac2) => {
-                        return support.getmonth(rac2.tg_ket_thuc) == parseInt(thang);
+                        return support.getmonth(rac2.tg_ket_thuc) == parseInt(data);
                     })
                     var rac3 = {}
                     rac1.forEach(function(rac4) {
@@ -221,11 +226,11 @@ class SPSOService {
                         }));
                         const may_in = await db.query('SELECT * FROM may_in WHERE ma_may_in = ?', [temp.ma_may_in]);
                         return {
-                            ID_may_in: temp.ma_may_in,
-                            ten_may_in: may_in[0][0].ten_may,
-                            so_don_hang: don_hang,
-                            A3,
-                            A4
+                            printerId: temp.ma_may_in,
+                            printerName: may_in[0][0].ten_may,
+                            orders: don_hang,
+                            pagesA3: A3,
+                            pagesA4: A4
                         };
                     }))
                     resolve(result);
@@ -237,7 +242,6 @@ class SPSOService {
     }
 
     reportUsing = async(req, data) => {
-        const { thang } = data;
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
                 const [nguoi_dung] = await db.query('SELECT * FROM user WHERE id = ?', [req.session.user.id]);
@@ -245,18 +249,18 @@ class SPSOService {
                 if (xac_minh.role == 'SPSO') {
                     const rac = await db.query('SELECT * FROM don_mua');
                     var rac1 = rac[0].filter((rac2) => {
-                        return support.getmonth(rac2.thoi_gian) == parseInt(thang);
+                        return support.getmonth(rac2.thoi_gian) == parseInt(data);
                     })
                     var revenue = 0;
                     var uniqueIds = new Set(rac1.map((item) => {
                         revenue += item.tong_tien;
                         return item.id;
                     }));
-                    resolve({
-                        don_hang: rac1.length,
-                        nguoi_dung: uniqueIds.size,
-                        doanh_thu: revenue / 1e5
-                    });
+                    resolve([
+                        { name: 'Đơn hàng', value: rac1.length },
+                        { name: 'Người dùng', value: uniqueIds.size },
+                        { name: 'Doanh thu', value: revenue / 1e5 }
+                    ])
                 }
                 else reject({status: false, message: 'Không có quyền truy cập'});
             } 
@@ -320,9 +324,10 @@ class SPSOService {
             const trang_thai_bao_tri = data.trang_thai_bao_tri;
             const loai_tep_chap_nhan = data.loai_tep_chap_nhan;
             const ngay_cap_nhat = support.getCurrentDate();
+            const ngay_reset = data.ngay_reset;
             const id = String(Date.now());
             const ghi_chu = "Thêm học kỳ mới";
-            await db.execute('INSERT INTO he_thong (ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat) VALUES (?, ?, ?, ?, ?)', [ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat]);
+            await db.execute('INSERT INTO he_thong (ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ngay_reset) VALUES (?, ?, ?, ?, ?)', [ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ngay_reset]);
             await db.execute('INSERT INTO cau_hinh (id, uid, ma_hoc_ki, ghi_chu) VALUES (?, ?, ?, ?)', [id, SPSOId, ma_hoc_ki, ghi_chu]);
             await db.execute('INSERT IGNORE INTO loai_tep_chap_nhan (ma_hoc_ki, loai_tep) VALUES (?, ?)', [ma_hoc_ki, loai_tep_chap_nhan]);
         }
@@ -341,9 +346,10 @@ class SPSOService {
             const trang_thai_bao_tri = data.trang_thai_bao_tri;
             const loai_tep_chap_nhan = data.loai_tep_chap_nhan;
             const ngay_cap_nhat = support.getCurrentDate();
+            const ngay_reset = data.ngay_reset;
             const ghi_chu = "Cập nhật cấu hình hệ thống";
             const id = String(Date.now());
-            await db.execute('UPDATE he_thong SET so_giay_mac_dinh = ?, gia = ?, trang_thai_bao_tri = ?, ngay_cap_nhat = ? WHERE ma_hoc_ki = ?', [so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ma_hoc_ki]);
+            await db.execute('UPDATE he_thong SET so_giay_mac_dinh = ?, gia = ?, trang_thai_bao_tri = ?, ngay_cap_nhat = ?, ngay_reset = ? WHERE ma_hoc_ki = ?', [so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ngay_reset, ma_hoc_ki]);
             await db.execute('INSERT INTO cau_hinh (id, uid, ma_hoc_ki, ghi_chu) VALUES (?, ?, ?, ?)', [id, SPSOId, ma_hoc_ki, ghi_chu]);
             await db.execute('INSERT IGNORE INTO loai_tep_chap_nhan (ma_hoc_ki, loai_tep) VALUES (?, ?)', [ma_hoc_ki, loai_tep_chap_nhan]);
         }

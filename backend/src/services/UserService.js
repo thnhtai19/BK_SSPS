@@ -1,6 +1,18 @@
 const db = require('../config/db');
 
 class UserService {
+    getFile = async (ten_tep, id) => {
+        try{
+            const [result, ] = await db.execute(`SELECT duong_dan 
+                                                FROM tep t join so_huu sh
+                                                on t.ma_tep = sh.ma_tep 
+                                                WHERE t.ten_tep = ? and sh.id = ?`, [ten_tep, id]); 
+            return result[0];
+        }
+        catch(err){
+            throw err;
+        }
+    }
     diary = async (req) => {
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
@@ -19,7 +31,7 @@ class UserService {
                 }
                 resolve({ status: true, message: result });
             } 
-            else reject({ status: false, message: 'Người dùng chưa đăng nhập' });
+            else reject({ message: 'Người dùng chưa đăng nhập' });
         });
     }
 
@@ -40,7 +52,7 @@ class UserService {
                 }
                 resolve({ status: true, message: result });
             } 
-            else reject({ status: false, message: 'Người dùng chưa đăng nhập' });
+            else reject({ message: 'Người dùng chưa đăng nhập' });
         });
     }
 
@@ -203,6 +215,28 @@ class UserService {
         } catch (err) {
             throw err;
         }
+    }
+
+    readNotice = async (req) => {
+        return new Promise(async (resolve, reject) => {
+            if (req.session.user) {
+                const [thong_baos] = await db.query('SELECT * FROM thong_bao WHERE uid = ? AND trang_thai = false', [req.session.user.id]);
+                const result = await Promise.all(thong_baos.map((thong_bao) => {
+                    return { 
+                        ID: thong_bao.id,
+                        noi_dung: thong_bao.noi_dung,
+                        trang_thai: thong_bao.trang_thai
+                    }
+                }));
+                const [trang_thai] = await db.query('UPDATE thong_bao SET trang_thai =? WHERE uid = ?', [true, req.session.user.id]);
+                if (trang_thai.affectedRows <= 0) {
+                    reject({message: 'Cập nhật thông báo thất bại'});
+                    return;
+                } 
+                resolve({status: true, message: result})
+            }
+            else reject({message: 'Người dùng chưa đăng nhập'});
+        });
     }
 }
 
