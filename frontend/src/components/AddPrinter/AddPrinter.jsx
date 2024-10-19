@@ -1,8 +1,9 @@
 import { useState } from "react";
 import FormInput from "../../components/FormInputComponent/FormInput";
 import { CloseOutlined } from "@ant-design/icons";
+import { message } from 'antd';
 
-const AddPrinter = ({ onClose }) => {
+const AddPrinter = ({ onClose, onAddPrinterSuccess }) => {
 	const [printerName, setPrinterName] = useState('');
   const [brand, setBrand] = useState('');
   const [printerVersion, setPrinterVersion] = useState('');
@@ -15,21 +16,12 @@ const AddPrinter = ({ onClose }) => {
 	const handleSubmit = async (e) => {
     if (e && e.preventDefault) {
 			e.preventDefault();
-		}
-	
-		// Reset form input states here if needed
-		setBrand('');
-		setPrinterName('');
-		setPrinterVersion('');
-		setDescription('');
-		setCo_so('');
-		setToa('');
-		setRoom('');
+		}		
 
     // Prepare data for API call
     const newPrinter = {
       hang: brand,
-      trang_thai_may_in: true,
+      trang_thai_may_in: "1",
       doi: printerVersion,
       mo_ta: description,
       ten_may: printerName,
@@ -37,7 +29,6 @@ const AddPrinter = ({ onClose }) => {
       toa: toa,     
       phong: room,  
     };
-		console.log(newPrinter);
 
     try {
       const response = await fetch('http://localhost:3001/spso/addPrinter', {
@@ -52,11 +43,21 @@ const AddPrinter = ({ onClose }) => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
-        onClose(); // Close the modal after successful addition
-				window.location.reload();
+				message.success(data.message);
+				const printerWithId = { ...newPrinter, ma_may_in: data.ma_may_in };
+      	onAddPrinterSuccess(printerWithId);
+
+				//Reset the form state
+				setBrand('');
+				setPrinterName('');
+				setPrinterVersion('');
+				setDescription('');
+				setCo_so('');
+				setToa('');
+				setRoom('');
+
+        onClose(); // Close form
       } else {
-        // Handle error response
         setErrorMessage(data.message);
       }
     } catch (error) {

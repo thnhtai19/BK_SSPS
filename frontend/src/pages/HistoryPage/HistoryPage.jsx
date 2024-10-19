@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Table, DatePicker, Breadcrumb, Input, Row, Col } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
@@ -172,9 +172,10 @@ const HistoryPage = () => {
     setSearchValue(value);
   };
 
-  const filteredData = data.filter((item) =>
-    item.ten_tep.toLowerCase().includes(searchValue.toLowerCase())
-  );
+const filteredData = data.filter((item) =>
+  item.ten_tep && item.ten_tep.toLowerCase().includes(searchValue.toLowerCase())
+);
+
 
   return (
     <div className="p-2 min-h-screen ml-2">

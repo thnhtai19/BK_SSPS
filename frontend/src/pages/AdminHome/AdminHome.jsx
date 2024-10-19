@@ -8,21 +8,39 @@ import {
   Area,
   AreaChart,
 } from "recharts";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 import Paper from "../../assets/paper.png";
 import DolarIcon from "../../assets/16842271.png";
 import UserIcon from "../../assets/userIcon.png";
 
 function AdminHome() {
-  const chartData = [
-    { date: "10-09-2024", user: 190, order: 100 },
-    { date: "11-09-2024", user: 160, order: 80 },
-    { date: "12-09-2024", user: 80, order: 40 },
-    { date: "13-09-2024", user: 160, order: 50 },
-    { date: "14-09-2024", user: 50, order: 20 },
-    { date: "15-09-2024", user: 130, order: 50 },
-    { date: "16-09-2024", user: 120, order: 50 },
-  ];
+  const [chartData, setChartData] = useState([]);
+  const [genralData, setGenralData] = useState([]);
+
+  useEffect(() => {
+
+    const apiUrl = process.env.REACT_APP_API_URL;
+
+    function fetchData() {
+      axios
+        .get(apiUrl + "spso/adminHomePage", { withCredentials: true })
+        .then((res) => {
+          setChartData(res.data.thong_ke_2);
+          setGenralData(res.data.thong_ke_1);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    fetchData();
+  }, []);
+
+  console.log(genralData);
+  
+  
 
   return (
     <main className="p-8">
@@ -30,7 +48,7 @@ function AdminHome() {
         <div className="flex flex-1 min-w-fit justify-between items-center p-4 bg-white rounded-xl  font-semibold   shadow">
           <div>
             <p>Tổng số người dùng</p>
-            <p className="text-lg">1000</p>
+            <p className="text-lg">{genralData.tong_nguoi_dung}</p>
           </div>
           <div className="w-14 object-cover">
             <img src={UserIcon} alt="" />
@@ -39,7 +57,7 @@ function AdminHome() {
         <div className="flex flex-1 min-w-fit justify-between items-center p-4 bg-white rounded-xl  font-semibold  shadow">
           <div>
             <p>Tổng doanh thu</p>
-            <p className="text-lg">10.000.000 VNĐ</p>
+            <p className="text-lg">{genralData.tong_doanh_thu} VNĐ</p>
           </div>
           <div className="w-14 object-cover">
             <img src={DolarIcon} alt="" />
@@ -48,7 +66,7 @@ function AdminHome() {
         <div className="flex flex-1 min-w-fit justify-between items-center p-4 bg-white rounded-xl  font-semibold  shadow">
           <div>
             <p>Tổng số tài liệu đã in</p>
-            <p className="text-lg">999</p>
+            <p className="text-lg">{genralData.so_luong_don_in}</p>
           </div>
           <div className="w-14 object-cover">
             <img src={Paper} alt="" />
@@ -76,14 +94,16 @@ function AdminHome() {
             <Legend />
             <Area
               type="monotone"
-              dataKey="user"
+              dataKey="so_nguoi_su_dung"
+              name="Số người sử dụng"
               stroke="#FF7F7F"
               fillOpacity={1}
               fill="url(#colorUser)"
             />
             <Area
               type="monotone"
-              dataKey="order"
+              dataKey="so_don_in"
+              name="Số đơn in"
               stroke="#8884d8"
               fillOpacity={1}
               fill="url(#colorOrder)"
