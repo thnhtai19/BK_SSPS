@@ -119,12 +119,12 @@ INSERT INTO in_tai_lieu (id, ma_may_in, ma_don_in, tg_bat_dau, tg_ket_thuc) VALU
 ('6', '6', '17', '11:14:25 07-10-2024', '10:14:25 10-10-2024');
 
 
-insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat) values
-('223', 200, 50, '12-07-2023'),
-('231', 200, 50, '12-09-2023'),
-('232', 200, 50, '12-01-2024'),
-('233', 200, 50, '12-07-2024'),
-('241', 200, 50, '12-10-2024');
+insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat, ngay_reset) values
+('223', 200, 50, '12-10-2024','10'),
+('231', 200, 50, '12-10-2024','10'),
+('232', 200, 50, '12-10-2024','10'),
+('233', 200, 50, '12-10-2024','10'),
+('241', 200, 50, '12-10-2024','10')
 
 insert into loai_tep_chap_nhan (ma_hoc_ki, loai_tep) values 
 ('223', '.doc'),
@@ -205,7 +205,7 @@ insert into don_in_gom_tep (ma_don_in, ma_tep, so_ban_in, so_mat, so_trang_in, k
 ('17', '4', 4, 2, 5, 'A4');
 
 insert into cau_hinh (id, uid, ma_hoc_ki, ghi_chu) values
-('1', '1', '233', 'Test API'),
+('1', '1', '232', 'Test API'),
 ('2', '1', '233', 'Test API'),
 ('3', '1', '241', 'Test API'),
 ('4', '2', '241', 'Test API');

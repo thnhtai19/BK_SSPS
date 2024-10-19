@@ -138,10 +138,11 @@ class SPSOService {
                     const result = [];
                     const [report] = await db.query('SELECT * FROM bao_cao');
                     report.forEach((row) => {
+                        const [time, date] = row.thoi_gian.split(" ");
                         result.push({
                             id: row.id,
                             semester: row.hoc_ky,
-                            createdTime: row.thoi_gian,
+                            createdTime: date + " " + time,
                             month: `${support.getmonth(row.thoi_gian)}/2024`,
                             content: `Báo cáo sử dụng hệ thống tháng ${support.getmonth(row.thoi_gian)}/${support.getyear(row.thoi_gian)}`
                         })
