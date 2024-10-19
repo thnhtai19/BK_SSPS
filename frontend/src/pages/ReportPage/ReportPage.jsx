@@ -1,49 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, DatePicker, Breadcrumb, Input, Button, Row, Col, Modal } from 'antd';
+import { Table, DatePicker, Breadcrumb, Input, Button, Row, Col, Modal,  message, Spin  } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useNavigate } from 'react-router-dom';
 
 const { Search } = Input;
 
 const ReportPage = () => {
 	const [pageSize, setPageSize] = useState(10);
-	const [dataSource] = useState([
-		{
-			id: '2220',
-			semester: 'HK241',
-			month: '09/2024',
-			content: 'Báo cáo sử dụng hệ thống tháng 9/test1',
-			createdTime: '14-09-2024 00:55:44',
-			printers: [
-				{
-					printerId: '2219',
-					printerName: 'Máy in 1',
-					orders: 60,
-					pagesA3: 150,
-					pagesA4: 1600,
-				},
-				{
-					printerId: '2221',
-					printerName: 'Máy in 3',
-					orders: 50,
-					pagesA3: 149,
-					pagesA4: 1300,
-				},
-			],
-			chartData: [
-				{ name: 'Đơn hàng', value: 900 },
-				{ name: 'Người dùng', value: 120 },
-				{ name: 'Doanh thu', value: 65 },
-			],
-		},
-	]);
+	const [dataSource, setdataSource] = useState();
 
 	const [filteredData, setFilteredData] = useState(dataSource);
 	const [selectedDates, setSelectedDates] = useState([null, null]);
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [selectedReport, setSelectedReport] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const navigate = useNavigate();
+
+	const apiUrl = process.env.REACT_APP_API_URL;
+	
+
+	useEffect(() => {
+		const gethis = async () => {
+			setLoading(true);
+			try {
+			const response = await fetch(`${apiUrl}spso/report`, {
+				method: 'GET',
+				headers: {
+				'Content-Type': 'application/json',
+				},
+				credentials: 'include',
+			});
+		
+			const data = await response.json();
+			if (data.message === 'Không có quyền truy cập') {
+				navigate('/404');
+				return;
+			} 
+
+			if (data.message === 'Người dùng chưa đăng nhập') {
+				navigate('/auth/login');
+				return;
+			} 
+		
+			if (response.ok) {
+				setdataSource(data)
+				setFilteredData(data);
+			}
+			
+			} catch (error) {
+			console.error('Lỗi:', error);
+			message.error('Đã xảy ra lỗi trong quá trình lấy dữ liệu!');
+			} finally {
+			setLoading(false);
+			}
+		}
+		gethis();
+	}, [navigate,apiUrl]);
+  
 
 	const paginationOptions = {
 		pageSize,
@@ -161,17 +177,29 @@ const ReportPage = () => {
 				</Row>
 			</div>
 
-			<div className='flex items-center justify-center mt-7'>
-				<div className='flex flex-col bg-white p-6 rounded-lg shadow-lg w-[95%] md:w-[95%]'>
-					<h3 className='text-xl font-semibold text-gray-800 mb-6 border-b pb-2'>Báo cáo sử dụng</h3>
+			{loading ? (
+			<Spin
+				size='large'
+				style={{
+				display: 'flex',
+				justifyContent: 'center',
+				alignItems: 'center',
+				minHeight: '100vh',
+				}}
+			/>
+			) : (
+				<div className='flex items-center justify-center mt-7'>
+					<div className='flex flex-col bg-white p-6 rounded-lg shadow-lg w-[95%] md:w-[95%]'>
+						<h3 className='text-xl font-semibold text-gray-800 mb-6 border-b pb-2'>Báo cáo sử dụng</h3>
 
-					<div className='mb-4'>
-						<Search placeholder='Tìm kiếm nội dung' onSearch={handleSearch} style={{ width: 200 }} />
+						<div className='mb-4'>
+							<Search placeholder='Tìm kiếm nội dung' onSearch={handleSearch} style={{ width: 200 }} />
+						</div>
+
+						<Table columns={columns} dataSource={filteredData} pagination={paginationOptions} bordered />
 					</div>
-
-					<Table columns={columns} dataSource={filteredData} pagination={paginationOptions} bordered />
 				</div>
-			</div>
+			)}
 
 			<Modal title='Chi tiết báo cáo' visible={isModalVisible} onCancel={handleCancel} footer={null} width={800}>
 				{selectedReport && (

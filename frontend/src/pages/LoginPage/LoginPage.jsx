@@ -171,6 +171,8 @@ function Login() {
       if (data.status) {
         localStorage.setItem("name", data.name);
         localStorage.setItem("email", data.email);
+        localStorage.setItem("role", data.role);
+        localStorage.setItem("so_trang", data.so_trang);
         toast.success("Đăng nhập thành công!");
         setTimeout(() => {
           navigate("/home");

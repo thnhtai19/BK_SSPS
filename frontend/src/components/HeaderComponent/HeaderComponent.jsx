@@ -114,6 +114,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
           </div>
         </Link>
       </Menu.Item>
+      {localStorage.getItem("role") === 'SPSO' ?(
       <Menu.Item key="2">
         <Link to="/admin/home" style={{ color: '#444' }} >
           <div style={{ display: 'flex', gap: '10px' }}>
@@ -122,6 +123,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
           </div>
         </Link>
       </Menu.Item>
+      ): null}
       <div style={{ width: '250px', borderBottom: '1.5px solid #F5F5F5', margin: '5px 0' }} />
       <Menu.Item key="3">
         <div style={{ display: 'flex', gap: '10px' }} onClick={handleLogout}>
@@ -144,7 +146,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
       <div className='right-container'>
         <div className='wrap-button-con'>
           <div className='wrap-button'>
-            99 credits
+          {localStorage.getItem("so_trang") ? localStorage.getItem("so_trang") : 0} credits
           </div>
         </div>
         <Dropdown overlay={notice} trigger={['click']} overlayStyle={{ paddingTop: '10px'}} >
