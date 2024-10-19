@@ -162,6 +162,32 @@ create table cau_hinh (
 );
 
 DELIMITER //
+DROP PROCEDURE IF EXISTS reset_so_giay;
+DROP EVENT IF EXISTS reset_so_giay_event;
+CREATE PROCEDURE reset_so_giay()
+BEGIN 
+		DECLARE v_ngay_reset DATE;
+		DECLARE v_so_giay_mac_dinh INT;
+        SELECT STR_TO_DATE(ngay_reset, '%d-%m-%Y'), so_giay_mac_dinh
+        INTO v_ngay_reset, v_so_giay_mac_dinh
+		FROM he_thong 
+		ORDER BY CAST(ma_hoc_ki as UNSIGNED) DESC, STR_TO_DATE(ngay_cap_nhat, '%d-%m-%Y') DESC
+		LIMIT 1;
+        SELECT v_ngay_reset, v_so_giay_mac_dinh;
+		IF CURDATE() = v_ngay_reset THEN
+        SET SQL_SAFE_UPDATES = 0;
+		UPDATE sinh_vien SET so_giay_con = v_so_giay_mac_dinh;
+        SET SQL_SAFE_UPDATES = 1;
+		END IF;
+END//
+DELIMITER ;
+SET GLOBAL event_scheduler = ON;
+CREATE EVENT IF NOT EXISTS reset_so_giay_event
+ON SCHEDULE EVERY 1 DAY
+DO
+CALL reset_so_giay();
+
+DELIMITER //
 
 CREATE TRIGGER calculate_tong_tien
 BEFORE INSERT ON don_mua

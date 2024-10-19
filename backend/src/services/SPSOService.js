@@ -307,7 +307,7 @@ class SPSOService {
     }
     fetchSystemInfo = async () => {
         try{
-            const [systemInfo, ] = await db.query(`SELECT ht.so_giay_mac_dinh, ht.ma_hoc_ki, ht.gia, ht.ngay_cap_nhat, 
+            const [systemInfo, ] = await db.query(`SELECT ht.so_giay_mac_dinh, ht.ma_hoc_ki, ht.gia, ht.ngay_cap_nhat, ht.ngay_reset,
                                                       ht.trang_thai_bao_tri, GROUP_CONCAT(lt.loai_tep SEPARATOR ', ') as loai_tep_chap_nhan 
                                                FROM he_thong ht left join loai_tep_chap_nhan lt
                                                on ht.ma_hoc_ki = lt.ma_hoc_ki
@@ -331,7 +331,7 @@ class SPSOService {
             const ngay_reset = data.ngay_reset;
             const id = String(Date.now());
             const ghi_chu = "Thêm học kỳ mới";
-            await db.execute('INSERT INTO he_thong (ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ngay_reset) VALUES (?, ?, ?, ?, ?)', [ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ngay_reset]);
+            await db.execute('INSERT INTO he_thong (ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ngay_reset) VALUES (?, ?, ?, ?, ?, ?)', [ma_hoc_ki, so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_cap_nhat, ngay_reset]);
             await db.execute('INSERT INTO cau_hinh (id, uid, ma_hoc_ki, ghi_chu) VALUES (?, ?, ?, ?)', [id, SPSOId, ma_hoc_ki, ghi_chu]);
             await db.execute('INSERT IGNORE INTO loai_tep_chap_nhan (ma_hoc_ki, loai_tep) VALUES (?, ?)', [ma_hoc_ki, loai_tep_chap_nhan]);
         }
