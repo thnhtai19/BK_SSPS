@@ -133,6 +133,19 @@ function Login() {
     setShowForgetPassword(!showForgetPassword);
   }
 
+  function handleKeyDownPW(e) {
+    if (e.key === "Enter") {
+      handleSubmit(e);
+    }
+  }
+
+  function handleKeyDownEmail(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      passwordRef.current.focus();
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -196,6 +209,7 @@ function Login() {
             placeholder="Vui lòng nhập tên đăng nhập"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={handleKeyDownEmail}
             className="border-[1px] mt-2 mb-4 focus:outline-none border-black sm:w-[450px] px-6 py-2 rounded-xl"
           />
           <label className="">Mật khẩu</label>
@@ -206,6 +220,7 @@ function Login() {
               placeholder="Vui lòng nhập mật khẩu"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handleKeyDownPW}
               className="flex-1 block mr-auto focus:outline-none px-6 rounded-xl"
             />
             {iconShowPassword && (
