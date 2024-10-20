@@ -9,6 +9,7 @@ import {
   AreaChart,
 } from "recharts";
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import Paper from "../../assets/paper.png";
@@ -18,9 +19,9 @@ import UserIcon from "../../assets/userIcon.png";
 function AdminHome() {
   const [chartData, setChartData] = useState([]);
   const [genralData, setGenralData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-
     const apiUrl = process.env.REACT_APP_API_URL;
 
     function fetchData() {
@@ -30,17 +31,27 @@ function AdminHome() {
           setChartData(res.data.thong_ke_2);
           setGenralData(res.data.thong_ke_1);
         })
-        .catch((err) => {
-          console.log(err);
+        .catch((error) => {
+          if (error.response) {
+            // Server trả về lỗi không phải 2xx
+            if (error.response.status === 401) {
+              console.error("Chưa xác thực, yêu cầu đăng nhập");
+              navigate("/auth/login");
+            } else {
+              navigate("/404")
+              console.error("Lỗi server:", error.response.data.message);              
+            }
+          } else if (error.request) {
+            console.error("Không thể kết nối tới server");
+          } else {
+            // Lỗi khác
+            console.error("Lỗi:", error.message);
+          }
         });
     }
 
     fetchData();
-  }, []);
-
-  console.log(genralData);
-  
-  
+  }, []);  
 
   return (
     <main className="p-8">

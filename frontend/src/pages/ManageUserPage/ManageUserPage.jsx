@@ -1,25 +1,90 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Table } from "antd";
 import axios from "axios";
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { CloseOutlined } from "@ant-design/icons";
+
+function PopUpToggleStatusBan({
+  setShowPopUpChangeStatus,
+  togglePopUpChangeStatus,
+}) {
+  const modelRef = useRef(null);
+
+  function closeForgetPassword() {
+    if (modelRef.current) {
+      modelRef.current.classList.add("animate-zoomOut");
+      modelRef.current.parentElement.classList.add("bg-transparent");
+      modelRef.current.addEventListener("animationend", () => {
+        setShowPopUpChangeStatus(false);
+      });
+    }
+  }
+
+  const handleChangeStatus = () => {
+    togglePopUpChangeStatus(null, true);
+  };
+
+  return (
+    <div className="bg-[rgba(128,128,128,0.5)] absolute top-0 right-0 left-0 bottom-0  flex items-center justify-center">
+      <div
+        ref={modelRef}
+        className="animate animate-zoomIn  rounded-xl mx-3   text-center  flex flex-col  px-12 pt-3 pb-14 bg-white shadow-2xl sm:w-[600px]"
+      >
+        <CloseOutlined
+          onClick={closeForgetPassword}
+          className=" ml-auto text-xl hover:bg-[#D2ECF4] hover:cursor-pointer p-2"
+        />
+        <h1 className="text-2xl font-bold ">Xác nhận thay đổi trạng thái</h1>
+        <p className="mt-4">
+          Bạn có chắc chắn muốn thay đổi trạng thái của người dùng này không?
+        </p>
+
+        <div className="flex gap-6 mt-12">
+          <button
+            className="flex-1 bg-[#0688B4] hover:shadow-white font-bold shadow-inner text-white  py-3 rounded-xl"
+            onClick={handleChangeStatus}
+          >
+            Đồng ý
+          </button>
+
+          <button
+            className="flex-1 bg-[#627d98] hover:shadow-white font-bold shadow-inner text-white  py-3 rounded-xl"
+            onClick={closeForgetPassword}
+          >
+            Hủy bỏ
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function ManageUserPage() {
   const [pageSize, setPageSize] = useState(10);
   const [dataSource, setDataSource] = useState([]);
   const [filteredData, setFilteredData] = useState(dataSource);
-  const [reLoad, setReLoad] = useState(false);
+  const [showPopUpChangeStatus, setShowPopUpChangeStatus] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const apiUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
 
-  function handleToggleStatusBan(e) {
-    if (e.target.innerText === "Bị chặn") {
+  function handleToggleStatus(e) {
+    const status =
+      dataSource.find((user) => user.MSSV === e).status === 1 ? 0 : 1;
+    changeStatusUser(status, e);
+    setShowPopUpChangeStatus(false);
+  }
+
+  function togglePopUpChangeStatus(e, isConfirm) {
+    if (!isConfirm) {
       const mssv = e.target.parentElement.parentElement.children[1].innerText;
-      changeStatusUser(1, mssv);
+      setSelectedUser(mssv);
+      setShowPopUpChangeStatus(!showPopUpChangeStatus);
     } else {
-      const mssv = e.target.parentElement.parentElement.children[1].innerText;
-      changeStatusUser(0, mssv);
+      handleToggleStatus(selectedUser);
     }
   }
 
@@ -37,32 +102,7 @@ function ManageUserPage() {
             console.error("Chưa xác thực, yêu cầu đăng nhập");
             navigate("/auth/login");
           } else {
-            console.error("Lỗi server:", error.response.data.message);
-          }
-        } else if (error.request) {
-          console.error("Không thể kết nối tới server");
-        } else {
-          // Lỗi khác
-          console.error("Lỗi:", error.message);
-        }
-      });
-  };
-
-  const fetchApiRoleUser = () => {
-    axios
-      .get(apiUrl + "user/profile", { withCredentials: true })
-      .then((response) => {
-        if (response.data.role === "SV") {
-          navigate("/404");
-        }
-      })
-      .catch((error) => {
-        if (error.response) {
-          // Server trả về lỗi không phải 2xx
-          if (error.response.status === 401) {
-            console.error("Chưa xác thực, yêu cầu đăng nhập");
-            navigate("/auth/login");
-          } else {
+            navigate("/404");
             console.error("Lỗi server:", error.response.data.message);
           }
         } else if (error.request) {
@@ -82,7 +122,12 @@ function ManageUserPage() {
         { withCredentials: true }
       )
       .then((response) => {
-        setReLoad(!reLoad);
+        setDataSource((prev) =>
+          prev.map((user) => (user.MSSV === id ? { ...user, status } : user))
+        );
+        setFilteredData((prev) =>
+          prev.map((user) => (user.MSSV === id ? { ...user, status } : user))
+        );
       })
       .catch((error) => {
         if (error.response) {
@@ -103,9 +148,8 @@ function ManageUserPage() {
   };
 
   useEffect(() => {
-    fetchApiRoleUser();
     fetchApiListUser();
-  }, [reLoad]);
+  }, []);
 
   const handlePageSizeChange = (value) => {
     setPageSize(value);
@@ -135,7 +179,7 @@ function ManageUserPage() {
       dataIndex: "mail",
     },
     {
-      title: "Hành động",
+      title: "Trạng thái",
       dataIndex: "status",
       render: (text) => (
         <div
@@ -144,7 +188,7 @@ function ManageUserPage() {
               ? "bg-[#BFFFD9] text-[#00760C] rounded-lg cursor-pointer  shadow-inner hover:shadow-[#00760C] select-none py-1 w-4/5 flex items-center justify-center font-medium"
               : "bg-[#FFBEBE] text-[#B90707] rounded-lg cursor-pointer shadow-inner hover:shadow-[#B90707] select-none py-1 w-4/5 flex items-center justify-center font-medium"
           }
-          onClick={handleToggleStatusBan}
+          onClick={(e) => togglePopUpChangeStatus(e, false)}
         >
           {text === 1 ? "Hoạt động" : "Bị chặn"}
         </div>
@@ -185,6 +229,12 @@ function ManageUserPage() {
           className="shadow rounded-lg border-[#EFF1F3] border-[1px]"
         />
       </div>
+      {showPopUpChangeStatus && (
+        <PopUpToggleStatusBan
+          setShowPopUpChangeStatus={setShowPopUpChangeStatus}
+          togglePopUpChangeStatus={togglePopUpChangeStatus}
+        />
+      )}
     </main>
   );
 }
