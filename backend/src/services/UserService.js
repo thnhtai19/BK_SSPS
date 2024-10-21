@@ -222,7 +222,7 @@ class UserService {
     readNotice = async (req) => {
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
-                const [thong_baos] = await db.query('SELECT * FROM thong_bao WHERE uid = ? AND trang_thai = false', [req.session.user.id]);
+                const [thong_baos] = await db.query('SELECT * FROM thong_bao WHERE uid = ?', [req.session.user.id]);
                 const result = await Promise.all(thong_baos.map((thong_bao) => {
                     return { 
                         ID: thong_bao.id,
