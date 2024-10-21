@@ -196,6 +196,7 @@ class SPSOService {
             if (req.session.user) {
                 const [nguoi_dung] = await db.query('SELECT * FROM user WHERE id = ?', [req.session.user.id]);
                 const xac_minh = nguoi_dung[0];
+                // console.log(data)
                 if (xac_minh.role == 'SPSO') {
                     // Xử lí tiền dữ liệu
                     const rac = await db.query('SELECT * FROM in_tai_lieu');
