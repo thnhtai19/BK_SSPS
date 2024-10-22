@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   WrapperContainer
 } from './style'
@@ -24,7 +24,7 @@ const { Search } = Input;
 
 const HeaderComponent = ({ isOpen, setIsOpen }) => {
   const [notifications, setNotifications] = useState([]);
-  const [notificationStatus, setNotificationStatus] = useState(false);
+  const [countNotice, setCountNotice] = useState(0);
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -45,6 +45,29 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
       return text;
   };
 
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+          const response = await fetch(`${apiUrl}user/notice`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+          });
+          const data = await response.json();
+          setNotifications(data.message);
+          let count = data.message.filter(item => item.trang_thai === 0).length;
+          setCountNotice(count);
+      } catch (error) {
+          console.error('Error fetching notifications:', error);
+      }
+    };
+    fetchNotifications();
+  }, [setCountNotice,apiUrl]);
+  
+
   const notice = (
     <Menu style={{ width: '350px', maxHeight: '300px', overflow: 'auto', position: 'relative', padding: 0, margin: 0 }}>
       <div style={{
@@ -56,7 +79,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
       }}>
         <div style={{ margin: 0, fontWeight: 'bold', fontSize: '18px' }}>Thông báo</div>
       </div>
-      {notificationStatus === false ? (
+      {notifications.length === 0 ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
           <InboxOutlined style={{ fontSize: '25px', color: '#6f6f6f' }} />
           <div style={{ color: '#6f6f6f', paddingTop: '10px' }}>Bạn chưa có thông báo nào!</div>
@@ -150,7 +173,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
           </div>
         </div>
         <Dropdown overlay={notice} trigger={['click']} overlayStyle={{ paddingTop: '10px'}} >
-        <Badge count={1}> 
+        <Badge count={countNotice}> 
           <BellOutlined style={{ fontSize: '25px', color: '#444', cursor: 'pointer' }} />
         </Badge>
         </Dropdown>
