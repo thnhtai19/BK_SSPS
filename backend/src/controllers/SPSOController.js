@@ -111,8 +111,8 @@ class SPSOController {
             const createReportList = await SPSOService.createReportList(req);
             const report_list = await SPSOService.reportList(req);
             const result = await Promise.all(report_list.map(async (temp) => {
-                const detail = await SPSOService.reportDetail(req, support.getmonth(temp.createdTime));
-                const using = await SPSOService.reportUsing(req, support.getmonth(temp.createdTime));
+                const detail = await SPSOService.reportDetail(req, temp.createdTime.split(' ')[0].split('-')[1]);
+                const using = await SPSOService.reportUsing(req, temp.createdTime.split(' ')[0].split('-')[1]);
                 const report_detail = {
                     printers: detail,
                     chartData: using

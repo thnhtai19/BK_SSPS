@@ -11,6 +11,7 @@ router.get('/printOrder', UserController.getPrintOrder);
 router.get('/printOrder/NoPagesEachDay', UserController.getNoPagesEachDay);
 router.post('/buy', UserController.Buy);
 router.get('/notice', UserController.readNotice);
+router.post('/notice', UserController.updateStatus);
 router.get('/getFile', UserController.getFile);
 
 module.exports = router

@@ -219,11 +219,10 @@ class UserService {
         }
     }
 
-
     readNotice = async (req) => {
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
-                const [thong_baos] = await db.query('SELECT * FROM thong_bao WHERE uid = ? AND trang_thai = false', [req.session.user.id]);
+                const [thong_baos] = await db.query('SELECT * FROM thong_bao WHERE uid = ?', [req.session.user.id]);
                 const result = await Promise.all(thong_baos.map((thong_bao) => {
                     return { 
                         ID: thong_bao.id,
@@ -231,12 +230,22 @@ class UserService {
                         trang_thai: thong_bao.trang_thai
                     }
                 }));
-                const [trang_thai] = await db.query('UPDATE thong_bao SET trang_thai =? WHERE uid = ?', [true, req.session.user.id]);
-                if (trang_thai.affectedRows <= 0) {
-                    reject({message: 'Cập nhật thông báo thất bại'});
-                    return;
-                } 
                 resolve({status: true, message: result})
+            }
+            else reject({message: 'Người dùng chưa đăng nhập'});
+        });
+    }
+
+    updateStatus = async (req, data) => {
+        return new Promise(async (resolve, reject) => {
+            if (req.session.user) {
+                const { id } = data;
+                const [result] = await db.query('UPDATE thong_bao SET trang_thai =? WHERE uid =? AND id =?', [true, req.session.user.id, id]);
+                if (result.affectedRows <= 0) {
+                    reject({message: 'Cập nhật trạng thái thất bại'});
+                    return;
+                }
+                resolve({status: true, message: 'Cập nhật trạng thái thành công'});
             }
             else reject({message: 'Người dùng chưa đăng nhập'});
         });
