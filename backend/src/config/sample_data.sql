@@ -116,22 +116,22 @@ insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat, trang_tha
 ('241', 200, 50, '12-10-2024', 'Đang Hoạt động');
 
 insert into loai_tep_chap_nhan (ma_hoc_ki, loai_tep) values 
-('241', '.doc'),
-('241', '.docx'),
-('241', '.pdf'),
-('241', '.csv'),
-('241', '.txt'),
-('241', '.ppt');
+('241', 'doc'),
+('241', 'docx'),
+('241', 'pdf'),
+('241', 'csv'),
+('241', 'txt'),
+('241', 'ppt');
 
 insert into tep (ma_tep, ten_tep, loai_tep, duong_dan, so_trang) values -- Chưa sửa đường dẫn, khi nào code API sẽ sửa sau
-('1', 'sample1.txt', '.txt', '\_5\sample_1.txt', 1),
-('2', 'sample2.txt', '.txt', '\_5\sample_2.txt', 1),
-('3', 'sample3.txt', '.txt', '\_5\sample_3.txt', 1),
-('4', 'sample4.txt', '.txt', '\_5\sample_4.txt', 1),
-('5', 'sample1.txt', '.txt', '\_6\sample_1.txt', 1),
-('6', 'sample2.txt', '.txt', '\_6\sample_2.txt', 1),
-('7', 'sample3.txt', '.txt', '\_6\sample_3.txt', 1),
-('8', 'sample1.txt', '.txt', '\_7\sample_1.txt', 1);
+('1', 'sample1.txt', 'txt', '\_5\sample_1.txt', 1),
+('2', 'sample2.txt', 'txt', '\_5\sample_2.txt', 1),
+('3', 'sample3.txt', 'txt', '\_5\sample_3.txt', 1),
+('4', 'sample4.txt', 'txt', '\_5\sample_4.txt', 1),
+('5', 'sample1.txt', 'txt', '\_6\sample_1.txt', 1),
+('6', 'sample2.txt', 'txt', '\_6\sample_2.txt', 1),
+('7', 'sample3.txt', 'txt', '\_6\sample_3.txt', 1),
+('8', 'sample1.txt', 'txt', '\_7\sample_1.txt', 1);
 
 insert into so_huu (id, ma_tep) values
 ('5', '1'),
