@@ -22,6 +22,14 @@ const columns = [
     dataIndex: 'so_trang',
     key: 'so_trang',
   },
+  {
+    title: 'Tổng tiền',
+    dataIndex: 'tong_tien',
+    key: 'tong_tien',
+    render: (value) => {
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+    },
+  },
 ];
 
 const BuyPage = () => {

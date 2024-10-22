@@ -8,7 +8,7 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [iconShowPassword, setIconShowPassword] = useState(true);
   const passwordRef = useRef(null);
-  
+  const apiUrl = process.env.REACT_APP_API_URL;
   const [name, setName] = useState('');
   const [uid, setUid] = useState('');
   const [email, setEmail] = useState('');
@@ -17,9 +17,30 @@ function Register() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const cheklogin = async () => {
+      try {
+        const response = await fetch(`${apiUrl}auth/check`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+        });
+  
+        const data = await response.json();
+        console.log(data);
+  
+        if (response.ok && data.status === false) {
+          navigate("/home");
+        } 
+      } catch (error) {
+      }
+    };
+    cheklogin();
+
     const passwordInput = passwordRef.current;
     passwordInput.type = showPassword ? "text" : "password";
-  }, [showPassword]);
+  }, [showPassword,apiUrl,navigate]);
 
   function toggleShowPassword() {
     setShowPassword(!showPassword);
@@ -35,7 +56,7 @@ function Register() {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/auth/sign_up', {
+      const response = await fetch(`${apiUrl}auth/sign_up`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -4,7 +4,7 @@ const support = require('./support');
 class SPSOService {
     fetchAllPrinter = async () => {
         try {
-            const [result, ] = await db.execute(`SELECT * FROM may_in`);
+            const [result, ] = await db.execute(`SELECT * FROM may_in ORDER BY ma_may_in DESC`);
             return result;
         } catch (err) {
             throw err;
@@ -52,7 +52,8 @@ class SPSOService {
                 left join may_in mi
                 on itl.ma_may_in = mi.ma_may_in
                 left join tep t
-                on dt.ma_tep = t.ma_tep`);
+                on dt.ma_tep = t.ma_tep
+                ORDER BY d.ma_don_in DESC`);
                 const formattedResult = result.map(record => {
                     return record;
                 });
@@ -63,18 +64,24 @@ class SPSOService {
         }
     }
 
-    updatePrintOrderStatus = async (ma_don_in, trang_thai) => {
+    updatePrintOrderStatus = async (id, ma_don_in, trang_thai) => {
         try {
             await db.execute(`UPDATE don_in SET trang_thai_don_in = ? WHERE ma_don_in = ?`, [trang_thai, ma_don_in]);
             const now = support.getCurrentFormattedDateTime();
-            if (ma_don_in == 'Đang in') await db.execute(`
-                UPDATE in_tai_lieu 
-                SET tg_bat_dau = ?
-                WHERE ma_don_in = ?`, [now, ma_don_in]);
-            else if (ma_don_in == 'Đã in') await db.execute(`
-                UPDATE in_tai_lieu 
-                SET tg_ket_thuc = ?
-                WHERE ma_don_in = ?`, [now, ma_don_in]);
+            if (trang_thai == 'Đang in') {
+                await db.execute(`
+                    UPDATE in_tai_lieu 
+                    SET tg_bat_dau = ?
+                    WHERE ma_don_in = ?`, [now, ma_don_in]);
+                await db.execute('INSERT INTO thong_bao (uid, thoi_gian, noi_dung) VALUES (?, ?, ?)', [id, support.startTime(new Date().getMonth() + 1), `Đơn ${ma_don_in} đang được in`]);
+            }
+            else if (trang_thai == 'Đã in') {
+                await db.execute(`
+                    UPDATE in_tai_lieu 
+                    SET tg_ket_thuc = ?
+                    WHERE ma_don_in = ?`, [now, ma_don_in]);
+                await db.execute('INSERT INTO thong_bao (uid, thoi_gian, noi_dung) VALUES (?, ?, ?)', [id, support.startTime(new Date().getMonth() + 1), `Đơn ${ma_don_in} đã in xong`]);
+            }
         } catch (err) {
             throw err;
         }
@@ -105,7 +112,7 @@ class SPSOService {
                 const [nguoi_dung] = await db.query('SELECT * FROM user WHERE id = ?', [req.session.user.id]);
                 const xac_minh = nguoi_dung[0];
                 if (xac_minh.role == 'SPSO') {
-                    const [sinh_vien] = await db.query('SELECT * FROM user WHERE role = ?', ['SV']);
+                    const [sinh_vien] = await db.query('SELECT * FROM user WHERE role = ? ORDER BY id DESC', ['SV']);
                     const result = await Promise.all(sinh_vien.map(async (sv, index) => {
                         const MSSV = sv.id;
                         const ten = sv.ten;
@@ -131,15 +138,16 @@ class SPSOService {
                     const result = [];
                     const [report] = await db.query('SELECT * FROM bao_cao');
                     report.forEach((row) => {
+                        const [time, date] = row.thoi_gian.split(" ");
                         result.push({
-                            ID: row.id,
-                            hoc_ky: row.hoc_ky,
-                            thoi_gian: row.thoi_gian,
-                            thang: `0${support.getmonth(row.thoi_gian)}/2024`,
-                            noi_dung: `Báo cáo sử dụng hệ thống tháng 0${support.getmonth(row.thoi_gian)}/2024`
+                            id: row.id,
+                            semester: row.hoc_ky,
+                            createdTime: date + " " + time,
+                            month: `${support.getmonth(row.thoi_gian)}/2024`,
+                            content: `Báo cáo sử dụng hệ thống tháng ${support.getmonth(row.thoi_gian)}/${support.getyear(row.thoi_gian)}`
                         })
                     })
-                    resolve({ status: true, reportList: result });
+                    resolve(result);
                 }
                 else reject({ status: false, message: 'Không có quyền truy cập' });
             } 
@@ -147,7 +155,7 @@ class SPSOService {
         });
     }
 
-    createReportList = async(req) => {
+    createReportList = async(req) => { //Chưa sort id
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
                 const now = new Date();
@@ -182,17 +190,18 @@ class SPSOService {
         });
     }
 
-    reportDetail = async(req, data) => {
-        const { thang } = data;
+
+    reportDetail = async(req, data) => { //Chưa sort id
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
                 const [nguoi_dung] = await db.query('SELECT * FROM user WHERE id = ?', [req.session.user.id]);
                 const xac_minh = nguoi_dung[0];
+                // console.log(data)
                 if (xac_minh.role == 'SPSO') {
                     // Xử lí tiền dữ liệu
                     const rac = await db.query('SELECT * FROM in_tai_lieu');
                     var rac1 = rac[0].filter((rac2) => {
-                        return support.getmonth(rac2.tg_ket_thuc) == parseInt(thang);
+                        return support.getmonth(rac2.tg_ket_thuc) == parseInt(data);
                     })
                     var rac3 = {}
                     rac1.forEach(function(rac4) {
@@ -221,11 +230,11 @@ class SPSOService {
                         }));
                         const may_in = await db.query('SELECT * FROM may_in WHERE ma_may_in = ?', [temp.ma_may_in]);
                         return {
-                            ID_may_in: temp.ma_may_in,
-                            ten_may_in: may_in[0][0].ten_may,
-                            so_don_hang: don_hang,
-                            A3,
-                            A4
+                            printerId: temp.ma_may_in,
+                            printerName: may_in[0][0].ten_may,
+                            orders: don_hang,
+                            pagesA3: A3,
+                            pagesA4: A4
                         };
                     }))
                     resolve(result);
@@ -236,8 +245,8 @@ class SPSOService {
         });
     }
 
-    reportUsing = async(req, data) => {
-        const { thang } = data;
+
+    reportUsing = async(req, data) => { //Chưa sort id
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
                 const [nguoi_dung] = await db.query('SELECT * FROM user WHERE id = ?', [req.session.user.id]);
@@ -245,18 +254,18 @@ class SPSOService {
                 if (xac_minh.role == 'SPSO') {
                     const rac = await db.query('SELECT * FROM don_mua');
                     var rac1 = rac[0].filter((rac2) => {
-                        return support.getmonth(rac2.thoi_gian) == parseInt(thang);
+                        return support.getmonth(rac2.thoi_gian) == parseInt(data);
                     })
                     var revenue = 0;
                     var uniqueIds = new Set(rac1.map((item) => {
                         revenue += item.tong_tien;
                         return item.id;
                     }));
-                    resolve({
-                        don_hang: rac1.length,
-                        nguoi_dung: uniqueIds.size,
-                        doanh_thu: revenue / 1e5
-                    });
+                    resolve([
+                        { name: 'Đơn hàng', value: rac1.length },
+                        { name: 'Người dùng', value: uniqueIds.size },
+                        { name: 'Doanh thu', value: revenue / 1e5 }
+                    ])
                 }
                 else reject({status: false, message: 'Không có quyền truy cập'});
             } 
@@ -264,7 +273,7 @@ class SPSOService {
         });
     }
 
-    adminHomePage = async(req, res) => {
+    adminHomePage = async() => {
         try {
             const [data1] = await db.execute(`SELECT COUNT(*) AS tong_nguoi_dung FROM user WHERE user.role = 'SV';`);
             const [data2] = await db.execute(`SELECT SUM(don_mua.tong_tien) AS tong_doanh_thu FROM don_mua;`)

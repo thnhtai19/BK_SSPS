@@ -46,7 +46,11 @@ class Support {
     }
 
     getmonth = (time) => {
-        return parseInt(time.split(' ')[1].split('-')[1]);
+        return time.split(' ')[1].split('-')[1];
+    }
+
+    getyear = (time) => {
+        return time.split(' ')[1].split('-')[2];
     }
 
     getSemester = (month, year) => {
@@ -54,6 +58,7 @@ class Support {
         if (month >= 1 && month <= 5) return (year - 2000) * 10 + 2;
         return (year - 2000) * 10 + 3;
     }
+
     getCurrentDate = () => {
         const today = new Date();
         

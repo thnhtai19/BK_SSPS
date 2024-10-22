@@ -68,6 +68,7 @@ class PrintService {
                                 [id, `Đã tạo đơn in mã ${ma_don_in}`, now]);
             await db.execute(`  UPDATE sinh_vien SET so_giay_con = so_giay_con - ? WHERE id = ?`, 
                                 [so_trang_in, id]);
+            await db.execute('INSERT INTO thong_bao (uid, thoi_gian, noi_dung) VALUES (?, ?, ?)', [id, support.startTime(new Date().getMonth() + 1), `Đơn ${ma_don_in} đang chờ in`]);
         } catch (err) {
             throw err;
         }
@@ -81,8 +82,10 @@ class PrintService {
             const ten_tep = file.originalname;
             const loai_tep = path.extname(file.originalname).slice(1);
             const so_trang = 50;
-            const ma_tep = String(Date.now());
-            await db.execute('INSERT INTO tep (ma_tep, ten_tep, loai_tep, duong_dan, so_trang) VALUES (?, ?, ?, ?, ?)', [ma_tep, ten_tep, loai_tep, duong_dan, so_trang]);
+            // const ma_tep = String(Date.now());
+            // await db.execute('INSERT INTO tep (ma_tep, ten_tep, loai_tep, duong_dan, so_trang) VALUES (?, ?, ?, ?, ?)', [ma_tep, ten_tep, loai_tep, duong_dan, so_trang]);
+            // await db.execute('INSERT INTO so_huu (id, ma_tep) VALUES (?, ?)', [id, ma_tep]);
+            await db.execute('INSERT INTO tep (ten_tep, loai_tep, duong_dan, so_trang) VALUES (?, ?, ?, ?)', [ten_tep, loai_tep, duong_dan, so_trang]);
             await db.execute('INSERT INTO so_huu (id, ma_tep) VALUES (?, ?)', [id, ma_tep]);
             return ma_tep;
         }

@@ -1,4 +1,3 @@
-const { message } = require('antd');
 const AuthService = require('../services/AuthService')
 
 class AuthController {
@@ -26,7 +25,7 @@ class AuthController {
             const result = await AuthService.logout(req);
             return res.status(200).send(result);
         } catch(err) {
-            return res.status(200).json({status: false, error: err});
+            return res.status(200).json(err);
         };
     }
 
@@ -58,6 +57,7 @@ class AuthController {
             return res.status(200).json({status: false, message: err});
         }
     }
+    
 }
 
 module.exports = new AuthController
