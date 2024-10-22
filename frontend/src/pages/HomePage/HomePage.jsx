@@ -47,6 +47,7 @@ const HomePage = () => {
         if (err.response) {
           if (err.response.data.message) {
             setError(err.response.data.message);
+            window.location.href = "/auth/login";
           } else if (err.response.data.error) {
             setError(err.response.data.error);
           }
