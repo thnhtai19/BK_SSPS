@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Table } from "antd";
-import { RightOutlined } from '@ant-design/icons';
 import FormInput from "../../components/FormInputComponent/FormInput";
-import { message, Spin } from 'antd';
+import { message, Spin, Breadcrumb } from 'antd';
 import axios from 'axios';
 
 const columns = [
@@ -53,10 +52,10 @@ const BuyPage = () => {
           },
           credentials: 'include',
         });
-  
+
         const data = await response.json();
         console.log(data);
-  
+
         if (response.ok) {
           setUserInfo(data);
         } else {
@@ -81,9 +80,9 @@ const BuyPage = () => {
           },
           credentials: 'include',
         });
-  
+
         const data = await response.json();
-  
+
         if (response.ok) {
           setUserHis(data.message);
           console.log(data.message)
@@ -100,40 +99,45 @@ const BuyPage = () => {
     };
     fetchUserProfile();
     gethis();
-  }, [apiUrl,navigate]);
+  }, [apiUrl, navigate]);
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
     localStorage.setItem("pageAmount", totalAmount);
-    const orderId = Math.floor(Date.now() / 1000); 
+    const orderId = Math.floor(Date.now() / 1000);
     const load = {
-        orderCode: orderId,
-        amount: totalAmount,
-        description: "Thanh toán BKSSPS",
-        buyerName:  userInfo.ten,
-        buyerEmail: userInfo.email,
-        cancelUrl: `${apiUrl2}buy/error`,
-        returnUrl: `${apiUrl2}buy/success`,
+      orderCode: orderId,
+      amount: totalAmount,
+      description: "Thanh toán BKSSPS",
+      buyerName: userInfo.ten,
+      buyerEmail: userInfo.email,
+      cancelUrl: `${apiUrl2}buy/error`,
+      returnUrl: `${apiUrl2}buy/success`,
     };
-  
+
     try {
-        const res = await axios.post(`${apiUrl}payment/create_payment`, load);
-        setIsProcessing(false)
-        if (res.data && res.data.checkoutUrl) {
-            window.location.href = res.data.checkoutUrl;
-        } else {
-            message.error("Thanh toán hiện không khả dụng, vui lòng thanh toán sau!");
-        }
-    } catch (error) {
+      const res = await axios.post(`${apiUrl}payment/create_payment`, load);
+      setIsProcessing(false)
+      if (res.data && res.data.checkoutUrl) {
+        window.location.href = res.data.checkoutUrl;
+      } else {
         message.error("Thanh toán hiện không khả dụng, vui lòng thanh toán sau!");
+      }
+    } catch (error) {
+      message.error("Thanh toán hiện không khả dụng, vui lòng thanh toán sau!");
     }
   };
 
   return (
-    <div>
-      <p className="px-5">bkssps.vn <RightOutlined /> Mua thêm trang</p>
+    <div> 
+      <Breadcrumb separator=">" className='pl-4'>
+        <Breadcrumb.Item>
+          <Link to="/">bkssps.vn</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Mua thêm trang</Breadcrumb.Item>
+      </Breadcrumb>
       {loading ? (
         <Spin
           size="large"
