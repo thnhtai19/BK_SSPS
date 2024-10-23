@@ -50,9 +50,9 @@ class UserController {
 
     getDocumentAndPrinterInfo = async (req, res) => {
         try {
-            if (!req.session.user) {
-                return res.status(401).json({ message: 'Chưa xác thực thông tin người dùng' });
-            }
+            // if (!req.session.user) {
+            //     return res.status(401).json({ message: 'Chưa xác thực thông tin người dùng' });
+            // }
             const result = await UserService.fetchDocumentAndPrinterInfo();
             res.json(result);
         }

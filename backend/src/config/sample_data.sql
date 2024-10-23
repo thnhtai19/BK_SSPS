@@ -119,12 +119,12 @@ INSERT INTO in_tai_lieu (id, ma_may_in, ma_don_in, tg_bat_dau, tg_ket_thuc) VALU
 ('6', '6', '17', '11:14:25 07-10-2024', '10:14:25 10-10-2024');
 
 
-insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat, ngay_reset) values
-('223', 200, 50, '12-10-2024','10'),
-('231', 200, 50, '12-10-2024','10'),
-('232', 200, 50, '12-10-2024','10'),
-('233', 200, 50, '12-10-2024','10'),
-('241', 200, 50, '12-10-2024','10');
+insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_reset) values
+('223', 200, 50, '24-10-2024'),
+('231', 200, 50, '24-10-2024'),
+('232', 200, 50, '24-10-2024'),
+('233', 200, 50, '24-10-2024'),
+('241', 200, 50, '24-10-2024');
 
 insert into loai_tep_chap_nhan (ma_hoc_ki, loai_tep) values 
 ('223', 'doc'),
