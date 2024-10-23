@@ -21,7 +21,6 @@ class SPSOService {
 
     addPrinter = async (data) => {
         try {
-                const ma_may_in = String(Date.now());
                 const dataToInsert = [
                     data.hang,
                     data.trang_thai_may_in,
@@ -32,8 +31,8 @@ class SPSOService {
                     data.toa,
                     data.phong
                 ];
-            await db.execute(`INSERT INTO may_in (ma_may_in, hang, trang_thai_may_in, doi, mo_ta, ten_may, co_so, toa, phong) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [ma_may_in, ...dataToInsert]);
-            return ma_may_in;
+            const [res] = await db.execute(`INSERT INTO may_in (hang, trang_thai_may_in, doi, mo_ta, ten_may, co_so, toa, phong) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [...dataToInsert]);
+            return res.insertId;
         }
         catch (err) {
             throw err;
