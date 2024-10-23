@@ -39,6 +39,16 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
     }
   };
 
+  const goOrders = async (id, idspham) => {
+      const data = { id };
+      await axios.post(`${apiUrl}user/notice`, data, { withCredentials: true });
+      if(idspham!==''){
+        window.location.href = '/history';
+      }else{
+        window.location.href = '/buy';
+      }
+  };
+
   const truncateText = (text, maxLength) => {
     if (!text) {
       return ''; 
@@ -98,7 +108,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
           </div>
         ) : (
           Object.entries(notifications).map(([key, item]) => (
-            <Menu.Item key={key} style={{ position: 'relative', display: 'flex', alignItems: 'center', padding: '10px 15px' }}>
+            <Menu.Item key={key} style={{ position: 'relative', display: 'flex', alignItems: 'center', padding: '10px 15px' }} onClick={() => goOrders(item.ID, item.ma_don)}>
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexGrow: 1 }}>
                 <div style={{
                   backgroundColor: item.trang_thai === 0 ? '#00d67f' : '#6f6f6f',
