@@ -30,7 +30,7 @@ create table nhat_ky (
 
 create table thong_bao (
 	id			int not null auto_increment,
-	uid			varchar(50) not null,
+	uid			int not null,
     thoi_gian	varchar(50) not null,
     noi_dung	varchar(255) not null,
     trang_thai	boolean not null default false,

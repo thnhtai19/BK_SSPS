@@ -100,7 +100,7 @@ insert into don_in (ma_don_in, trang_thai_don_in) values
 ('17', 'Chờ in');
 
 INSERT INTO in_tai_lieu (id, ma_may_in, ma_don_in, tg_bat_dau, tg_ket_thuc) VALUES 
-('5', '1', '1', '11:14:25 01-10-2024', '10:14:25 10-10-2024'),
+('5', '1', '1', '11:14:25 01-09-2024', '10:14:25 10-09-2024'),
 ('5', '1', '2', '11:14:25 02-10-2024', '10:14:25 10-10-2024'), 
 ('5', '1', '3', '11:14:25 03-10-2024', '10:14:25 10-10-2024'),
 ('5', '1', '4', '11:14:25 04-10-2024', '10:14:25 10-10-2024'),
@@ -118,43 +118,42 @@ INSERT INTO in_tai_lieu (id, ma_may_in, ma_don_in, tg_bat_dau, tg_ket_thuc) VALU
 ('6', '6', '16', '11:14:25 07-10-2024', '10:14:25 10-10-2024'),
 ('6', '6', '17', '11:14:25 07-10-2024', '10:14:25 10-10-2024');
 
-
-insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_cap_nhat, ngay_reset) values
-('223', 200, 50, '12-10-2024','10'),
-('231', 200, 50, '12-10-2024','10'),
-('232', 200, 50, '12-10-2024','10'),
-('233', 200, 50, '12-10-2024','10'),
-('241', 200, 50, '12-10-2024','10')
+insert into he_thong (ma_hoc_ki, gia, so_giay_mac_dinh, ngay_reset) values
+('223', 200, 50, '10'),
+('231', 200, 50, '10'),
+('232', 200, 50, '10'),
+('233', 200, 50, '10'),
+('241', 200, 50, '10');
 
 insert into loai_tep_chap_nhan (ma_hoc_ki, loai_tep) values 
-('223', '.doc'),
-('223', '.docx'),
-('223', '.pdf'),
-('231', '.doc'),
-('231', '.docx'),
-('231', '.pdf'),
-('232', '.doc'),
-('232', '.docx'),
-('232', '.pdf'),
-('233', '.doc'),
-('233', '.docx'),
-('233', '.pdf'),
-('241', '.doc'),
-('241', '.docx'),
-('241', '.pdf'),
-('241', '.csv'),
-('241', '.txt'),
-('241', '.ppt');
+('223', 'doc'),
+('223', 'docx'),
+('223', 'pdf'),
+('231', 'doc'),
+('231', 'docx'),
+('231', 'pdf'),
+('232', 'doc'),
+('232', 'docx'),
+('232', 'pdf'),
+('233', 'doc'),
+('233', 'docx'),
+('233', 'pdf'),
+('241', 'doc'),
+('241', 'docx'),
+('241', 'pdf'),
+('241', 'csv'),
+('241', 'txt'),
+('241', 'ppt');
 
 insert into tep (ma_tep, ten_tep, loai_tep, duong_dan, so_trang) values -- Chưa sửa đường dẫn, khi nào code API sẽ sửa sau
-('1', 'sample1.txt', '.txt', '\_5\sample_1.txt', 1),
-('2', 'sample2.txt', '.txt', '\_5\sample_2.txt', 1),
-('3', 'sample3.txt', '.txt', '\_5\sample_3.txt', 1),
-('4', 'sample4.txt', '.txt', '\_5\sample_4.txt', 1),
-('5', 'sample1.txt', '.txt', '\_6\sample_1.txt', 1),
-('6', 'sample2.txt', '.txt', '\_6\sample_2.txt', 1),
-('7', 'sample3.txt', '.txt', '\_6\sample_3.txt', 1),
-('8', 'sample1.txt', '.txt', '\_7\sample_1.txt', 1);
+('1', 'sample1.txt', 'txt', '\_5\sample_1.txt', 1),
+('2', 'sample2.txt', 'txt', '\_5\sample_2.txt', 1),
+('3', 'sample3.txt', 'txt', '\_5\sample_3.txt', 1),
+('4', 'sample4.txt', 'txt', '\_5\sample_4.txt', 1),
+('5', 'sample1.txt', 'txt', '\_6\sample_1.txt', 1),
+('6', 'sample2.txt', 'txt', '\_6\sample_2.txt', 1),
+('7', 'sample3.txt', 'txt', '\_6\sample_3.txt', 1),
+('8', 'sample1.txt', 'txt', '\_7\sample_1.txt', 1);
 
 insert into so_huu (id, ma_tep) values
 ('5', '1'),

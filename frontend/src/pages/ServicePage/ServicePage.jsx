@@ -47,6 +47,7 @@ const ServicePage = () => {
 
       if (data.message === "Chưa xác thực thông tin người dùng") {
         setErrorMessage("Chưa xác thực thông tin người dùng");
+        window.location.href = "/auth/login";
       } else {
         setAcceptedDocuments(data.acceptedDocuments.map((doc) => doc.loai_tep));
         setActivePrinters(data.activePrinters);

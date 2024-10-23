@@ -6,7 +6,9 @@ const fs = require('fs');
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         if (!req.session.user){
-            return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
+            // return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
+            return cb(new Error('Chưa xác thực thông tin người dùng'), null);
+
         }
         const id = req.session.user.id;
         const uploadDir = path.join(__dirname, `uploads/_${id}`);

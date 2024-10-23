@@ -67,6 +67,16 @@ class Support {
         const year = today.getFullYear();
       
         return `${day}-${month}-${year}`;
+    }
+
+    getOrderId = (noi_dung) => {
+        if (noi_dung.includes('in')) {
+          const match = noi_dung.match(/Đơn (\d+)/);
+          if (match) {
+            return parseInt(match[1], 10);
+          }
+        }
+        return "";
       }
 }
 

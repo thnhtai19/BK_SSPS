@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const support = require('./support');
 
 class UserService {
     getFile = async (ten_tep, id) => {
@@ -189,28 +190,29 @@ class UserService {
                 WHERE digt.ma_don_in
                 IN 
                 (SELECT ma_don_in FROM in_tai_lieu WHERE id = ?);`, [id])
-                const [data3] = await db.execute(`
-                    SELECT 
-                        DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y') AS date,
-                    --     COUNT(DISTINCT di.ma_don_in) AS so_don_in_trong_ngay,
-                        COUNT(digt.ma_tep) AS so_tai_lieu_in_trong_ngay,
-                        SUM(digt.so_trang_in) AS so_trang_da_dung_trong_ngay
-                    FROM 
-                        in_tai_lieu itl
-                    JOIN 
-                        don_in_gom_tep digt ON itl.ma_don_in = digt.ma_don_in
-                    JOIN 
-                        don_in di ON digt.ma_don_in = di.ma_don_in
-                    WHERE 
-                        itl.id = ?
-                    GROUP BY 
-                        DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y')
-                    ORDER BY 
-                        STR_TO_DATE(date, '%d-%m-%Y') ASC
-                    LIMIT 7;`, [id]);
-                             
+            const [data3] = await db.execute(`
+                SELECT 
+                    DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y') AS date,
+                --     COUNT(DISTINCT di.ma_don_in) AS so_don_in_trong_ngay,
+                    COUNT(digt.ma_tep) AS so_tai_lieu_in_trong_ngay,
+                    SUM(digt.so_trang_in) AS so_trang_da_dung_trong_ngay
+                FROM 
+                    in_tai_lieu itl
+                JOIN 
+                    don_in_gom_tep digt ON itl.ma_don_in = digt.ma_don_in
+                JOIN 
+                    don_in di ON digt.ma_don_in = di.ma_don_in
+                WHERE 
+                    itl.id = ?
+                GROUP BY 
+                    DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y')
+                ORDER BY 
+                    STR_TO_DATE(date, '%d-%m-%Y') ASC
+                LIMIT 7;`, [id]);
+            
+            const result1 = data1.length > 0 ? data1[0] : { tong_tien_da_dung: 0, so_giay_in_con_lai: 0 };
             const result = {
-                ...data1[0],
+                ...result1,
                 ...data2[0],
                 thong_ke: data3}
             return result;
@@ -219,24 +221,34 @@ class UserService {
         }
     }
 
-
     readNotice = async (req) => {
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
-                const [thong_baos] = await db.query('SELECT * FROM thong_bao WHERE uid = ? AND trang_thai = false', [req.session.user.id]);
+                const [thong_baos] = await db.query('SELECT * FROM thong_bao WHERE uid = ? ORDER BY id DESC', [req.session.user.id]);
                 const result = await Promise.all(thong_baos.map((thong_bao) => {
                     return { 
                         ID: thong_bao.id,
                         noi_dung: thong_bao.noi_dung,
-                        trang_thai: thong_bao.trang_thai
+                        trang_thai: thong_bao.trang_thai,
+                        ma_don: support.getOrderId(thong_bao.noi_dung)
                     }
                 }));
-                const [trang_thai] = await db.query('UPDATE thong_bao SET trang_thai =? WHERE uid = ?', [true, req.session.user.id]);
-                if (trang_thai.affectedRows <= 0) {
-                    reject({message: 'Cập nhật thông báo thất bại'});
-                    return;
-                } 
                 resolve({status: true, message: result})
+            }
+            else reject({message: 'Người dùng chưa đăng nhập'});
+        });
+    }
+
+    updateStatus = async (req, data) => {
+        return new Promise(async (resolve, reject) => {
+            if (req.session.user) {
+                const { id } = data;
+                const [result] = await db.query('UPDATE thong_bao SET trang_thai =? WHERE uid =? AND id =?', [true, req.session.user.id, id]);
+                if (result.affectedRows <= 0) {
+                    reject({message: 'Cập nhật trạng thái thất bại'});
+                    return;
+                }
+                resolve({status: true, message: 'Cập nhật trạng thái thành công'});
             }
             else reject({message: 'Người dùng chưa đăng nhập'});
         });
