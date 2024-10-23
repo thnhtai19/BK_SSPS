@@ -110,7 +110,7 @@ class SPSOController {
         try {
             const createReportList = await SPSOService.createReportList(req);
             const report_list = await SPSOService.reportList(req);
-            const result = await Promise.all(report_list.map(async (temp) => {
+            const result = await Promise.all(report_list.reverse().map(async (temp) => {
                 const detail = await SPSOService.reportDetail(req, temp.createdTime.split(' ')[0].split('-')[1]);
                 const using = await SPSOService.reportUsing(req, temp.createdTime.split(' ')[0].split('-')[1]);
                 const report_detail = {
