@@ -358,9 +358,8 @@ class SPSOService {
             const gia = data.gia;
             const trang_thai_bao_tri = data.trang_thai_bao_tri;
             const loai_tep_chap_nhan = data.loai_tep_chap_nhan;
-            const ngay_reset = data.ngay_reset;
             const ghi_chu = "Cập nhật cấu hình hệ thống";
-            await db.execute('UPDATE he_thong SET so_giay_mac_dinh = ?, gia = ?, trang_thai_bao_tri = ?, ngay_reset = ? WHERE ma_hoc_ki = ?', [so_giay_mac_dinh, gia, trang_thai_bao_tri, ngay_reset, ma_hoc_ki]);
+            await db.execute('UPDATE he_thong SET so_giay_mac_dinh = ?, gia = ?, trang_thai_bao_tri = ? WHERE ma_hoc_ki = ?', [so_giay_mac_dinh, gia, trang_thai_bao_tri, ma_hoc_ki]);
             await db.execute('INSERT INTO cau_hinh (uid, ma_hoc_ki, ghi_chu) VALUES (?, ?, ?)', [SPSOId, ma_hoc_ki, ghi_chu]);
             await db.execute('DELETE FROM loai_tep_chap_nhan WHERE ma_hoc_ki = ?', [ma_hoc_ki]);
             await db.execute('INSERT IGNORE INTO loai_tep_chap_nhan (ma_hoc_ki, loai_tep) VALUES (?, ?)', [ma_hoc_ki, loai_tep_chap_nhan]);
