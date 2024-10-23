@@ -201,12 +201,11 @@ const ReportPage = () => {
 				</div>
 			)}
 
-			<Modal title='Chi tiết báo cáo' visible={isModalVisible} onCancel={handleCancel} footer={null} width={800}>
+			<Modal title = {selectedReport ? selectedReport.content : "Báo cáo chi tiết"} visible={isModalVisible} onCancel={handleCancel} footer={null} width={800}>
 				{selectedReport && (
 					<div>
-						<h2 className='text-lg font-semibold'>{selectedReport.content}</h2>
 						<p className='mb-4'>Thời gian tạo: {selectedReport.createdTime}</p>
-
+						<h3 className='text-base font-semibold pb-2' style={{color: "#0888B3"}}>Báo cáo sử dụng máy in</h3>
 						<Table
 							dataSource={selectedReport.printers}
 							columns={[
@@ -219,7 +218,7 @@ const ReportPage = () => {
 							pagination={false}
 							className='mb-6'
 						/>
-
+						<h3 className='text-base font-semibold pb-2' style={{color: "#0888B3"}}>Báo cáo mua trang in</h3>
 						<ResponsiveContainer width='100%' height={300}>
 							<BarChart data={selectedReport.chartData} layout='vertical' barSize={20}>
 								<CartesianGrid strokeDasharray='3 3' />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
-import { message, Spin } from 'antd';
+import { useNavigate, Link } from 'react-router-dom';
+import { message, Spin, Breadcrumb } from 'antd';
 import {
     WrapperContainer
 } from './style'
@@ -57,7 +57,12 @@ const SupportPage = () => {
                 />
             ) : (
                 <WrapperContainer>
-                    <div className='wrap-text'>bkssps.vn &gt; Hỗ trợ</div>
+                    <Breadcrumb separator=">">
+                        <Breadcrumb.Item>
+                        <Link to="/">bkssps.vn</Link>
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item>Hỗ trợ</Breadcrumb.Item>
+                    </Breadcrumb>
                     <div className='wrap-card-area'>
                         <div className='wrap-card-container'>
                             <div className='wrap-left-card'>

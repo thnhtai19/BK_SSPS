@@ -1,8 +1,8 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { Table } from "antd";
+import { Table, Breadcrumb } from "antd";
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import { CloseOutlined } from "@ant-design/icons";
 
@@ -217,6 +217,15 @@ function ManageUserPage() {
   };
   return (
     <main className="sm:p-4 p-0 mt-4 sm:mt-0 border-[#EFF1F3] border-[1px]">
+      <Breadcrumb separator='>' className="pb-2">
+          <Breadcrumb.Item>
+            <Link to='/'>bkssps.vn</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <Link to='/admin/home'>Admin</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Quản lý người dùng</Breadcrumb.Item>
+        </Breadcrumb>
       <div className="bg-white rounded-lg p-4 shadow sm:w-full w-dvw">
         <h3 className="font-semibold text-lg">Danh sách người dùng</h3>
         <div className=" my-6 rounded-lg flex items-center border-[1px] border-gray-400 px-3  w-fit">
