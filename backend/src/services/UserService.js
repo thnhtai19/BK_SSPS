@@ -83,13 +83,12 @@ class UserService {
                     FROM he_thong h 
                     LEFT JOIN loai_tep_chap_nhan l 
                     ON h.ma_hoc_ki = l.ma_hoc_ki
-                    WHERE h.ngay_cap_nhat = (
-                        SELECT h.ngay_cap_nhat
+                    WHERE h.ma_hoc_ki = (
+                        SELECT h.ma_hoc_ki
                         FROM he_thong h
-                        ORDER BY ABS(TIMESTAMPDIFF(SECOND, h.ngay_cap_nhat, NOW())) ASC
+                        ORDER BY CAST(h.ma_hoc_ki as UNSIGNED) DESC
                         LIMIT 1
-                    );
-                `),
+                    );`),
                 db.execute(`
                     SELECT ma_may_in, ten_may 
                     FROM may_in 

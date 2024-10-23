@@ -1,7 +1,6 @@
 drop database if exists hcmut_ssps;
 create database hcmut_ssps;
 use hcmut_ssps;
-
 create table user (
 	id 			int not null auto_increment,
     ten 		varchar(50) not null,
@@ -99,7 +98,6 @@ create table he_thong (
 	ma_hoc_ki	varchar(50) not null,
 	gia 		int not null default 500,
     so_giay_mac_dinh	int not null default 50,
-    ngay_cap_nhat		varchar(50) not null,
     ngay_reset            varchar(50) not null,
     trang_thai_bao_tri     varchar(50) not null default 'Đang Hoạt động',
     primary key(ma_hoc_ki)
@@ -160,10 +158,8 @@ create table cau_hinh (
     foreign key(uid) references spso(id),
     foreign key(ma_hoc_ki) references he_thong(ma_hoc_ki)
 );
-
+use hcmut_ssps;
 DELIMITER //
-DROP PROCEDURE IF EXISTS reset_so_giay;
-DROP EVENT IF EXISTS reset_so_giay_event;
 CREATE PROCEDURE reset_so_giay()
 BEGIN 
 		DECLARE v_ngay_reset DATE;
@@ -171,9 +167,8 @@ BEGIN
         SELECT STR_TO_DATE(ngay_reset, '%d-%m-%Y'), so_giay_mac_dinh
         INTO v_ngay_reset, v_so_giay_mac_dinh
 		FROM he_thong 
-		ORDER BY CAST(ma_hoc_ki as UNSIGNED) DESC, STR_TO_DATE(ngay_cap_nhat, '%d-%m-%Y') DESC
+		ORDER BY CAST(ma_hoc_ki as UNSIGNED) DESC
 		LIMIT 1;
-        SELECT v_ngay_reset, v_so_giay_mac_dinh;
 		IF CURDATE() = v_ngay_reset THEN
         SET SQL_SAFE_UPDATES = 0;
 		UPDATE sinh_vien SET so_giay_con = v_so_giay_mac_dinh;
