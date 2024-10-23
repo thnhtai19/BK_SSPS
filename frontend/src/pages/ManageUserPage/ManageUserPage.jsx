@@ -71,11 +71,20 @@ function ManageUserPage() {
   const apiUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
 
-  function handleToggleStatus(e) {
+  function handleToggleStatus(mssv) {
+    if (!mssv) return;
+
+    const mssvTypeNumber = parseInt(mssv);
+
     const status =
-      dataSource.find((user) => user.MSSV === e).status === 1 ? 0 : 1;
-    changeStatusUser(status, e);
-    setShowPopUpChangeStatus(false);
+      dataSource.find((user) => user.MSSV === mssvTypeNumber).status === 1
+        ? 0
+        : 1;
+
+    if (status !== null) {
+      changeStatusUser(status, mssvTypeNumber);
+      setShowPopUpChangeStatus(false);
+    }
   }
 
   function togglePopUpChangeStatus(e, isConfirm) {
@@ -163,7 +172,7 @@ function ManageUserPage() {
   };
   const columns = [
     {
-      title: "ID",
+      title: "STT",
       dataIndex: "STT",
     },
     {
