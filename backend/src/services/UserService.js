@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const support = require('./support');
 
 class UserService {
     getFile = async (ten_tep, id) => {
@@ -223,12 +224,13 @@ class UserService {
     readNotice = async (req) => {
         return new Promise(async (resolve, reject) => {
             if (req.session.user) {
-                const [thong_baos] = await db.query('SELECT * FROM thong_bao WHERE uid = ?', [req.session.user.id]);
+                const [thong_baos] = await db.query('SELECT * FROM thong_bao WHERE uid = ? ORDER BY id DESC', [req.session.user.id]);
                 const result = await Promise.all(thong_baos.map((thong_bao) => {
                     return { 
                         ID: thong_bao.id,
                         noi_dung: thong_bao.noi_dung,
-                        trang_thai: thong_bao.trang_thai
+                        trang_thai: thong_bao.trang_thai,
+                        ma_don: support.getOrderId(thong_bao.noi_dung)
                     }
                 }));
                 resolve({status: true, message: result})
