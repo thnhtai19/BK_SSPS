@@ -113,7 +113,7 @@ const AddPrinter = ({ onClose, onAddPrinterSuccess }) => {
 						</div>
 
 						<div className="flex-col flex-1">
-							<legend className="text-center">Vị trí</legend>
+							{/* <legend className="text-center">Vị trí</legend> */}
 							<fieldset>
 								<FormInput 
 									ID={"co-so"}
@@ -137,13 +137,13 @@ const AddPrinter = ({ onClose, onAddPrinterSuccess }) => {
 									onChange={(e) => setRoom(e)}
 								/>
 							</fieldset>
-							<div className="flex justify-end  mt-4">
-								<button type="submit" className="bg-[#0688B4] mx-auto   text-white font-medium  py-1 w-3/5 shadow-inner  hover:shadow-[white] rounded-lg">
-									Thêm
-								</button>
-							</div>
 						</div>
 					</form>
+						<div className="flex justify-end  mt-4">
+							<button type="submit" className="bg-[#0688B4] mx-auto   text-white font-medium  py-1 w-3/5 shadow-inner  hover:shadow-[white] rounded-lg">
+								Thêm
+							</button>
+						</div>
 				</div>
 			</div>
 		</>
