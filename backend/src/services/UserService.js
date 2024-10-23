@@ -190,28 +190,29 @@ class UserService {
                 WHERE digt.ma_don_in
                 IN 
                 (SELECT ma_don_in FROM in_tai_lieu WHERE id = ?);`, [id])
-                const [data3] = await db.execute(`
-                    SELECT 
-                        DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y') AS date,
-                    --     COUNT(DISTINCT di.ma_don_in) AS so_don_in_trong_ngay,
-                        COUNT(digt.ma_tep) AS so_tai_lieu_in_trong_ngay,
-                        SUM(digt.so_trang_in) AS so_trang_da_dung_trong_ngay
-                    FROM 
-                        in_tai_lieu itl
-                    JOIN 
-                        don_in_gom_tep digt ON itl.ma_don_in = digt.ma_don_in
-                    JOIN 
-                        don_in di ON digt.ma_don_in = di.ma_don_in
-                    WHERE 
-                        itl.id = ?
-                    GROUP BY 
-                        DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y')
-                    ORDER BY 
-                        STR_TO_DATE(date, '%d-%m-%Y') ASC
-                    LIMIT 7;`, [id]);
-                             
+            const [data3] = await db.execute(`
+                SELECT 
+                    DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y') AS date,
+                --     COUNT(DISTINCT di.ma_don_in) AS so_don_in_trong_ngay,
+                    COUNT(digt.ma_tep) AS so_tai_lieu_in_trong_ngay,
+                    SUM(digt.so_trang_in) AS so_trang_da_dung_trong_ngay
+                FROM 
+                    in_tai_lieu itl
+                JOIN 
+                    don_in_gom_tep digt ON itl.ma_don_in = digt.ma_don_in
+                JOIN 
+                    don_in di ON digt.ma_don_in = di.ma_don_in
+                WHERE 
+                    itl.id = ?
+                GROUP BY 
+                    DATE_FORMAT(STR_TO_DATE(itl.tg_bat_dau, '%H:%i:%s %d-%m-%Y'), '%d-%m-%Y')
+                ORDER BY 
+                    STR_TO_DATE(date, '%d-%m-%Y') ASC
+                LIMIT 7;`, [id]);
+            
+            const result1 = data1.length > 0 ? data1[0] : { tong_tien_da_dung: 0, so_giay_in_con_lai: 0 };
             const result = {
-                ...data1[0],
+                ...result1,
                 ...data2[0],
                 thong_ke: data3}
             return result;
