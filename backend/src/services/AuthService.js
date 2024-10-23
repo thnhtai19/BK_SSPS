@@ -87,6 +87,12 @@ class AuthService {
         const { email, password } = data;
         return new Promise(async (resolve, reject) => {
             try {
+                const semestry = supportFunction.getSemester(new Date().getMonth() + 1, new Date().getFullYear())
+                const [server] = await db.query('SELECT * FROM he_thong WHERE ma_hoc_ki =? AND trang_thai_bao_tri =?', [semestry, 'Đang Hoạt động']);
+                if (server.length == 0) {
+                    resolve({ status: false, message: "Hệ thống đang bảo trì" });
+                    return;
+                }
                 const [rows] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
                 if (rows.length === 0) {
                     resolve({ status: false, message: "Tài khoản không tồn tại" });
