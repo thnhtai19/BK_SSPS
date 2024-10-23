@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   WrapperContainer
 } from './style'
@@ -24,8 +24,9 @@ const { Search } = Input;
 
 const HeaderComponent = ({ isOpen, setIsOpen }) => {
   const [notifications, setNotifications] = useState([]);
-  const [notificationStatus, setNotificationStatus] = useState(false);
-
+  const [countNotice, setCountNotice] = useState(0);
+  const [count, setCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const apiUrl = process.env.REACT_APP_API_URL;
 
   const handleLogout = async () => {
@@ -38,12 +39,51 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
     }
   };
 
-  const truncateText = (text, maxLength) => {
-      if (text.length > maxLength) {
-          return text.substring(0, maxLength) + '...';
+  const goOrders = async (id, idspham) => {
+      const data = { id };
+      await axios.post(`${apiUrl}user/notice`, data, { withCredentials: true });
+      if(idspham!==''){
+        window.location.href = '/history';
+      }else{
+        window.location.href = '/buy';
       }
-      return text;
   };
+
+  const truncateText = (text, maxLength) => {
+    if (!text) {
+      return ''; 
+    }
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + '...';
+    }
+    return text;
+  };
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${apiUrl}user/notice`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+        const data = await response.json();
+        setNotifications(data.message);
+        let count = data.message.filter(item => item.trang_thai === 0).length;
+        setCountNotice(count);
+        setCount(data.message.length)
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchNotifications();
+  }, [setCountNotice, apiUrl]);  
+  
 
   const notice = (
     <Menu style={{ width: '350px', maxHeight: '300px', overflow: 'auto', position: 'relative', padding: 0, margin: 0 }}>
@@ -56,38 +96,44 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
       }}>
         <div style={{ margin: 0, fontWeight: 'bold', fontSize: '18px' }}>Thông báo</div>
       </div>
-      {notificationStatus === false ? (
-        <div style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
-          <InboxOutlined style={{ fontSize: '25px', color: '#6f6f6f' }} />
-          <div style={{ color: '#6f6f6f', paddingTop: '10px' }}>Bạn chưa có thông báo nào!</div>
+      {isLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
+          <div className="loader" />
         </div>
       ) : (
-        Object.entries(notifications).map(([key, item]) => (
-          <Menu.Item key={key} style={{ position: 'relative', display: 'flex', alignItems: 'center', padding: '10px 15px' }}>
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexGrow: 1 }}>
-              <div style={{
-                backgroundColor: item.status === false ? '#00d67f' : '#6f6f6f',
-                width: '50px',
-                height: '50px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0
-              }}>
-                <ShoppingOutlined style={{ fontSize: '20px', color: '#fff' }} />
+        count === 0 ? (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', gap: '5px'}}>
+            <InboxOutlined style={{ fontSize: '25px', color: '#6f6f6f' }} />
+            <div style={{ color: '#6f6f6f'}}>Bạn chưa có thông báo nào!</div>
+          </div>
+        ) : (
+          Object.entries(notifications).map(([key, item]) => (
+            <Menu.Item key={key} style={{ position: 'relative', display: 'flex', alignItems: 'center', padding: '10px 15px' }} onClick={() => goOrders(item.ID, item.ma_don)}>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexGrow: 1 }}>
+                <div style={{
+                  backgroundColor: item.trang_thai === 0 ? '#00d67f' : '#6f6f6f',
+                  width: '50px',
+                  height: '50px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <ShoppingOutlined style={{ fontSize: '20px', color: '#fff' }} />
+                </div>
+                <div
+                  style={{ color: '#444', textAlign: 'left', wordWrap: 'break-word', whiteSpace: 'normal' }}
+                >
+                  {truncateText(item.noi_dung, 73)}
+                </div>
               </div>
-              <div
-                style={{ color: '#444', textAlign: 'left', wordWrap: 'break-word', whiteSpace: 'normal' }}
-              >
-                {truncateText(item.notice, 73)}
-              </div>
-            </div>
-          </Menu.Item>
-        ))
+            </Menu.Item>
+          ))
+        )
       )}
     </Menu>
-  );
+  );  
 
   const menu = (
     <Menu style={{ width: '250px', maxHeight: '300px' }}>
@@ -150,7 +196,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
           </div>
         </div>
         <Dropdown overlay={notice} trigger={['click']} overlayStyle={{ paddingTop: '10px'}} >
-        <Badge count={1}> 
+        <Badge count={countNotice}> 
           <BellOutlined style={{ fontSize: '25px', color: '#444', cursor: 'pointer' }} />
         </Badge>
         </Dropdown>
