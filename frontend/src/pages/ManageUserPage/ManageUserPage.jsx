@@ -97,32 +97,6 @@ function ManageUserPage() {
     }
   }
 
-  const fetchApiListUser = () => {
-    axios
-      .get(apiUrl + "spso/student", { withCredentials: true })
-      .then((response) => {
-        setDataSource(response.data.danh_sach);
-        setFilteredData(response.data.danh_sach);
-      })
-      .catch((error) => {
-        if (error.response) {
-          // Server trả về lỗi không phải 2xx
-          if (error.response.status === 401) {
-            console.error("Chưa xác thực, yêu cầu đăng nhập");
-            navigate("/auth/login");
-          } else {
-            navigate("/404");
-            console.error("Lỗi server:", error.response.data.message);
-          }
-        } else if (error.request) {
-          console.error("Không thể kết nối tới server");
-        } else {
-          // Lỗi khác
-          console.error("Lỗi:", error.message);
-        }
-      });
-  };
-
   const changeStatusUser = (status, id) => {
     axios
       .put(
@@ -157,8 +131,33 @@ function ManageUserPage() {
   };
 
   useEffect(() => {
+    const fetchApiListUser = () => {
+      axios
+        .get(apiUrl + "spso/student", { withCredentials: true })
+        .then((response) => {
+          setDataSource(response.data.danh_sach);
+          setFilteredData(response.data.danh_sach);
+        })
+        .catch((error) => {
+          if (error.response) {
+            // Server trả về lỗi không phải 2xx
+            if (error.response.status === 401) {
+              console.error("Chưa xác thực, yêu cầu đăng nhập");
+              navigate("/auth/login");
+            } else {
+              navigate("/404");
+              console.error("Lỗi server:", error.response.data.message);
+            }
+          } else if (error.request) {
+            console.error("Không thể kết nối tới server");
+          } else {
+            // Lỗi khác
+            console.error("Lỗi:", error.message);
+          }
+        });
+    };
     fetchApiListUser();
-  }, []);
+  }, [apiUrl, navigate]);
 
   const handlePageSizeChange = (value) => {
     setPageSize(value);

@@ -77,7 +77,7 @@ const AdminHistoryPage = () => {
       ma_don_in: selectedId,
       trang_thai: selectedStatus,
     };
-
+  
     try {
       const res = await fetch(`${apiUrl}spso/updatePrintOrderStatus`, {
         method: 'POST',
@@ -87,11 +87,19 @@ const AdminHistoryPage = () => {
         body: JSON.stringify(load),
         credentials: 'include',
       });
-
+  
       const data = await res.json();
-
+  
       if (data && data.message === "Cập nhật trạng thái thành công!") {
-        gethis();
+        setHis((prevData) => {
+          const updatedData = [...prevData];
+          const index = updatedData.findIndex(item => item.ma_don_in === selectedId);
+          if (index !== -1) {
+            updatedData[index].trang_thai_don_in = selectedStatus; 
+          }
+          return updatedData; 
+        });
+  
         message.success('Cập nhật trạng thái thành công!');
       } else {
         message.error('Cập nhật trạng thái thất bại!');
@@ -99,9 +107,11 @@ const AdminHistoryPage = () => {
     } catch (error) {
       message.error('Cập nhật trạng thái thất bại!');
     }
-
+  
     setIsModalVisible(false);
   };
+  
+
 
   const filterDataByDate = (data, startDate, endDate) => {
     if (!startDate && !endDate) return data;
