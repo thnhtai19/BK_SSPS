@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Breadcrumb, Modal, Slider } from "antd";
 import { Link } from "react-router-dom";
+import JSZip from 'jszip';
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import { FrownOutlined, FileUnknownOutlined } from "@ant-design/icons";
@@ -60,6 +61,30 @@ const ServicePage = () => {
   useEffect(() => {
     fetchAcceptedDocumentsAndPrinters();
   }, [fetchAcceptedDocumentsAndPrinters]);
+  const getDocxOrPptxPageCount = async (file) => {
+    const zip = new JSZip();
+    const content = await zip.loadAsync(file);
+    
+    const appXml = content.files['docProps/app.xml'];
+    if (!appXml) return null;
+    
+    const appContent = await appXml.async('text');
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(appContent, 'application/xml');
+    
+    const pagesNode = xmlDoc.querySelector('Pages');
+    const slidesNode = xmlDoc.querySelector('Slides');
+    
+    if (pagesNode) {
+      return parseInt(pagesNode.textContent, 10); 
+    }
+    
+    if (slidesNode) {
+      return parseInt(slidesNode.textContent, 10); 
+    }
+  
+    return null;
+  };
 
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -94,6 +119,12 @@ const ServicePage = () => {
   const handleFileUpload = async (event) => {
     if (event.target.files && event.target.files[0]) {
       const uploadedFile = event.target.files[0];
+      const fileName = uploadedFile.name;
+      const fileExtension = fileName.split('.').pop().toLowerCase();
+      if (fileExtension === 'docx' || fileExtension === 'pptx') {
+        const pageCount = await getDocxOrPptxPageCount(uploadedFile);
+        setNumPages(pageCount);
+      }
       const formData = new FormData();
       formData.append("file", uploadedFile);
 
@@ -327,7 +358,7 @@ const ServicePage = () => {
                     ))}
                   </Document>
                   <p className="text-sm">
-                    Trang {currentPage} / {numPages}
+                    Trang {numPages}
                   </p>
                 </div>
               ) : fileUrl ? (
@@ -335,6 +366,9 @@ const ServicePage = () => {
                   <FrownOutlined className="text-6xl" />
                   <p className="text-red-500 mt-4">
                     Không có bản xem trước cho định dạng tệp này!
+                  </p>
+                  <p className="text-m ">
+                    Số trang {numPages}
                   </p>
                 </div>
               ) : (
