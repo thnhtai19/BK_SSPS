@@ -46,7 +46,7 @@ class PrintService {
                 throw new Error('Số trang in vượt quá số giấy còn lại');
             }
             const now = support.getCurrentFormattedDateTime();
-            await db.execute(`  INSERT INTO don_in`);
+            await db.execute(`INSERT INTO don_in () VALUES ()`);
             const [result1] = await db.execute('SELECT LAST_INSERT_ID() AS id');
             const ma_don_in = result1[0].id;
             await db.execute(`  INSERT INTO don_in_gom_tep (ma_don_in, ma_tep, so_ban_in, so_mat, kich_thuoc, so_trang_in) 
