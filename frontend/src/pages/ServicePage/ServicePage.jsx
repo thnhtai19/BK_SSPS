@@ -367,8 +367,8 @@ const ServicePage = () => {
                   <p className="text-red-500 mt-4">
                     Không có bản xem trước cho định dạng tệp này!
                   </p>
-                  <p className="text-m ">
-                    Số trang {numPages}
+                  <p className="text-m font-bold text-blue-700 mt-6">
+                    Số trang: {numPages}
                   </p>
                 </div>
               ) : (
