@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { DatePicker } from "antd";
 import axios from "axios";
 import { Select, Breadcrumb } from "antd";
 import { Link } from "react-router-dom";
@@ -6,6 +7,7 @@ import { Button, ConfigProvider } from "antd";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FormInput from "../../components/FormInputComponent/FormInput";
+import dayjs from "dayjs";
 
 const { Option } = Select;
 
@@ -16,12 +18,7 @@ const AdminSystemSettingPage = () => {
     const [resetDate, setResetDate] = useState("");
     const [systemState, setSystemState] = useState("");
     const [price, setPrice] = useState("");
-    const [fileStatus, setFileStatus] = useState({
-        pdf: "Đang tắt",
-        pptx: "Đang tắt",
-        docx: "Đang tắt",
-        doc: "Đang tắt",
-    });
+    const [fileStatus, setFileStatus] = useState("");
     const parseFileStatus = (acceptedFileTypes) => {
         const updatedFileStatus = {
             pdf: "Đang tắt",
@@ -186,12 +183,6 @@ const AdminSystemSettingPage = () => {
             notifyError(errors.join(" "));
             return;
         }
-        const newFileStatus = {
-            pdf: "Đang tắt",
-            pptx: "Đang tắt",
-            docx: "Đang tắt",
-            doc: "Đang tắt",
-        };
         const fileType = getFileTypes();
 
         try {
@@ -210,7 +201,6 @@ const AdminSystemSettingPage = () => {
 
             if (response.data.message) {
                 notifySuccess(response.data.message);
-                setFileStatus(newFileStatus);
             }
         } catch (err) {
             if (err.response) {
@@ -240,101 +230,90 @@ const AdminSystemSettingPage = () => {
                 </Breadcrumb>
             </div>
             <div className="w-11/12 h-auto mx-auto mt-12 py-3 px-5 border border-solid rounded-2xl bg-white">
-                <form className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-6">
-                    <legend className="font-bold text-xl">
-                        Cấu hình hệ thống
-                    </legend>
-                    <fieldset className="grid grid-cols-1 sm:grid-cols-4 gap-4 col-span-4">
-                        <FormInput
-                            ID={"page-number"}
-                            Type={"number"}
-                            initialValue={pageCount}
-                            Text={"Số trang mặc định"}
-                            onChange={setPageCount}
-                        />
-                        <FormInput
-                            ID={"reset-date"}
-                            Type={"number"}
-                            initialValue={resetDate}
-                            Text={"Ngày reset số trang"}
-                            onChange={setResetDate}
-                        />
+            <form className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-6">
+    <legend className="font-bold text-xl col-span-4">
+        Cấu hình hệ thống
+    </legend>
+    <fieldset className="grid grid-cols-1 sm:grid-cols-4 gap-4 col-span-4">
+    <div className="col-span-4 sm:col-span-1">
+            <FormInput
+                ID={"page-number"}
+                Type={"number"}
+                initialValue={pageCount}
+                Text={"Số trang mặc định"}
+                onChange={setPageCount}
+                className="w-full"
+            />
+        </div>
 
-                        <FormInput
-                            ID={"price"}
-                            Type={"number"}
-                            initialValue={price}
-                            Text={"Giá mỗi trang in mua thêm"}
-                            onChange={setPrice}
-                        />
-                        <div className="flex flex-col">
-                            <label
-                                htmlFor="referrer"
-                                className="text-gray-700 mb-1 font-medium"
-                            >
-                                Bảo trì hệ thống
-                            </label>
-                            <ConfigProvider
-                                theme={{
-                                    token: {
-                                        colorBgContainer: "#f3f4f6",
-                                        colorText: "#444444",
-                                    },
-                                }}
-                            >
-                                <Select
-                                    id="referrer"
-                                    value={systemState}
-                                    onChange={setSystemState}
-                                    placeholder="(chọn trạng thái)"
-                                    dropdownStyle={{
-                                        maxHeight: 200,
-                                        overflow: "auto",
-                                    }}
-                                    className="w-full h-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                >
-                                    <Option value="Đang hoạt động">
-                                        Đang hoạt động
-                                    </Option>
-                                    <Option value="Đã tạm ngưng">
-                                        Đã tạm ngưng
-                                    </Option>
-                                </Select>
-                            </ConfigProvider>
-                        </div>
-                        {Object.entries(fileStatus).map(([fileType, status]) => (
-                            <div className="flex flex-col" key={fileType}>
-                                <label className="text-gray-700 mb-1 font-medium">{`Tệp ${fileType.toUpperCase()}`}</label>
-                                <ConfigProvider
-                                    theme={{
-                                        token: {
-                                            colorBgContainer: "#f3f4f6",
-                                            colorText: "#444444",
-                                        },
-                                    }}
-                                >
-                                    <Select
-                                        value={status}
-                                        onChange={(value) => setFileStatus((prev) => ({ ...prev, [fileType]: value }))}
-                                        className="w-full h-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                    >
-                                        <Option value="Đang bật">Đang bật</Option>
-                                        <Option value="Đang tắt">Đang tắt</Option>
-                                    </Select>
-                                </ConfigProvider>
-                            </div>
-                        ))}
-                    </fieldset>
-                    <div className="col-span-4 flex justify-end">
-                        <Button
-                            type="button"
-                            onClick={handleUpdateSystem}
-                            className="w-32 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        <div className="col-span-4 sm:col-span-1">
+            <FormInput
+                ID={"price"}
+                Type={"number"}
+                initialValue={price}
+                Text={"Giá mỗi trang in mua thêm"}
+                onChange={setPrice}
+                className="w-full"
+            />
+        </div>
+
+        <div className="col-span-4 sm:col-span-1">
+            <label htmlFor="system-state" className="text-gray-700 mb-1 font-medium">
+                Bảo trì hệ thống
+            </label>
+            <ConfigProvider theme={{
+                token: {
+                    colorBgContainer: "#f3f4f6",
+                    colorText: "#444444",
+                },
+            }}>
+                <Select
+                    id="system-state"
+                    value={systemState}
+                    onChange={setSystemState}
+                    placeholder="(chọn trạng thái)"
+                    className="w-full h-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                    <Option value="Đang hoạt động">Đang hoạt động</Option>
+                    <Option value="Đã tạm ngưng">Đã tạm ngưng</Option>
+                </Select>
+            </ConfigProvider>
+        </div>
+
+        <div className="flex flex-col col-span-4">
+        <legend className="font-bold text-xl mb-4">
+        Trạng thái tệp
+    </legend>
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                {Object.entries(fileStatus).map(([fileType, status]) => (
+                    <div className="flex flex-col col-span-1" key={fileType}>
+                        <label className="text-gray-700 mb-1 font-medium">{`Tệp ${fileType.toUpperCase()}`}</label>
+                        <ConfigProvider
+                            theme={{
+                                token: {
+                                    colorBgContainer: "#f3f4f6",
+                                    colorText: "#444444",
+                                },
+                            }}
                         >
-                            Cập nhật
-                        </Button>
+                            <Select
+                                value={status}
+                                onChange={(value) => setFileStatus((prev) => ({ ...prev, [fileType]: value }))}
+                                className="w-full h-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            >
+                                <Option value="Đang bật">Đang bật</Option>
+                                <Option value="Đang tắt">Đang tắt</Option>
+                            </Select>
+                        </ConfigProvider>
                     </div>
-                </form>
+                ))}
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+
+
                 <form className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-6">
                     <legend className="font-bold text-xl mb-2">
                         Quản lí học kỳ
@@ -355,9 +334,27 @@ const AdminSystemSettingPage = () => {
                             Placeholder="Nhập tên học kỳ"
                             onChange={setNewTerm}
                         />
+                        <div className="flex flex-col">
+    <label className="text-gray-700 mb-1 font-medium">Ngày reset số trang</label>
+    <DatePicker
+    format="DD-MM-YYYY"
+    value={resetDate ? dayjs(resetDate, "DD-MM-YYYY") : null} // Chuyển đổi giá trị sang dayjs nếu cần
+    onChange={(date, dateString) => setResetDate(dateString)} // Cập nhật state khi chọn ngày
+    className="w-full h-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+    />
+</div>
                     </fieldset>
                 </form>
-                <div className="col-span-4 flex justify-end">
+                 <div className="flex flex-row justify-end col-span-4 space-x-4">
+            
+                        <Button
+                            type="button"
+                            onClick={handleUpdateSystem}
+                            className="w-32 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+                            Cập nhật
+                        </Button>
+                    
                     <Button
                         type="button"
                         onClick={handleAddSemester}
@@ -365,6 +362,7 @@ const AdminSystemSettingPage = () => {
                     >
                         Thêm
                     </Button>
+            
                 </div>
             </div>
             <ToastContainer />
