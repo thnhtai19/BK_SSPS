@@ -112,7 +112,7 @@ create table loai_tep_chap_nhan (
 
 create table tep (
 	ma_tep		int not null auto_increment,
-    ten_tep		varchar(50) not null,
+    ten_tep		varchar(255) not null,
     loai_tep	varchar(50) not null,
     duong_dan   varchar(255) not null,
     so_trang    int not null,
