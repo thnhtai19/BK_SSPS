@@ -24,6 +24,7 @@ const { Search } = Input;
 
 const HeaderComponent = ({ isOpen, setIsOpen }) => {
   const [notifications, setNotifications] = useState([]);
+  const [countpage, setCountPage] = useState(0);
   const [countNotice, setCountNotice] = useState(0);
   const [count, setCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,7 +82,27 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
         setIsLoading(false);
       }
     };
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`${apiUrl}user/profile`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setCountPage(data.so_giay_con)
+        }
+      } catch (error) {
+        console.error('Lỗi:', error);
+      }
+    };
     fetchNotifications();
+    fetchUserProfile();
   }, [setCountNotice, apiUrl]);  
   
 
@@ -192,7 +213,7 @@ const HeaderComponent = ({ isOpen, setIsOpen }) => {
       <div className='right-container'>
         <div className='wrap-button-con'>
           <div className='wrap-button'>
-          {localStorage.getItem("so_trang") ? localStorage.getItem("so_trang") : 0} credits
+          {countpage} Trang
           </div>
         </div>
         <Dropdown overlay={notice} trigger={['click']} overlayStyle={{ paddingTop: '10px'}} >

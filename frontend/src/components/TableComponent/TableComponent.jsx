@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Input } from "antd";
 
 const TableComponent = ({ dataSource, columns }) => {
   const [searchText, setSearchText] = useState("");
   const [filteredData, setFilteredData] = useState(dataSource);
   const [pageSize, setPageSize] = useState(5);
+
+  useEffect(() => {
+    setFilteredData(dataSource);
+  }, [dataSource]);
 
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
@@ -35,17 +39,17 @@ const TableComponent = ({ dataSource, columns }) => {
         style={{ marginBottom: 16, width: 300 }}
       />
       <div style={{ minHeight: '400px' }}>
-      <Table
-        columns={centeredColumns}
-        dataSource={filteredData}
-        pagination={{
-          pageSize: pageSize, 
-          showSizeChanger: true,
-          pageSizeOptions: ['5', '10', '20', '50'],
-          onShowSizeChange: handlePageSizeChange,
-        }}
-        scroll={{ x: 'max-content' }}
-      />
+        <Table
+          columns={centeredColumns}
+          dataSource={filteredData}
+          pagination={{
+            pageSize: pageSize, 
+            showSizeChanger: true,
+            pageSizeOptions: ['5', '10', '20', '50'],
+            onShowSizeChange: handlePageSizeChange,
+          }}
+          scroll={{ x: 'max-content' }}
+        />
       </div>
     </div>
   );
