@@ -75,7 +75,6 @@ create table may_in (
 
 create table don_in (
 	  ma_don_in	int not null auto_increment,
-
     trang_thai_don_in	varchar(50) not null check(trang_thai_don_in in ('Đã in', 'Chờ in', 'Đang in')) default 'Chờ in', 
     primary key(ma_don_in)
 );
