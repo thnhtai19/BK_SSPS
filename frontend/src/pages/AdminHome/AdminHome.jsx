@@ -9,9 +9,9 @@ import {
   AreaChart,
 } from "recharts";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-
+import {Breadcrumb} from "antd";
 import Paper from "../../assets/paper.png";
 import DolarIcon from "../../assets/16842271.png";
 import UserIcon from "../../assets/userIcon.png";
@@ -51,10 +51,19 @@ function AdminHome() {
     }
 
     fetchData();
-  }, []);  
+  }, [navigate]);  
 
   return (
     <main className="p-8">
+      <Breadcrumb separator='>' className="pb-2">
+          <Breadcrumb.Item>
+            <Link to='/'>bkssps.vn</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <Link to='/admin/home'>Admin</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Quản lý người dùng</Breadcrumb.Item>
+        </Breadcrumb>
       <header className="flex gap-10 flex-wrap">
         <div className="flex flex-1 min-w-fit justify-between items-center p-4 bg-white rounded-xl  font-semibold   shadow">
           <div>

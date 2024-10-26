@@ -1,8 +1,8 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import AddPrinter from "../../components/AddPrinter/AddPrinter";
-import { Table, Modal, message } from 'antd';
+import { Table, Modal, message, Breadcrumb } from 'antd';
 
 
 function ManageUserPage() {
@@ -225,6 +225,15 @@ function ManageUserPage() {
 
   return (
     <main className="sm:p-4 p-0 mt-6 sm:mt-0">
+      <Breadcrumb separator='>' className="pb-2">
+          <Breadcrumb.Item>
+            <Link to='/'>bkssps.vn</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <Link to='/admin/home'>Admin</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Quản lý máy in</Breadcrumb.Item>
+        </Breadcrumb>
       {/* main content */}
       <section className="bg-white rounded-lg p-4 pb-10 sm:w-full w-dvw  shadow overflow-auto">
 

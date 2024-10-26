@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Breadcrumb, Modal, Slider } from "antd";
 import { Link } from "react-router-dom";
+import JSZip from "jszip";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import { FrownOutlined, FileUnknownOutlined } from "@ant-design/icons";
@@ -60,6 +61,30 @@ const ServicePage = () => {
   useEffect(() => {
     fetchAcceptedDocumentsAndPrinters();
   }, [fetchAcceptedDocumentsAndPrinters]);
+  const getDocxOrPptxPageCount = async (file) => {
+    const zip = new JSZip();
+    const content = await zip.loadAsync(file);
+
+    const appXml = content.files["docProps/app.xml"];
+    if (!appXml) return null;
+
+    const appContent = await appXml.async("text");
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(appContent, "application/xml");
+
+    const pagesNode = xmlDoc.querySelector("Pages");
+    const slidesNode = xmlDoc.querySelector("Slides");
+
+    if (pagesNode) {
+      return parseInt(pagesNode.textContent, 10);
+    }
+
+    if (slidesNode) {
+      return parseInt(slidesNode.textContent, 10);
+    }
+
+    return null;
+  };
 
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -94,6 +119,12 @@ const ServicePage = () => {
   const handleFileUpload = async (event) => {
     if (event.target.files && event.target.files[0]) {
       const uploadedFile = event.target.files[0];
+      const fileName = uploadedFile.name;
+      const fileExtension = fileName.split(".").pop().toLowerCase();
+      if (fileExtension === "docx" || fileExtension === "pptx") {
+        const pageCount = await getDocxOrPptxPageCount(uploadedFile);
+        setNumPages(pageCount);
+      }
       const formData = new FormData();
       formData.append("file", uploadedFile);
 
@@ -187,6 +218,7 @@ const ServicePage = () => {
 
     const printData = {
       ma_tep: fileId,
+      so_trang: numPages,
       dinh_dang_trang_in: pageSelection === "Tất cả" ? "Tất cả" : "Tùy chỉnh",
       ma_may_in: activePrinters.find((p) => p.ten_may === printer)?.ma_may_in,
       so_ban_in: totalCopies,
@@ -305,36 +337,27 @@ const ServicePage = () => {
           </h3>
 
           <div
-            className="relative overflow-auto"
-            style={{ maxHeight: "600px" }}
+            className="relative"
+            style={{ maxHeight: "600px", overflow: "auto" }}
             onScroll={handleScroll}
           >
-            <div style={{ width: "fit-content", margin: "0 auto" }}>
+            <div style={{ width: "100%", margin: "0 auto" }}>
               {fileUrl && file.name.endsWith(".pdf") ? (
-                <div
-                  className="relative overflow-auto"
-                  style={{ maxHeight: "600px" }}
-                  onScroll={handleScroll}
-                >
-                  <Document
-                    file={fileUrl}
-                    onLoadSuccess={onDocumentLoadSuccess}
-                  >
-                    {Array.from(new Array(numPages), (el, index) => (
-                      <div key={`page_${index + 1}`} className="mb-4">
-                        <Page pageNumber={index + 1} scale={scale} />
-                      </div>
-                    ))}
-                  </Document>
-                  <p className="text-sm">
-                    Trang {currentPage} / {numPages}
-                  </p>
-                </div>
+                <Document file={fileUrl} onLoadSuccess={onDocumentLoadSuccess}>
+                  {Array.from(new Array(numPages), (el, index) => (
+                    <div key={`page_${index + 1}`} className="mb-4">
+                      <Page pageNumber={index + 1} scale={scale} />
+                    </div>
+                  ))}
+                </Document>
               ) : fileUrl ? (
                 <div className="flex flex-col items-center justify-center text-red-500 mt-20">
                   <FrownOutlined className="text-6xl" />
                   <p className="text-red-500 mt-4">
                     Không có bản xem trước cho định dạng tệp này!
+                  </p>
+                  <p className="text-m font-bold text-blue-700 mt-6">
+                    Số trang: {numPages}
                   </p>
                 </div>
               ) : (
@@ -520,8 +543,11 @@ const ServicePage = () => {
           <strong>Số bản sao:</strong> {copies}
         </p>
         <p>
-          <strong>Chọn trang in:</strong> `
+          <strong>Chọn trang in: </strong>
           {pageSelection === "Tùy chỉnh" ? customPages : pageSelection}
+        </p>
+        <p>
+          <strong>Số trang:</strong> {numPages}
         </p>
       </Modal>
     </div>

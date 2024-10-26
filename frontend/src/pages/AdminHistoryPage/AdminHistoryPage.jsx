@@ -3,8 +3,8 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { WrapContainer } from './style';
 import TableComponent from '../../components/TableComponent/TableComponent';
 import { FilterOutlined } from '@ant-design/icons';
-import { DatePicker, Modal, Select, message, Spin } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { DatePicker, Modal, Select, message, Spin, Breadcrumb } from 'antd';
+import { useNavigate, Link } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -16,7 +16,7 @@ const AdminHistoryPage = () => {
   const [dataSource, setHis] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [selectedId, setSelectedRecordID] = useState(null); 
+  const [selectedId, setSelectedRecordID] = useState(null);
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -30,13 +30,13 @@ const AdminHistoryPage = () => {
         },
         credentials: 'include',
       });
-  
+
       const data = await response.json();
       if (data.message === 'Không có quyền truy cập!') {
         navigate('/404');
         return;
       }
-  
+
       if (response.ok) {
         const filteredData = filterDataByDate(data, selectedDateStart, selectedDateEnd);
         setHis(filteredData);
@@ -51,12 +51,12 @@ const AdminHistoryPage = () => {
       setLoading(false);
     }
   }, [apiUrl, selectedDateStart, selectedDateEnd, navigate]);
-  
+
 
   useEffect(() => {
     gethis();
   }, [selectedDateStart, selectedDateEnd, gethis]);
-  
+
 
   const handleChangeStart = (date, dateString) => {
     setSelectedDateStart(date);
@@ -73,39 +73,49 @@ const AdminHistoryPage = () => {
   };
 
   const handleUpdateStatus = async () => {
-      const load = {
-        ma_don_in: selectedId,
-        trang_thai: selectedStatus,
-      };
-      
-      try {
-        const res = await fetch(`${apiUrl}spso/updatePrintOrderStatus`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(load),
-          credentials: 'include',
+    const load = {
+      ma_don_in: selectedId,
+      trang_thai: selectedStatus,
+    };
+  
+    try {
+      const res = await fetch(`${apiUrl}spso/updatePrintOrderStatus`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(load),
+        credentials: 'include',
+      });
+  
+      const data = await res.json();
+  
+      if (data && data.message === "Cập nhật trạng thái thành công!") {
+        setHis((prevData) => {
+          const updatedData = [...prevData];
+          const index = updatedData.findIndex(item => item.ma_don_in === selectedId);
+          if (index !== -1) {
+            updatedData[index].trang_thai_don_in = selectedStatus; 
+          }
+          return updatedData; 
         });
-      
-        const data = await res.json();
-      
-        if (data && data.message === "Cập nhật trạng thái thành công!") {
-          gethis();
-          message.success('Cập nhật trạng thái thành công!');
-        } else {
-          message.error('Cập nhật trạng thái thất bại!');
-        }
-      } catch (error) {
+  
+        message.success('Cập nhật trạng thái thành công!');
+      } else {
         message.error('Cập nhật trạng thái thất bại!');
       }
-    
-    setIsModalVisible(false); 
+    } catch (error) {
+      message.error('Cập nhật trạng thái thất bại!');
+    }
+  
+    setIsModalVisible(false);
   };
+  
+
 
   const filterDataByDate = (data, startDate, endDate) => {
     if (!startDate && !endDate) return data;
-  
+
     return data.filter(item => {
       const dateParts = item.tg_bat_dau.split(' ');
       const [time, date] = dateParts;
@@ -113,9 +123,9 @@ const AdminHistoryPage = () => {
       const formattedDate = new Date(`${year}-${month}-${day}T${time}`);
 
       const startDateCondition = startDate ? formattedDate >= startDate.toDate() : true;
-      
+
       const endDateCondition = endDate ? formattedDate <= endDate.toDate() : true;
-  
+
       return startDateCondition && endDateCondition;
     });
   };
@@ -194,7 +204,7 @@ const AdminHistoryPage = () => {
             padding: '6px 8px',
           };
         }
-        
+
         return <span style={style}>{text}</span>;
       },
     },
@@ -204,15 +214,15 @@ const AdminHistoryPage = () => {
       render: (text, record) => (
         <span>
           <button
-          onClick={() => handleEdit(record)}
-          style={{
-            border: '1px solid #0688B4',
-            backgroundColor: 'transparent',
-            color: '#0688B4',
-            padding: '4px 8px',
-            borderRadius: '10px',
-            cursor: 'pointer',
-          }}
+            onClick={() => handleEdit(record)}
+            style={{
+              border: '1px solid #0688B4',
+              backgroundColor: 'transparent',
+              color: '#0688B4',
+              padding: '4px 8px',
+              borderRadius: '10px',
+              cursor: 'pointer',
+            }}
             onMouseEnter={(e) => e.target.style.backgroundColor = '#a0e1f7'}
             onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
           >
@@ -229,7 +239,15 @@ const AdminHistoryPage = () => {
         <title>Lịch sử in - BK SSPS Admin</title>
       </Helmet>
       <WrapContainer>
-        <div className='wrap-text'>bkssps.vn &gt; Admin &gt; Lịch sử in</div>
+        <Breadcrumb separator='>'>
+          <Breadcrumb.Item>
+            <Link to='/'>bkssps.vn</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <Link to='/admin/home'>Admin</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Lịch sử in</Breadcrumb.Item>
+        </Breadcrumb>
         {loading ? (
           <Spin
             size='large'
@@ -300,12 +318,12 @@ const AdminHistoryPage = () => {
             Chờ in
           </Option>
           <Option value='Đang in' disabled={selectedStatus === 'Đã in' || selectedStatus === 'Đang in'}>
-            Đang in 
+            Đang in
           </Option>
           <Option value='Đã in' disabled={selectedStatus === 'Đã in'}>
             Đã in
           </Option>
-      </Select>
+        </Select>
       </Modal>
     </HelmetProvider>
   );
