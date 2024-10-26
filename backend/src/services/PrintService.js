@@ -22,8 +22,9 @@ class PrintService {
     createPrintOrder = async (data, id) => {
         try {
             const ma_tep = data.ma_tep;
-            const result0 = await db.execute('SELECT so_trang FROM tep WHERE ma_tep = ?', [ma_tep]);
-            const so_trang = result0[0][0].so_trang;
+            // const result0 = await db.execute('SELECT so_trang FROM tep WHERE ma_tep = ?', [ma_tep]);
+            // const so_trang = result0[0][0].so_trang;
+            const so_trang = data.so_trang;
             const ma_may_in = data.ma_may_in;
             const so_ban_in = data.so_ban_in;
             const so_mat = data.so_mat;
