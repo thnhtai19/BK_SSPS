@@ -31,16 +31,20 @@ class PrintService {
             const kich_thuoc = data.kich_thuoc;
             let so_trang_in;
             if(data.dinh_dang_trang_in === "Chỉ trang lẻ"){
-                so_trang_in = so_ban_in * Math.ceil(Math.floor(so_trang / 2) / so_mat);
+                so_trang_in = so_ban_in * Math.ceil(Math.ceil(so_trang / 2) / so_mat);
             }
             else if(data.dinh_dang_trang_in === "Chỉ trang chẵn"){
-                so_trang_in = so_ban_in * Math.ceil(Math.ceil(so_trang / 2) / so_mat);
+                so_trang_in = so_ban_in * Math.ceil(Math.floor(so_trang / 2) / so_mat);
             }
             else if(data.dinh_dang_trang_in === "Tất cả"){
                 so_trang_in = so_ban_in * Math.ceil(so_trang / so_mat);
             }
+            else if (data.gioi_han_tren && data.gioi_han_duoi) {
+                let so_trang_gioi_han = data.gioi_han_tren - data.gioi_han_duoi + 1;
+                so_trang_in = so_ban_in * Math.ceil(so_trang_gioi_han / so_mat);
+            }
             else {
-                so_trang_in = so_ban_in * Math.ceil((data.gioi_han_tren - data.gioi_han_duoi) / so_mat);
+                so_trang_in = 0;
             }
             const result = await db.execute('SELECT so_giay_con FROM sinh_vien WHERE id = ?', [id]);
             if(result[0][0].so_giay_con < so_trang_in){
