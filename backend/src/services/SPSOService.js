@@ -66,7 +66,7 @@ class SPSOService {
     updatePrintOrderStatus = async (id, ma_don_in, trang_thai) => {
         try {
             const [nguoi_dung] = await db.query('SELECT id FROM in_tai_lieu WHERE ma_don_in = ?', [ma_don_in]);
-            const uid = nguoi_dung[0];
+            const uid = nguoi_dung[0].id;
             await db.execute(`UPDATE don_in SET trang_thai_don_in = ? WHERE ma_don_in = ?`, [trang_thai, ma_don_in]);
             const now = support.getCurrentFormattedDateTime();
             if (trang_thai == 'Đang in') {
