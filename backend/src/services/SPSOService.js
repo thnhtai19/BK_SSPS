@@ -65,6 +65,8 @@ class SPSOService {
 
     updatePrintOrderStatus = async (id, ma_don_in, trang_thai) => {
         try {
+            const [nguoi_dung] = await db.query('SELECT id FROM in_tai_lieu WHERE ma_don_in = ?', [ma_don_in]);
+            const uid = nguoi_dung[0].id;
             await db.execute(`UPDATE don_in SET trang_thai_don_in = ? WHERE ma_don_in = ?`, [trang_thai, ma_don_in]);
             const now = support.getCurrentFormattedDateTime();
             if (trang_thai == 'Đang in') {
@@ -72,14 +74,14 @@ class SPSOService {
                     UPDATE in_tai_lieu 
                     SET tg_bat_dau = ?
                     WHERE ma_don_in = ?`, [now, ma_don_in]);
-                await db.execute('INSERT INTO thong_bao (uid, thoi_gian, noi_dung) VALUES (?, ?, ?)', [id, support.startTime(new Date().getMonth() + 1), `Đơn ${ma_don_in} đang được in`]);
+                await db.execute('INSERT INTO thong_bao (uid, thoi_gian, noi_dung) VALUES (?, ?, ?)', [uid, support.startTime(new Date().getMonth() + 1), `Đơn ${ma_don_in} đang được in`]);
             }
             else if (trang_thai == 'Đã in') {
                 await db.execute(`
                     UPDATE in_tai_lieu 
                     SET tg_ket_thuc = ?
                     WHERE ma_don_in = ?`, [now, ma_don_in]);
-                await db.execute('INSERT INTO thong_bao (uid, thoi_gian, noi_dung) VALUES (?, ?, ?)', [id, support.startTime(new Date().getMonth() + 1), `Đơn ${ma_don_in} đã in xong`]);
+                await db.execute('INSERT INTO thong_bao (uid, thoi_gian, noi_dung) VALUES (?, ?, ?)', [uid, support.startTime(new Date().getMonth() + 1), `Đơn ${ma_don_in} đã in xong`]);
             }
         } catch (err) {
             throw err;
@@ -116,9 +118,11 @@ class SPSOService {
                         const MSSV = sv.id;
                         const ten = sv.ten;
                         const mail = sv.email;
+                        const thoi_gian_tham_gia = sv.ngay_dk;
                         const [trang_thai] = await db.query('SELECT * FROM sinh_vien WHERE id = ?', [MSSV]);
                         const status = trang_thai[0].trang_thai;
-                        return { STT: index + 1, MSSV, ten, mail, status };
+                        const page = trang_thai[0].so_giay_con;
+                        return { STT: index + 1, MSSV, ten, mail, thoi_gian_tham_gia, status, page };
                     })); 
                     resolve({ status: true, danh_sach: result });
                 }

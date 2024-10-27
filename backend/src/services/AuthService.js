@@ -20,6 +20,12 @@ class AuthService {
         const { email, password, name, uid } = data;
         return new Promise(async (resolve, reject) => {
             try {
+                const semestry = supportFunction.getSemester(new Date().getMonth() + 1, new Date().getFullYear())
+                const [server] = await db.query('SELECT * FROM he_thong WHERE ma_hoc_ki =? AND trang_thai_bao_tri =?', [semestry, 'Đang Hoạt động']);
+                if (server.length == 0) {
+                    resolve({ status: false, message: "Hệ thống đang bảo trì" });
+                    return;
+                }
                 const [existingUsers] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
                 if (existingUsers.length > 0) { 
                     resolve({ status: false, message: "Email đã được dùng" });
@@ -87,12 +93,6 @@ class AuthService {
         const { email, password } = data;
         return new Promise(async (resolve, reject) => {
             try {
-                const semestry = supportFunction.getSemester(new Date().getMonth() + 1, new Date().getFullYear())
-                const [server] = await db.query('SELECT * FROM he_thong WHERE ma_hoc_ki =? AND trang_thai_bao_tri =?', [semestry, 'Đang Hoạt động']);
-                if (server.length == 0) {
-                    resolve({ status: false, message: "Hệ thống đang bảo trì" });
-                    return;
-                }
                 const [rows] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
                 if (rows.length === 0) {
                     resolve({ status: false, message: "Tài khoản không tồn tại" });
@@ -106,6 +106,12 @@ class AuthService {
                 }
                 var page = 0;
                 if (user.role == 'SV') {
+                    const semestry = supportFunction.getSemester(new Date().getMonth() + 1, new Date().getFullYear())
+                    const [server] = await db.query('SELECT * FROM he_thong WHERE ma_hoc_ki =? AND trang_thai_bao_tri =?', [semestry, 'Đang Hoạt động']);
+                    if (server.length == 0) {
+                        resolve({ status: false, message: "Hệ thống đang bảo trì" });
+                        return;
+                    }
                     const [sinh_vien] = await db.query('SELECT * FROM sinh_vien WHERE id = ?', [user.id]);
                     const SV = sinh_vien[0];
                     if (SV.trang_thai == 0) {
