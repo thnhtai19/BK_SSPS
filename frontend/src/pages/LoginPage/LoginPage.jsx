@@ -255,7 +255,7 @@ function Login() {
         </form>
         <div className="text-center mt-20">
           Bạn chưa có tài khoản?
-          <Link to="/register" className="text-[#0688B4] hover:underline">
+          <Link to="/auth/register" className="text-[#0688B4] hover:underline">
             Đăng ký ngay
           </Link>
         </div>
