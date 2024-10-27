@@ -135,6 +135,15 @@ function ManageUserPage() {
       axios
         .get(apiUrl + "spso/student", { withCredentials: true })
         .then((response) => {
+          if (response.data.message === "Không có quyền truy cập")
+            navigate("/404");
+          if (response.data.message === "Người dùng chưa đăng nhập")
+            navigate("/auth/login");
+          if (response.data.message === "Cập nhật trạng thái thất bại")
+          {
+            alert("Cập nhật trạng thái thất bại");
+            return;
+          }
           setDataSource(response.data.danh_sach);
           setFilteredData(response.data.danh_sach);
         })
@@ -216,15 +225,15 @@ function ManageUserPage() {
   };
   return (
     <main className="sm:p-4 p-0 mt-4 sm:mt-0 border-[#EFF1F3] border-[1px]">
-      <Breadcrumb separator='>' className="pb-2">
-          <Breadcrumb.Item>
-            <Link to='/'>bkssps.vn</Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
-            <Link to='/admin/home'>Admin</Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>Quản lý người dùng</Breadcrumb.Item>
-        </Breadcrumb>
+      <Breadcrumb separator=">" className="pb-2">
+        <Breadcrumb.Item>
+          <Link to="/">bkssps.vn</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>
+          <Link to="/admin/home">Admin</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Quản lý người dùng</Breadcrumb.Item>
+      </Breadcrumb>
       <div className="bg-white rounded-lg p-4 shadow sm:w-full w-dvw">
         <h3 className="font-semibold text-lg">Danh sách người dùng</h3>
         <div className=" my-6 rounded-lg flex items-center border-[1px] border-gray-400 px-3  w-fit">

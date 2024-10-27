@@ -21,30 +21,38 @@ const HistoryPage = () => {
 
   const navigate = useNavigate();
   
-	const fetchApiHistoryPrintOrder = () => {
-		axios.get(apiUrl + 'user/printOrder',{withCredentials: true})
-			.then(response => {
-				setdata(response.data);
-				getChartData(response.data);
-			})
-			.catch(error => {
-        if (error.response) {
-            // Server trả về lỗi không phải 2xx
-            if (error.response.status === 401) {
-                console.error('Chưa xác thực, yêu cầu đăng nhập');
-                navigate('/auth/login');
-            } else {
-                console.error('Lỗi server:', error.response.data.message);
-            }
-        } else if (error.request) {
-            console.error('Không thể kết nối tới server');
-        } else {
-            // Lỗi khác
-            console.error('Lỗi:', error.message);
-        }
-    });
-	}
-	const getChartData = (data) => {
+  
+
+  useEffect(() => { 
+  
+    const fetchApiHistoryPrintOrder = () => {
+      axios.get(apiUrl + 'user/printOrder',{withCredentials: true})
+        .then(response => {
+          setdata(response.data);
+          getChartData(response.data);
+        })
+        .catch(error => {
+          if (error.response) {
+              // Server trả về lỗi không phải 2xx
+              if (error.response.status === 401) {
+                  console.error('Chưa xác thực, yêu cầu đăng nhập');
+                  navigate('/auth/login');
+              } else {
+                  console.error('Lỗi server:', error.response.data.message);
+              }
+          } else if (error.request) {
+              console.error('Không thể kết nối tới server');
+          } else {
+              // Lỗi khác
+              console.error('Lỗi:', error.message);
+          }
+      });
+    }
+    
+    fetchApiHistoryPrintOrder();
+  }, [navigate, apiUrl]);
+
+  const getChartData = (data) => {
 		const tempData = [];
 		data.forEach((item) => {
 			const date = item.tg_bat_dau.split(" ")[1]; // Lấy phần ngày từ thời gian bắt đầu
@@ -68,10 +76,8 @@ const HistoryPage = () => {
 
     setChartData(tempData);
   };
-
-  useEffect(() => {
-    fetchApiHistoryPrintOrder();
-  }, []);
+	
+  
 
   const handlePageSizeChange = (value) => {
     setPageSize(value);
@@ -124,17 +130,19 @@ const HistoryPage = () => {
       dataIndex: "trang_thai_don_in",
       render: (status) => (
         <button
+          className='w-4/5 856404 fff3cd'
           style={{
             backgroundColor:
-              status === 0 ? "#bfffd8" : status === 1 ? "#f7f9fb" : "#ffd4d4",
+              status === "Đã in" ? "#bfffd8" : status === "Đang in" ? "#fff3cd" : "#ffd4d4",
             color:
-              status === 0 ? "#00750c" : status === 1 ? "#444444" : "#c40000", // Màu chữ đỏ đậm cho "Đã hủy"
+              status === "Đã in" ? "#00750c" : status === "Đang in" ? "#856404" : "#c40000", // Màu chữ đỏ đậm cho "Đã hủy"
             borderRadius: "5px",
             padding: "5px 10px",
             border: "none",
+            fontWeight: 600,
           }}
         >
-          {status === 0 ? "Hoàn tất" : status === 1 ? "Đang chờ in" : "Đã hủy"}
+          {status}
         </button>
       ),
     },
