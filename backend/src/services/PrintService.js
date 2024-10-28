@@ -71,15 +71,16 @@ class PrintService {
     
     saveFile = async (file, id) => {
         try {
-            //console.log(file);
             const duong_dan = file.path;
-            // console.log('_' + id + '/' + file.path)
             const ten_tep = file.originalname;
             const loai_tep = path.extname(file.originalname).slice(1);
             const so_trang = 50;
-            // const ma_tep = String(Date.now());
-            // await db.execute('INSERT INTO tep (ma_tep, ten_tep, loai_tep, duong_dan, so_trang) VALUES (?, ?, ?, ?, ?)', [ma_tep, ten_tep, loai_tep, duong_dan, so_trang]);
-            // await db.execute('INSERT INTO so_huu (id, ma_tep) VALUES (?, ?)', [id, ma_tep]);
+            const filePathList = await db.execute('SELECT duong_dan FROM tep');
+            if(filePathList[0].some(filePath => filePath.duong_dan === duong_dan)){
+                const [result] = await db.execute('SELECT ma_tep FROM tep WHERE duong_dan = ?', [duong_dan]);
+                const ma_tep = result[0].ma_tep;
+                return ma_tep;
+            }
             await db.execute('INSERT INTO tep (ten_tep, loai_tep, duong_dan, so_trang) VALUES (?, ?, ?, ?)', [ten_tep, loai_tep, duong_dan, so_trang]);
             const [result] = await db.execute('SELECT ma_tep FROM tep WHERE duong_dan = ?', [duong_dan]);
             const ma_tep = result[0].ma_tep;

@@ -154,7 +154,7 @@ class UserService {
     getPrintOrder = async (id) => {
         try {
             const [result] = await db.execute(`
-                SELECT d.ma_don_in,d.trang_thai_don_in, mi.ten_may, t.ten_tep, t.duong_dan, 
+                SELECT d.ma_don_in,d.trang_thai_don_in, mi.ten_may, t.ten_tep, 
                        itl.tg_bat_dau, itl.tg_ket_thuc, dt.kich_thuoc, dt.so_trang_in
                 FROM don_in d 
                 left join don_in_gom_tep dt on d.ma_don_in = dt.ma_don_in
