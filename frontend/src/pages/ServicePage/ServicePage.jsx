@@ -5,6 +5,8 @@ import JSZip from "jszip";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import { FrownOutlined, FileUnknownOutlined } from "@ant-design/icons";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const ServicePage = () => {
@@ -107,7 +109,7 @@ const ServicePage = () => {
       if (acceptedDocuments.includes(fileExtension)) {
         handleFileUpload({ target: { files: [droppedFile] } });
       } else {
-        alert(`Chỉ chấp nhận các định dạng: ${acceptedDocuments.join(", ")}`);
+        toast.error(`Chỉ chấp nhận các định dạng: ${acceptedDocuments.join(", ")}`);
       }
     }
 
@@ -140,11 +142,12 @@ const ServicePage = () => {
           setFile(uploadedFile);
           setFileUrl(URL.createObjectURL(uploadedFile));
           setFileId(data.ma_tep);
+          toast.success("Tải file thành công!");
         } else {
-          alert(data.message);
+          toast.error(data.message);
         }
       } catch (error) {
-        alert("Đã xảy ra lỗi khi tải tệp.");
+        toast.error("Đã xảy ra lỗi khi tải tệp.");
       }
     }
   };
@@ -202,7 +205,7 @@ const ServicePage = () => {
   };
   const handlePrint = () => {
     if (!file) {
-      alert("Vui lòng tải tệp lên trước khi in.");
+      toast.error("Vui lòng tải tệp lên trước khi in.");
       return;
     }
 
@@ -211,7 +214,7 @@ const ServicePage = () => {
 
   const handleConfirmPrint = async () => {
     if (!file) {
-      alert("Vui lòng tải tệp lên trước khi in.");
+      toast.error("Vui lòng tải tệp lên trước khi in.");
       return;
     }
     const totalCopies = parseInt(copies);
@@ -258,23 +261,47 @@ const ServicePage = () => {
       const data = await response.json();
 
       if (data.message === "Tạo đơn in thành công!") {
-        alert("Đã gửi lệnh in thành công!");
+        toast.success("Đã gửi lệnh in thành công!");
       } else {
-        alert(data.message);
+        toast.error(data.message);
       }
 
       setIsPreviewVisible(false);
     } catch (error) {
-      alert("Đã xảy ra lỗi khi gửi lệnh in.");
+      toast.error("Đã xảy ra lỗi khi gửi lệnh in.");
     }
   };
 
   const handleClosePreview = () => {
     setIsPreviewVisible(false);
   };
+  const calculate = () => {
+    let pagesToPrint;
+  
+    if (pageSelection === "Tất cả") {
+      pagesToPrint = numPages;
+    } else if (pageSelection === "Chỉ trang lẻ") {
+      pagesToPrint = Math.ceil(numPages / 2);
+    } else if (pageSelection === "Chỉ trang chẵn") {
+      pagesToPrint = Math.floor(numPages / 2);
+    } else if (pageSelection === "Tùy chỉnh" && customPages) {
+      const customPageRanges = customPages.split(",").flatMap(range => {
+        const [start, end] = range.split("-").map(Number);
+        return end ? Array.from({ length: end - start + 1 }, (_, i) => start + i) : [start];
+      });
+      pagesToPrint = customPageRanges.length;
+    }
+  
+    const totalSheets = faces === "2 mặt" ? Math.ceil(pagesToPrint / 2) : pagesToPrint;
+    return totalSheets * copies;
+  };
+  
+  const total = calculate();
 
   return (
+    
     <div className="p-4 min-h-screen">
+      <ToastContainer />
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       <Breadcrumb separator=">">
         <Breadcrumb.Item>
@@ -355,9 +382,6 @@ const ServicePage = () => {
                   <FrownOutlined className="text-6xl" />
                   <p className="text-red-500 mt-4">
                     Không có bản xem trước cho định dạng tệp này!
-                  </p>
-                  <p className="text-m font-bold text-blue-700 mt-6">
-                    Số trang: {numPages}
                   </p>
                 </div>
               ) : (
@@ -513,7 +537,7 @@ const ServicePage = () => {
         footer={[
           <button
             key="print"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 mr-4"
             onClick={handleConfirmPrint}
           >
             In
@@ -547,10 +571,11 @@ const ServicePage = () => {
           {pageSelection === "Tùy chỉnh" ? customPages : pageSelection}
         </p>
         <p>
-          <strong>Số trang:</strong> {numPages}
+          <strong>Số giấy cần dùng:</strong> {total}
         </p>
       </Modal>
     </div>
+    
   );
 };
 

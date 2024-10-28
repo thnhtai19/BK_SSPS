@@ -8,6 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FormInput from "../../components/FormInputComponent/FormInput";
 import dayjs from "dayjs";
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -17,6 +18,7 @@ const AdminSystemSettingPage = () => {
     const [pageCount, setPageCount] = useState("");
     const [resetDate, setResetDate] = useState("");
     const [systemState, setSystemState] = useState("");
+    const navigate = useNavigate();
     const [price, setPrice] = useState("");
     const [fileStatus, setFileStatus] = useState("");
     const parseFileStatus = (acceptedFileTypes) => {
@@ -46,6 +48,10 @@ const AdminSystemSettingPage = () => {
                     withCredentials: true,
                 });
 
+                if (response.status === 401) {
+                    navigate("/auth/login");
+                    return;
+                }
                 if (response.data && response.data.length > 0) {
                     const systemInfo = response.data[0];
     
@@ -68,10 +74,13 @@ const AdminSystemSettingPage = () => {
             } catch (err) {
                 console.error("Lỗi khi lấy dữ liệu cấu hình hệ thống:", err);
                 notifyError("Không thể lấy dữ liệu cấu hình hệ thống.");
+                if (err.response && err.response.status === 401) {
+                    navigate("/auth/login");
+                }
             }
         };
         fetchSystemInfo();
-    }, []);
+    }, [navigate]);
    
     const notifySuccess = (message) => {
         toast.success(message, {
