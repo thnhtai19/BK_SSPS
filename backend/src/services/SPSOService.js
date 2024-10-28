@@ -204,7 +204,7 @@ class SPSOService {
                     // Xử lí tiền dữ liệu
                     const rac = await db.query('SELECT * FROM in_tai_lieu');
                     var rac1 = rac[0].filter((rac2) => {
-                        return support.getmonth(rac2.tg_ket_thuc) == parseInt(data);
+                        return rac2.tg_ket_thuc != null && support.getmonth(rac2.tg_ket_thuc) == parseInt(data);
                     })
                     var rac3 = {}
                     rac1.forEach(function(rac4) {
