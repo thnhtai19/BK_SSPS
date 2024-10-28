@@ -176,7 +176,7 @@ function Login() {
         toast.success("Đăng nhập thành công!");
         setTimeout(() => {
           navigate("/home");
-        }, 3000);
+        }, 1000);
       } else {
         toast.error(data.message);
       }
