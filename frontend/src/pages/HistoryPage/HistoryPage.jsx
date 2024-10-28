@@ -55,7 +55,9 @@ const HistoryPage = () => {
   const getChartData = (data) => {
 		const tempData = [];
 		data.forEach((item) => {
-			const date = item.tg_bat_dau.split(" ")[1]; // Lấy phần ngày từ thời gian bắt đầu
+      if(!item.tg_ket_thuc) return;
+
+			const date = item.tg_ket_thuc.split(" ")[1]; // Lấy phần ngày từ thời gian bắt đầu
 
       // Tìm đối tượng có cùng ngày trong kết quả
       let found = tempData.find((el) => el.date === date);
@@ -72,6 +74,13 @@ const HistoryPage = () => {
       } else if (item.kich_thuoc === "A4") {
         found.A4 += item.so_trang_in;
       }
+    });
+
+    // Sắp xếp lại mảng theo thứ tự ngày
+    tempData.sort((a, b) => {
+      const dateA = new Date(a.date.split("-").reverse().join("-"));
+      const dateB = new Date(b.date.split("-").reverse().join("-"));
+      return dateA - dateB;
     });
 
     setChartData(tempData);
