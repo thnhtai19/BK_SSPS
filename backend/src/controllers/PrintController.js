@@ -18,6 +18,7 @@ const storage = multer.diskStorage({
         cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
+        //console.log(file.originalname);
         cb(null, file.originalname);
     }
 });
@@ -46,6 +47,12 @@ class PrintController {
     
     uploadFile = (req, res) => {
         upload.single('file')(req, res, async (err) => {
+            if (!req.session.user) {
+                return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
+            }
+            if (req.session.user.role != 'SV') {
+                return res.status(403).json({message: 'Không có quyền truy cập!'});
+            }
             if (err) {
                 return res.json({ message: 'Tải file thành công!' });
             }
@@ -54,12 +61,6 @@ class PrintController {
             }
 
             try {
-                if (!req.session.user) {
-                    return res.status(401).json({message: 'Chưa xác thực thông tin người dùng'});
-                }
-                if (req.session.user.role != 'SV') {
-                    return res.status(403).json({message: 'Không có quyền truy cập!'});
-                }
                 const file = req.file;
                 const id = req.session.user.id;
                 const result = await PrintService.saveFile(file, id);
