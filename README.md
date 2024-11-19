@@ -1,15 +1,6 @@
 ## Cài Đặt Các Phụ Thuộc
 ```bash
-npm i react-scripts
-npm i concurrently
-npm i web-vitals
-npm i nodemon
-npm i cors
-npm i react-helmet-async
-npm i axios
-npm i slick-carousel react-slick
-npm i antd
-npm i styled-components
+npm i react-scripts concurrently web-vitals nodemon cors react-helmet-async axios slick-carousel react-slick antd styled-components mysql2 cookie-parser bcryptjs express-session tailwindcss postcss autoprefixer react-apexcharts @payos/node multer jszip
 ```
 
 ## Cài Đặt node_modules
