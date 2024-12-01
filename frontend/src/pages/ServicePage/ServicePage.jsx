@@ -262,6 +262,9 @@ const ServicePage = () => {
 
       if (data.message === "Tạo đơn in thành công!") {
         toast.success("Đã gửi lệnh in thành công!");
+        setTimeout(() => {
+            window.location.href = '/history';
+        }, 2000); 
       } else {
         toast.error(data.message);
       }
