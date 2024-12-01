@@ -1,12 +1,12 @@
-# CNPM_HCMUT_SSPS
+# CNPM_BK_SSPS
 
-Chào mừng đến với **HCMUT_SSPS**.
+Chào mừng đến với **BK_SSPS**.
 
 ## Tổng Quan
 
-**HCMUT_SSPS** là một dịch vụ in ấn thông minh dành cho sinh viên trường Đại học Bách Khoa - ĐHQG TP.HCM (HCMUT) giúp sử dụng các dịch vụ in ấn của trường một cách hiệu quả hơn. Sinh viên có thể sử dụng hệ thống này để đặt trước nhu cầu in ấn mà không cần phải xếp hàng như phương thức truyền thống. Hệ thống cũng cung cấp tính năng lưu trữ thông tin in ấn, chẳng hạn như tài liệu, số lượng, ngày, giờ, địa điểm... của mỗi đơn hàng. Sinh viên có thể xem tất cả các chi tiết về việc sử dụng hệ thống của mình trong lịch sử.
+**BK_SSPS** là một dịch vụ in ấn thông minh dành cho sinh viên trường Đại học Bách Khoa - ĐHQG TP.HCM (HCMUT) giúp sử dụng các dịch vụ in ấn của trường một cách hiệu quả hơn. Sinh viên có thể sử dụng hệ thống này để đặt trước nhu cầu in ấn mà không cần phải xếp hàng như phương thức truyền thống. Hệ thống cũng cung cấp tính năng lưu trữ thông tin in ấn, chẳng hạn như tài liệu, số lượng, ngày, giờ, địa điểm... của mỗi đơn hàng. Sinh viên có thể xem tất cả các chi tiết về việc sử dụng hệ thống của mình trong lịch sử.
 
-Hệ thống được quản lý bởi **Nhân viên Dịch vụ In Ấn Sinh Viên** (SPSO). SPSO chịu trách nhiệm cấu hình hệ thống, quản lý các máy in và theo dõi thống kê cũng như hiệu suất của **HCMUT_SSPS**. SPSO cũng có thể xem lịch sử in ấn của người dùng.
+Hệ thống được quản lý bởi **Nhân viên Dịch vụ In Ấn Sinh Viên** (SPSO). SPSO chịu trách nhiệm cấu hình hệ thống, quản lý các máy in và theo dõi thống kê cũng như hiệu suất của **BK_SSPS**. SPSO cũng có thể xem lịch sử in ấn của người dùng.
 
 ## Công Nghệ Sử Dụng
 
