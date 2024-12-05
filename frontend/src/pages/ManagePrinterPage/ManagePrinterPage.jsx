@@ -109,7 +109,7 @@ function ManageUserPage() {
           const updatedData = printerData.map(printer => {
             return {
               ...printer,
-              location: `Tầng ${printer.co_so}, ${printer.toa}, ${printer.phong}` // Gộp các dữ liệu liên quan lại thành location
+              location: `Cơ sở ${printer.co_so}, ${printer.toa}, ${printer.phong}` // Gộp các dữ liệu liên quan lại thành location
             };
           });
           setPrinterInfo(updatedData);
@@ -215,7 +215,7 @@ function ManageUserPage() {
   const handleAddPrinterSuccess = (newPrinter) => {
     const editNewPrinter = {
       ...newPrinter, 
-      location: `Tầng ${newPrinter.co_so}, ${newPrinter.toa}, ${newPrinter.phong}`
+      location: `Cơ sở ${newPrinter.co_so}, ${newPrinter.toa}, ${newPrinter.phong}`
     };
   
     setPrinterInfo((prevPrinterInfo) => [...prevPrinterInfo, editNewPrinter]);
